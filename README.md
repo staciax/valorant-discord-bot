@@ -24,9 +24,10 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 ```
 pip install -r requirements.txt
 ```
-* Store discord bot token in .env
+* Store discord bot token in .env and server id for slash command (if private server)
 ```
 TOKEN=<bot token>
+SLASH_SERVER_ID=<your_server_id>
 ```
 * Run the bot
 ```
