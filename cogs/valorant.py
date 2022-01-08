@@ -4,14 +4,17 @@ from discord.commands import slash_command, Option
 from discord.ext import commands, tasks
 from datetime import time, datetime
 
-# Third
-import requests
+# Standard
+import os
 
 # Local
 from utils.api import ValorantAPI
 
 #valorant_api
 #available regions: eu, ap, na, kr | (latem, br = 'na')
+
+#slash_server_id
+MY_SERVER_ID = int(os.getenv('SERVER_ID'))
 
 class valorant(commands.Cog):
     def __init__(self, bot):
@@ -21,7 +24,7 @@ class valorant(commands.Cog):
     async def on_ready(self):
         print(f'-{self.__class__.__name__}')
     
-    @slash_command(description="Shows my daily store", guild_ids=[]) #Input your server id
+    @slash_command(description="Shows my daily store", guild_ids=[MY_SERVER_ID]) #Input your server id
     async def store(self, interaction, username: Option(str, "Input username"), password: Option(str, "Input password")):
         api = ValorantAPI(interaction, username, password, region='ap')
         await api.start()
