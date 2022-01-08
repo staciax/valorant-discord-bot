@@ -42,8 +42,8 @@ def generate_image(skin):
 
         # price
         draw.text((500, 15), price[0], font=font_medium, fill=color_text)
-        draw.text((500, 263), price[1], font=font_medium, fill=color_text)
-        draw.text((1095, 15), price[2], font=font_medium, fill=color_text)
+        draw.text((1095, 15), price[1], font=font_medium, fill=color_text)
+        draw.text((500, 263), price[2], font=font_medium, fill=color_text)
         draw.text((1095, 263), price[3], font=font_medium, fill=color_text)
 
         # name
