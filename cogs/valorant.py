@@ -14,7 +14,7 @@ from utils.api import ValorantAPI
 #available regions: eu, ap, na, kr | (latem, br = 'na')
 
 #slash_server_id
-MY_SERVER_ID = int(os.getenv('SERVER_ID'))
+MY_SERVER_ID = int(os.getenv('SLASH_SERVER_ID'))
 
 class valorant(commands.Cog):
     def __init__(self, bot):
