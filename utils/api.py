@@ -15,11 +15,12 @@ from .errors import UserInputErrors
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ValorantAPI:
-    def __init__(self, interaction, username, password, region):
+    def __init__(self, interaction=None, username=None, password=None, region=None, channel=None):
         self.interaction = interaction
         self.username = username
         self.password = password
         self.region = region
+        self.channel:discord.TextChannel = channel
         self.session = requests.session()
         
     def fetch(self, endpoint="/") -> dict:
@@ -97,3 +98,18 @@ class ValorantAPI:
         # r = self.session.get("https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/{region}/{user_id}".format(region=self.region, user_id=self.user_id))
         # userinfo = r.json()
         # print(userinfo['name'], userinfo['tag'])
+    
+    async def for_loop_send(self):        
+        # authenticate
+        self.user_id, self.headers = Auth(self.username, self.password).authenticate()   
+
+        # generate image
+        file = generate_image(self.my_daily_offter())
+
+        # build embed 
+        embed = discord.Embed(title="Valorant Store",color=0xfe676e, timestamp=discord.utils.utcnow())
+        embed.set_image(url='attachment://store-offers.png')
+        embed.set_footer(text=f"ID : {self.username}")
+
+        # loop send
+        await self.channel.send(embed=embed, file=file)
