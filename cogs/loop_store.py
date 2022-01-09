@@ -24,8 +24,8 @@ class loop_store(commands.Cog):
     async def on_ready(self):
         print(f'-{self.__class__.__name__}')
     
-    # @tasks.loop(time=time(hour=00, minute=00, second=30)) #gmt 00:00 เท่ากับ เวลาไทย 7 โมงเช้า (gmt +7)
-    @tasks.loop(seconds=10) # ไว้เทสนะครับ ปิดใช้งานอันบนก่อน
+    @tasks.loop(time=time(hour=00, minute=00, second=30)) #gmt 00:00 เท่ากับ เวลาไทย 7 โมงเช้า (gmt +7)
+    # @tasks.loop(seconds=10) # ไว้เทสนะครับ ปิดใช้งานอันบนก่อน
     async def valorant_loop(self):
             CHANNEL_LOOP = os.getenv('CHANNEL_LOOP', None)
             try:
