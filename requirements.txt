@@ -1,5 +1,4 @@
-wheel
 Pillow
 python-dotenv
-py-cord @ git+https://github.com/Pycord-Development/pycord@9aafd033e77be75ffcb4956a012be24378e55d5d
+py-cord @ git+https://github.com/Pycord-Development/pycord
 requests
