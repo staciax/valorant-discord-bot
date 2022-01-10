@@ -1,7 +1,8 @@
 # Valorant store checker - Discord Bot
 Discord bot that shows valorant your daily store by using the Ingame API.
-written using Python and the [Pycord](https://github.com/Pycord-Development/pycord) library
+written using Python and the [Pycord](https://github.com/Pycord-Development/pycord) library <br>
 
+Tutorial : [Youtube](https://youtu.be/gYjzEuJh3Ms)
 
 ## Screenshot
 
