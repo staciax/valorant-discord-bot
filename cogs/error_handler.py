@@ -14,11 +14,14 @@ class error_handler(commands.Cog):
     async def on_application_command_error(self, ctx, error):
         # i don't know why isinstance not work
         # if isinstance(error, commands.UserInputError):
-
-        # isinstance artificial
-        error = (str(error)).split(':')
-
-        embed = discord.Embed(description=error[2], color=0xfe676e)
+        
+        embed = discord.Embed(color=0xfe676e)
+        try:
+            # isinstance artificial
+            error = (str(error)).split(':')
+            embed.description=error[2]
+        except:
+            embed.description = "An unknown error occurred, sorry"
         await ctx.respond(embed=embed, ephemeral=True)
 
 def setup(bot):
