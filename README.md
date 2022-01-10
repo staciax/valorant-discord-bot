@@ -8,7 +8,7 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 ![image](https://i.imgur.com/gj5usTI.gif)
 ![image](https://i.imgur.com/RLMarRk.png)
 <br>
-`* bug display price weapon 2,3 (fixed)`
+`* bug display price skin 2,3 (fixed)`
 
 ## Usage
 
