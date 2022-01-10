@@ -18,7 +18,8 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 ## Prerequisites
 
-* Python 3.6+
+* [Python 3.6+](https://www.python.org/downloads/)
+* [Git](https://git-scm.com/download)
 
 ## Installations
 
