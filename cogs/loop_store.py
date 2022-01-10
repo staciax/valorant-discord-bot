@@ -27,7 +27,7 @@ class loop_store(commands.Cog):
     @tasks.loop(time=time(hour=0, minute=0, second=30)) #gmt 00:00 เท่ากับ เวลาไทย 7 โมงเช้า (gmt +7)
     # @tasks.loop(seconds=10) # ไว้เทสนะครับ ปิดใช้งานอันบนก่อน
     async def valorant_loop(self):
-            CHANNEL_LOOP = os.getenv('CHANNEL_LOOP', None)
+            CHANNEL_LOOP = os.getenv('CHANNEL_ID', None)
             try:
                 channel = self.bot.get_channel(int(CHANNEL_LOOP))
                 with open("accounts.txt", encoding='utf-8') as file:
