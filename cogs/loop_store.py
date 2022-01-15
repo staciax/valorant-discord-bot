@@ -11,7 +11,7 @@ from utils.api import ValorantAPI
 
 #valorant_api
 #available regions: eu, ap, na, kr | (latem, br = 'na')
-MY_REGION = int(os.getenv('REGION'))
+MY_REGION = os.getenv('REGION')
 
 class loop_store(commands.Cog):
     def __init__(self, bot):
