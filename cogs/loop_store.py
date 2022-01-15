@@ -11,10 +11,12 @@ from utils.api import ValorantAPI
 
 #valorant_api
 #available regions: eu, ap, na, kr | (latem, br = 'na')
+MY_REGION = int(os.getenv('REGION'))
 
 class loop_store(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.channel = None
         self.valorant_loop.start()
     
     def cog_unload(self):
@@ -29,11 +31,11 @@ class loop_store(commands.Cog):
     async def valorant_loop(self):
             CHANNEL_LOOP = os.getenv('CHANNEL_ID', None)
             try:
-                channel = self.bot.get_channel(int(CHANNEL_LOOP))
+                self.channel = self.bot.get_channel(int(CHANNEL_LOOP))
                 with open("accounts.txt", encoding='utf-8') as file:
                     for x in file.readlines():
                         account = x.rstrip("\n").split(";")
-                        api = ValorantAPI(channel=channel, username=account[0], password=account[1], region='ap')
+                        api = ValorantAPI(channel=self.channel, username=account[0], password=account[1], region=MY_REGION)
                         await api.for_loop_send()
             except ValueError:
                 pass
