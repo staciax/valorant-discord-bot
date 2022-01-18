@@ -31,8 +31,9 @@ pip install -r requirements.txt
 * Store discord bot token in .env and server id for slash command (if private server)
 ```
 TOKEN=<bot token>
-SERVER_ID= <your_server_id>
-CHANNEL_LOOP = <channel_id> (if you want to loop)
+SERVER_ID=<your_server_id>
+REGION=<your_region>
+CHANNEL_LOOP= <channel_id> (if you want to loop)
 ```
 * Run the bot
 ```
