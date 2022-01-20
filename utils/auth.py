@@ -12,6 +12,9 @@ class Auth:
         self.password = password
 
     def authenticate(self):
+        
+        auth_error = 'An unknown error occurred, sorry'
+        
         try:
             session = requests.session()
             data = {
@@ -27,7 +30,15 @@ class Auth:
                 'username': self.username,
                 'password': self.password,
             }
+                    
             r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data)
+
+            # auth error handler
+            if r.json()['type'] == 'auth':
+                auth_error = 'Your username or password may be incorrect!'
+            elif r.json()['type'] == 'multifactor':
+                auth_error = 'You need to disable 2 factor authentication.'
+
             pattern = re.compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
             data = pattern.findall(r.json()['response']['parameters']['uri'])[0] 
             access_token = data[0]
@@ -48,4 +59,4 @@ class Auth:
 
             return user_id, headers
         except:
-            raise RuntimeError('Your username or password may be incorrect!')
+            raise RuntimeError(auth_error)
