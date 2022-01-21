@@ -15,12 +15,13 @@ from .errors import UserInputErrors
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ValorantAPI:
-    def __init__(self, interaction=None, username=None, password=None, region=None, channel=None):
+    def __init__(self, interaction=None, username=None, password=None, region=None, channel=None, bot=None):
         self.interaction = interaction
         self.username = username
         self.password = password
         self.region = region
         self.channel:discord.TextChannel = channel
+        self.bot = bot
         self.session = requests.session()
         
     def fetch(self, endpoint="/") -> dict:
@@ -68,18 +69,20 @@ class ValorantAPI:
 
             # defers the interaction response.
             await interaction.defer(ephemeral=True)
+            message = await interaction.respond('\u200B') #empty text
 
             # authenticate
-            self.user_id, self.headers = Auth(self.username, self.password).authenticate()   
+            auth = Auth(self.username, self.password)
+            self.user_id, self.headers = await auth.authenticate(message, self.bot, interaction)
 
             # generate image
+            await interaction.trigger_typing()
             file = generate_image(self.my_daily_offter())
 
             # build embed 
             embed = self.build_embed()
             
             # send message for public server
-            await interaction.respond('\u200B') #empty text
             await interaction.channel.send(embed=embed, file=file)
 
             # # send message for private server

@@ -1,5 +1,6 @@
 # Standard 
 import re
+import asyncio
 
 # Third
 import requests
@@ -11,9 +12,9 @@ class Auth:
         self.username = username
         self.password = password
 
-    def authenticate(self):
+    async def authenticate(self, message, bot, interaction):
         
-        auth_error = 'An unknown error occurred, sorry'
+        auth_error = 'An unknown error occurred, sorry'  
         
         try:
             session = requests.session()
@@ -37,8 +38,23 @@ class Auth:
             if r.json()['type'] == 'auth':
                 auth_error = 'Your username or password may be incorrect!'
             elif r.json()['type'] == 'multifactor':
-                auth_error = 'You need to disable 2 factor authentication.'
+                # 2fa error
+                auth_error = '2FA verify code may be incorrect!'
+                await message.edit('**Enter the 2FA verify code**')
 
+                try:
+                    respond_message = await bot.wait_for("message", check=lambda msg: msg.author == interaction.user and msg.channel == interaction.channel, timeout=60)
+                except asyncio.TimeoutError:
+                    auth_error = '2 factor authentication is Timeout.'
+                await message.edit('\u200B')
+                await respond_message.delete()
+                data = {
+                    "type": "multifactor",
+                    "code": respond_message.content,
+                    "rememberDevice": False
+                }
+                r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data)
+            
             pattern = re.compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
             data = pattern.findall(r.json()['response']['parameters']['uri'])[0] 
             access_token = data[0]
