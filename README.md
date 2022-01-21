@@ -4,12 +4,13 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 Tutorial : [Youtube](https://youtu.be/gYjzEuJh3Ms)
 
+* [Support  2 factor authentication](https://i.imgur.com/3Rr6p3e.gif)
+
 ## Screenshot
 
-![image](https://i.imgur.com/gj5usTI.gif)
-![image](https://i.imgur.com/RLMarRk.png)
+![image](https://i.imgur.com/xPZ5vAu.gif)
+![image](https://i.imgur.com/AV6Pj5d.png)
 <br>
-`* bug display price skin 2,3 (fixed)`
 
 ## Usage
 
