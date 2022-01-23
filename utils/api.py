@@ -1,10 +1,7 @@
 # Standard
-import asyncio
 import requests
 import urllib3
 import discord
-from discord.ext import commands
-from typing import Any
 
 # Local
 from .auth import Auth

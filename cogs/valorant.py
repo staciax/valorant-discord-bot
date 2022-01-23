@@ -1,8 +1,7 @@
 # Standard
 import discord
 from discord.commands import slash_command, Option
-from discord.ext import commands, tasks
-from datetime import time, datetime
+from discord.ext import commands
 
 # Standard
 import os
@@ -10,12 +9,9 @@ import os
 # Local
 from utils.api import ValorantAPI
 
-#valorant_api
-#available regions: eu, ap, na, kr | (latem, br = 'na')
-
-# #slash_server_id
-MY_SERVER_ID = int(os.getenv('SERVER_ID'))
-MY_REGION = os.getenv('REGION')
+#env_loader
+MY_SERVER_ID = int(os.getenv('SERVER_ID'))  # don't edit this
+MY_REGION = os.getenv('REGION')  # don't edit this
 
 class valorant(commands.Cog):
     def __init__(self, bot):
