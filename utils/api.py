@@ -69,8 +69,8 @@ class ValorantAPI:
             message = await interaction.respond('\u200B') #empty text
 
             # authenticate
-            auth = Auth(self.username, self.password)
-            self.user_id, self.headers = await auth.authenticate(message, self.bot, interaction)
+            auth = Auth(self.username, self.password, message,interaction, self.bot)
+            self.user_id, self.headers = await auth.authenticate()
 
             # generate image
             await interaction.trigger_typing()
@@ -101,7 +101,8 @@ class ValorantAPI:
     
     async def for_loop_send(self):        
         # authenticate
-        self.user_id, self.headers = Auth(self.username, self.password).authenticate()   
+        auth = Auth(self.username, self.password)
+        self.user_id, self.headers = await auth.authenticate()
 
         # generate image
         file = generate_image(self.my_daily_offter())

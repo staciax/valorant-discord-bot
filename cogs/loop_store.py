@@ -33,17 +33,19 @@ class loop_store(commands.Cog):
             self.channel = self.bot.get_channel(int(CHANNEL_LOOP))
             with open("accounts.txt", encoding='utf-8') as file:
                 for x in file.readlines():
-                    account = x.rstrip("\n").split(";")
-                    api = ValorantAPI(channel=self.channel, username=account[0], password=account[1], region=MY_REGION)
-                    await api.for_loop_send()
-        except ValueError:
-            pass
+                    try:
+                        account = x.rstrip("\n").split(";")
+                        api = ValorantAPI(channel=self.channel, username=account[0], password=account[1], region=MY_REGION)
+                        await api.for_loop_send()
+                    except:
+                        pass
         except Exception as Ex:
             print(f'Notification loop error - {Ex}')
     
     @valorant_loop.before_loop
     async def before_daily_send(self):
         await self.bot.wait_until_ready()
+        print('Notification loop is Ready')
         
 def setup(bot):
     bot.add_cog(loop_store(bot))
