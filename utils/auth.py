@@ -64,7 +64,7 @@ class Auth:
                     }
                     await self.message.edit('\u200B')
                     await respond_message.delete()
-                    r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data)
+                    r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
             
             pattern = re.compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
             data = pattern.findall(r.json()['response']['parameters']['uri'])[0] 
