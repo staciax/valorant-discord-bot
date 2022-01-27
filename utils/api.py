@@ -60,17 +60,23 @@ class ValorantAPI:
             embed.set_footer(text=f'Requested by {user.display_name}', icon_url=user.avatar)
         return embed
 
+    async def get_authenticate(self, auth):        
+        try:
+            self.user_id, self.headers = await auth.authenticate()
+        except:
+            self.user_id, self.headers = await auth.authenticate_aiohttp()
+
+
     async def start(self):
         interaction = self.interaction
         try:
 
             # defers the interaction response.
             await interaction.defer(ephemeral=True)
-            message = await interaction.respond('\u200B') #empty text
+            self.message = await interaction.respond('\u200B') #empty text
 
             # authenticate
-            auth = Auth(self.username, self.password, message,interaction, self.bot)
-            self.user_id, self.headers = await auth.authenticate()
+            await self.get_authenticate(Auth(self.username, self.password, self.message, self.interaction, self.bot))
 
             # generate image
             await interaction.trigger_typing()
@@ -101,8 +107,7 @@ class ValorantAPI:
     
     async def for_loop_send(self):        
         # authenticate
-        auth = Auth(self.username, self.password)
-        self.user_id, self.headers = await auth.authenticate()
+        await self.get_authenticate(Auth(self.username, self.password))
 
         # generate image
         file = generate_image(self.my_daily_offter())
