@@ -18,10 +18,9 @@ class Auth:
         self.interaction = interaction
         self.bot = bot
 
-        self.auth_error = 'An unknown error occurred, sorry'  
+        self.error = 'An unknown error occurred, sorry'  
 
     async def authenticate(self):
-        print('requests')
         try:
             session = requests.session()
             data = {
@@ -47,17 +46,17 @@ class Auth:
 
             # auth error handler
             if r.json()['type'] == 'auth':
-                auth_error = 'Your username or password may be incorrect!'
+                self.error = 'Your username or password may be incorrect!'
             elif r.json()['type'] == 'multifactor':
                 if self.message is not None and self.bot is not None and self.interaction is not None:
                     # 2fa error
-                    auth_error = '2FA verify code may be incorrect!'
+                    self.error = '2FA verify code may be incorrect!'
                     await self.message.edit('**Enter the 2FA verify code**')
 
                     try:
                         respond_message = await self.bot.wait_for("message", check=lambda msg: msg.author == self.interaction.user and msg.channel == self.interaction.channel, timeout=90)
                     except asyncio.TimeoutError:
-                        auth_error = '2 factor authentication is Timeout.'
+                        self.error = '2 factor authentication is Timeout.'
                     data = {
                         "type": "multifactor",
                         "code": respond_message.content,
@@ -90,7 +89,6 @@ class Auth:
             raise RuntimeError(self.auth_error)
 
     async def authenticate_aiohttp(self):
-        print('aiohttp')
         try:
             session = aiohttp.ClientSession()
             
@@ -118,17 +116,17 @@ class Auth:
 
             # auth error handler
             if data['type'] == 'auth':
-                auth_error = 'Your username or password may be incorrect!'
+                self.error = 'Your username or password may be incorrect!'
             elif data['type'] == 'multifactor':
                 if self.message is not None and self.bot is not None and self.interaction is not None:
                     # 2fa error
-                    auth_error = '2FA verify code may be incorrect!'
+                    self.error = '2FA verify code may be incorrect!'
                     await self.message.edit('**Enter the 2FA verify code**')
 
                     try:
                         respond_message = await self.bot.wait_for("message", check=lambda msg: msg.author == self.interaction.user and msg.channel == self.interaction.channel, timeout=90)
                     except asyncio.TimeoutError:
-                        auth_error = '2 factor authentication is Timeout.'
+                        self.error = '2 factor authentication is Timeout.'
                     data = {
                         "type": "multifactor",
                         "code": respond_message.content,

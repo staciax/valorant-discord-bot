@@ -48,3 +48,9 @@ for providing a great API about Valorant!
 
 ### [Valorant-API.com](https://valorant-api.com/)
 for every skin names and images!
+
+### Support Me
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/staciax)
+
+[![STACIA SUPPORT](https://badgen.net/discord/online-members/pmZt2T5ggb)](https://discord.gg/hE8x7S2fR5)
