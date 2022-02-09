@@ -86,7 +86,7 @@ class Auth:
 
             return user_id, headers
         except:
-            raise RuntimeError(self.auth_error)
+            raise RuntimeError(self.error)
 
     async def authenticate_aiohttp(self):
         try:
@@ -159,4 +159,4 @@ class Auth:
 
             return user_id, headers
         except:
-            raise RuntimeError(self.auth_error)
+            raise RuntimeError(self.error)
