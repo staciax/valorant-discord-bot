@@ -1,45 +1,71 @@
-# Valorant store checker - Discord Bot
+# Valorant store checker - Discord Bot (BETA)
 Discord bot that shows your daily store offer without open the VALORANT by using the Ingame API.
 written using Python and the [Pycord](https://github.com/Pycord-Development/pycord) library <br>
 
-Tutorial : [Youtube](https://youtu.be/gYjzEuJh3Ms)
-
-* [Support  2 factor authentication](https://i.imgur.com/3Rr6p3e.gif)
+#### NEW UPDATE 
+* `Notify skin, shows valorant point, Login, logout, more`
+* [`Night Market (end 23/02/2022)`](https://i.imgur.com/n1KSay4.png)
 
 ## Screenshot
 
-![image](https://i.imgur.com/xPZ5vAu.gif)
-![image](https://i.imgur.com/AV6Pj5d.png)
+![image](https://i.imgur.com/I0rHtiM.png)
 <br>
+* Embed Design `-embed split` by [Giorgio#0609](https://github.com/giorgi-o)[`img`](https://i.imgur.com/qzrI0qF.png) | default : `-embed pillow` 
 
-## Usage
+![image](https://i.imgur.com/J1Dptta.png)
 
-| Command                       | Action                                                                                                     |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `store`  | Shows my daily store |
+* Notify skin
 
-## Prerequisites
+![image](https://i.imgur.com/ijjvQV3.png)
 
-* [Python 3.6+](https://www.python.org/downloads/)
-* [Git](https://git-scm.com/download)
+
+<!-- ![image](https://i.imgur.com/xPZ5vAu.gif)
+![image](https://i.imgur.com/AV6Pj5d.png) -->
+<br>
 
 ## Installations
 
+* [Python 3.8+](https://www.python.org/downloads/)
+
 * Install requirements
+
+* Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
+
 ```
 pip install -r requirements.txt
 ```
-* Store discord bot token in .env and server id for slash command
+
 ```
-TOKEN=<BOT_TOKEN>
-SERVER_ID=<SERVER_ID>
-REGION=<YOUR_REGION>
-CHANNEL_LOOP=<CHANNEL_ID notification loop>
+# manual install package
+
+pip install pillow
+pip install py-cord==2.0.0b4
+pip install requests
+```
+
+* Store discord bot token in config.json
+```
+"TOKEN": "PUT YOUR DISCORD BOT TOKEN"
 ```
 * Run the bot
 ```
 python bot.py
 ```
+* Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-setup global`
+* if you want use in server now `-setup guild` to setup the commands.
+
+## Usage
+
+| Command                       | Action                                                                                                     |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| `store`  | Shows your daily store |
+| `point`  | Shows your valorant point |
+| `login`  | Log in with your Riot acoount |
+| `logout`  | Logout your Riot acoount |
+| `2fa`  | Enter your 2FA Code |
+| `notify`  | Set an notify for when a particular skin is in your store |
+| `notifys`  | Shows all your skin notify |
+| `night`  | Shows your nightmarket |
 
 ## Special thanks
 
@@ -49,8 +75,12 @@ for providing a great API about Valorant!
 ### [Valorant-API.com](https://valorant-api.com/)
 for every skin names and images!
 
+### [Giorgio#0609](https://github.com/giorgi-o)
+for embed design and helping me and more! <3
+
+### [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
+developer community for valorant api
+
 ### Support Me
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/staciax)
-
-[![STACIA SUPPORT](https://badgen.net/discord/online-members/pmZt2T5ggb)](https://discord.gg/hE8x7S2fR5)

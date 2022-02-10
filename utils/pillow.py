@@ -6,51 +6,81 @@ from io import BytesIO
 import requests
 from PIL import Image, ImageDraw, ImageFont
 
-def generate_image(skin):
+def generate_image(skin_list):
     try:
-        name, icon, price = skin
-
         # background
         background = Image.open('assets/images/background.png')
         draw = ImageDraw.Draw(background)
 
         # font
         font = "assets/font/LEMONMILK-RegularItalic.otf"
-        font_small = ImageFont.FreeTypeFont(font, 30)
-        font_medium = ImageFont.FreeTypeFont(font, 35)
+        test_font = ImageFont.FreeTypeFont(font, 55)
+        font_medium = ImageFont.FreeTypeFont(font, 50)
         color_text = '#ffffff'
 
-        # icon        
-        skin1 = requests.get(icon[0])
-        skin2 = requests.get(icon[1])
-        skin3 = requests.get(icon[2])
-        skin4 = requests.get(icon[3])
+        def limit_text(text):
+            if len(text) > 20:
+                text = text[:20] + "..."
+            return text
 
-        # icon resize
-        skin_length = 420
-        skin_height = 120
-        skin1_resize = Image.open(BytesIO(skin1.content)).resize((skin_length, skin_height))
-        skin2_resize = Image.open(BytesIO(skin2.content)).resize((skin_length, skin_height))
-        skin3_resize = Image.open(BytesIO(skin3.content)).resize((skin_length, skin_height))
-        skin4_resize = Image.open(BytesIO(skin4.content)).resize((skin_length, skin_height))
+        # SKIN 1
+        try:
+            skin_1 = skin_list['skin1']
+            skin1_tier = requests.get(skin_1['tier'])
+            skin1_tier_png = Image.open(BytesIO(skin1_tier.content)).resize([90, 90])
+            background.paste(skin1_tier_png,(10, 10), skin1_tier_png)
+            
+            skin1 = requests.get(skin_1['icon'])
+            skin1_png = Image.open(BytesIO(skin1.content)).rotate(-25, expand=1)
+            background.paste(skin1_png,(100, 30), skin1_png)
+            draw.text((710, 20), str(skin_1['price']), font=font_medium, fill=color_text)
 
-        # icon paste and set position
-        background.paste(skin1_resize,(25, 60), skin1_resize)
-        background.paste(skin2_resize,(625, 60), skin2_resize)
-        background.paste(skin3_resize,(25, 310), skin3_resize)
-        background.paste(skin4_resize,(625, 310), skin4_resize)
+            draw.text((20, 280), limit_text(skin_1['name']), font=test_font, fill=color_text)
+        except:
+            pass
+        
+        # SKIN 2
+        try:
+            skin_2 = skin_list['skin2']
 
-        # price
-        draw.text((500, 15), price[0], font=font_medium, fill=color_text)
-        draw.text((1095, 15), price[1], font=font_medium, fill=color_text)
-        draw.text((500, 263), price[2], font=font_medium, fill=color_text)
-        draw.text((1095, 263), price[3], font=font_medium, fill=color_text)
+            skin2_tier = requests.get(skin_2['tier'])
+            skin2_tier_png = Image.open(BytesIO(skin2_tier.content)).resize([90, 90])
+            background.paste(skin2_tier_png,(855, 10), skin2_tier_png)
+            skin2 = requests.get(skin_2['icon'])
+            skin2_png = Image.open(BytesIO(skin2.content)).rotate(-25, expand=1)
+            background.paste(skin2_png,(980, 30), skin2_png)
+            draw.text((1560, 20), str(skin_2['price']), font=font_medium, fill=color_text)
+            draw.text((870, 280), limit_text(skin_2['name']), font=test_font, fill=color_text)
+        except:
+            pass
 
-        # name
-        draw.text((15, 205), name[0], font=font_small, fill=color_text)
-        draw.text((610, 205), name[1], font=font_small, fill=color_text)
-        draw.text((15, 455), name[2], font=font_small, fill=color_text)
-        draw.text((610, 455), name[3], font=font_small, fill=color_text)
+        # SKIN 3
+        try:
+            skin_3 = skin_list['skin3']
+            skin3_tier = requests.get(skin_3['tier'])
+            skin3_tier_png = Image.open(BytesIO(skin3_tier.content)).resize([90, 90])
+            background.paste(skin3_tier_png,(10, 360), skin3_tier_png)
+            skin3 = requests.get(skin_3['icon'])
+            skin3_png = Image.open(BytesIO(skin3.content)).rotate(-25, expand=1)
+            background.paste(skin3_png,(100, 360), skin3_png)
+            draw.text((710, 370), str(skin_3['price']), font=font_medium, fill=color_text)
+            draw.text((20, 635), limit_text(skin_3['name']), font=test_font, fill=color_text)
+        except:
+            pass
+
+        # SKIN 4
+        try:
+            skin_4 = skin_list['skin4']
+            skin4_tier = requests.get(skin_4['tier'])
+            skin4_tier_png = Image.open(BytesIO(skin4_tier.content)).resize([90, 90])
+            background.paste(skin4_tier_png,(855, 360), skin4_tier_png)
+            skin4 = requests.get(skin_4['icon'])
+            skin4_png = Image.open(BytesIO(skin4.content)).rotate(-25, expand=1)
+            background.paste(skin4_png,(980, 360), skin4_png)
+            draw.text((1560, 370), str(skin_4['price']), font=font_medium, fill=color_text)
+            draw.text((870, 635), limit_text(skin_4['name']), font=test_font, fill=color_text)
+        except: 
+            pass
 
         # save file
         buffer = BytesIO()

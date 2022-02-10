@@ -1,4 +1,3 @@
 Pillow
-python-dotenv
-py-cord @ git+https://github.com/Pycord-Development/pycord
+py-cord==2.0.0b4
 requests
