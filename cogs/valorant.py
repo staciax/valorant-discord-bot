@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 # Local
 from utils.auth import Auth
 from utils.store import VALORANT_API
-from utils.json_loader import data_read, data_save, config_read
+from utils.json_loader import data_read, data_save, config_read, config_save
 from utils.useful import *
 from utils.pillow import generate_image
 from utils.view_notify import Notify, Notify_list
@@ -89,8 +89,7 @@ class valorant(commands.Cog):
             except Exception as e:
                 print(e)
                 raise commands.CommandError("An unknown error occurred, sorry")
-
-            
+   
     @slash_command(description="Log in with your Riot acoount")
     async def login(self, ctx, username: Option(str, "Input username", defualt='ragluxs'), password: Option(str, "Input password", defualt='4869_lucky')):
         await ctx.defer(ephemeral=True)
@@ -216,6 +215,56 @@ class valorant(commands.Cog):
 
         view = Notify_list(ctx)
         await view.start()
+    
+    @slash_command(description="Change notify mode")
+    async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Spectified)", choices=['Spectified Skin','All Skin','Off'])):
+        
+        await ctx.defer(ephemeral=True)
+
+        Auth(user_id=ctx.author.id).get_users()
+        data = data_read('users')
+
+        try:
+            skin_data = data_read('skins')
+            if skin_data['prices']["version"] != self.bot.game_version:
+                fetch_price(ctx.author.id)
+        except KeyError:
+            fetch_price(ctx.author.id)
+        
+        embed = discord.Embed(color=0xfd4554)
+        if mode == 'Spectified Skin':
+            config = config_read()
+            config["notify_mode"] = 'Spectified'
+
+            embed.title = "**Changed notify mode** - Spectified"
+            embed.description = "Use `/notify` to add skins to the notify list."
+            embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
+
+            await ctx.respond(embed=embed)
+        
+        elif mode == 'All Skin':
+            config = config_read()
+            config["notify_mode"] = 'All'
+            config_save(config)
+
+            config_save(config)
+            data[str(ctx.author.id)]['channel'] = ctx.channel.id
+            data_save('users', data)
+
+            embed.title = "**Changed notify mode** - All"
+            embed.description = f"**Set Channel:** {ctx.channel.mention} for all notify"
+            embed.set_image(url='https://i.imgur.com/Gedqlzc.png')
+
+            await ctx.respond(embed=embed)
+
+        else:
+            config = config_read()
+            config["notify_mode"] = False
+            config_save(config)
+            embed.title = "**Changed notify mode** - Off"
+            embed.description = 'turn off notify'
+
+            await ctx.respond(embed=embed)
 
     @slash_command(description="Shows your valorant point in your accounts")
     async def point(self, ctx):

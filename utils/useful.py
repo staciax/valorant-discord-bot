@@ -279,6 +279,22 @@ async def get_emoji_tier(ctx, skin_uuid):
         image = url_to_image(icon)
         emoji = await ctx.guild.create_custom_emoji(image=image, name=name + 'Tier')
     return emoji
+
+def get_emoji_point_bot(bot, point):
+    if point == 'vp':
+        name = 'ValorantPoint'
+        emoji = discord.utils.get(bot.emojis, name=name)
+    elif point == 'rad':
+        name = 'RadianitePoint'
+        emoji = discord.utils.get(bot.emojis, name=name)
+    return emoji
+
+def get_emoji_tier_bot(bot, skin_uuid):
+    data = data_read('skins')
+    uuid = data['skins'][skin_uuid]['tier']
+    name = data['tiers'][uuid]['name']
+    emoji = discord.utils.get(bot.emojis, name=name + 'Tier')
+    return emoji
     
 async def setup_emoji(ctx):
     data:dict = data_read('skins')
@@ -330,5 +346,17 @@ def pillow_embed(name, user, duration) -> discord.Embed:
 async def embed_design_giorgio(ctx, uuid, name, price, icon) -> discord.Embed:
     embed = discord.Embed(color=0x0F1923)
     embed.description = f"{await get_emoji_tier(ctx, uuid)} **{name}**\n{await get_emoji_point(ctx, 'vp')} {price}"
+    embed.set_thumbnail(url=icon)
+    return embed
+
+def embed_giorgio_notify(bot, uuid, name, price, icon) -> discord.Embed:
+    embed = discord.Embed(color=0x0F1923)
+    embed.description = f"{get_emoji_tier_bot(bot, uuid)} **{name}**\n{get_emoji_point_bot(bot, 'vp')} {price}"
+    embed.set_thumbnail(url=icon)
+    return embed
+
+def notify_send(emoji, name, duration, icon) -> discord.Embed:
+    embed = discord.Embed(color=0xfd4554)
+    embed.description = f"{emoji} **{name}** is in your daily store!\nRemaining {duration}"
     embed.set_thumbnail(url=icon)
     return embed

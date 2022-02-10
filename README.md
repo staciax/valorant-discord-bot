@@ -29,6 +29,8 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 * Install requirements
 
+Create the [discord bot](https://discord.com/developers/applications) and invite bot to server with scope `applications.commands`
+
 * Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
 
 ```
@@ -52,7 +54,7 @@ pip install requests
 python bot.py
 ```
 * Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-setup global`
-* if you want use in server now `-setup guild` to setup the commands.
+* if you want use in server now `-setup guild` to setup the commands. | remove command `-unsetup guild`
 
 ## Usage
 
@@ -65,6 +67,7 @@ python bot.py
 | `2fa`  | Enter your 2FA Code |
 | `notify`  | Set an notify for when a particular skin is in your store |
 | `notifys`  | Shows all your skin notify |
+| `notify_mode`  | Change notify mode `spectified skin` or `all skin` |
 | `night`  | Shows your nightmarket |
 
 ## Special thanks
