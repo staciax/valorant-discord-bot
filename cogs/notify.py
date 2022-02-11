@@ -92,7 +92,7 @@ class Notify_(commands.Cog):
                         embed = notify_send(get_tier_emoji(uuid, self.bot), name, duration, icon)
                         view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
-            except FileNotFoundError:
+            except (KeyError, FileNotFoundError):
                 pass
             except Exception as e:
                 print(f'Notify Spectified error - {e}')

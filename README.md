@@ -18,18 +18,13 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 ![image](https://i.imgur.com/ijjvQV3.png)
 
-
-<!-- ![image](https://i.imgur.com/xPZ5vAu.gif)
-![image](https://i.imgur.com/AV6Pj5d.png) -->
-<br>
-
 ## Installations
 
 * [Python 3.8+](https://www.python.org/downloads/)
 
 * Install requirements
 
-Create the [discord bot](https://discord.com/developers/applications) and invite bot to server with scope `applications.commands`
+* Create the [discord bot](https://discord.com/developers/applications) and invite bot to server with scope `applications.commands`
 
 * Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
 
@@ -45,7 +40,7 @@ pip install py-cord==2.0.0b4
 pip install requests
 ```
 
-* Store discord bot token in config.json
+* Store discord bot token in [config.json](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/config.json)
 ```
 "TOKEN": "PUT YOUR DISCORD BOT TOKEN"
 ```
@@ -68,7 +63,7 @@ python bot.py
 | `notify`  | Set an notify for when a particular skin is in your store |
 | `notifys`  | Shows all your skin notify |
 | `notify_mode`  | Change notify mode `spectified skin` or `all skin` |
-| `night`  | Shows your nightmarket |
+| `nightmarket`  | Shows your nightmarket |
 
 ## Special thanks
 

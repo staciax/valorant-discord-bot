@@ -1,7 +1,6 @@
 # Standard
 import requests
 import urllib3
-from discord.ext import commands
 
 # Local
 from utils.json_loader import data_read
@@ -31,7 +30,7 @@ class VALORANT_API:
         if r.status_code == 200:
             data = r.json()
         if data is None:
-            raise commands.UserInputError("Failed to fetch store")
+            raise RuntimeError("Failed to fetch store")
         return data
 
     def store_fetch_offers(self) -> dict:
@@ -147,7 +146,7 @@ class VALORANT_API:
             self.session.close()
             return skin_data
         except RuntimeError as rt:
-            raise commands.UserInputError(f'{rt}')
+            raise RuntimeError(f'{rt}')
 
     def temp_store(self, puuid, header, region):
         self.puuid = puuid

@@ -91,7 +91,7 @@ class valorant(commands.Cog):
                 raise commands.CommandError("An unknown error occurred, sorry")
    
     @slash_command(description="Log in with your Riot acoount")
-    async def login(self, ctx, username: Option(str, "Input username", defualt='ragluxs'), password: Option(str, "Input password", defualt='4869_lucky')):
+    async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):
         await ctx.defer(ephemeral=True)
         
         create_json('users', {})
@@ -284,12 +284,12 @@ class valorant(commands.Cog):
             raise commands.UserInputError("Can't fetch point")
 
         embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
-        embed.add_field(name='Valorant Points',value=f'{vp}', inline=True)
-        embed.add_field(name='Radianite points',value=f'{rad}', inline=True)
+        embed.add_field(name='Valorant Points',value=f"{get_emoji_point_bot(self.bot, 'vp')} {vp}", inline=True)
+        embed.add_field(name='Radianite points',value=f"{get_emoji_point_bot(self.bot, 'rad')} {rad}", inline=True)
 
         await ctx.respond(embed=embed)
 
-    @slash_command(description="Shows your nightmarket in your account")
+    @slash_command(name="nightmarket", description="Shows your nightmarket in your account")
     async def night(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
         
         is_private = False
