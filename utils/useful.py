@@ -256,36 +256,53 @@ def url_to_image(url):
         return image_value
 
 async def get_emoji_point(ctx, point):
+    
+    emoji = '\u200b' # if guild can't create emoji
+    
     if point == 'vp':
         name = 'ValorantPoint'
         emoji = discord.utils.get(ctx.bot.emojis, name=name) or discord.utils.get(ctx.guild.emojis, name=name)
         if emoji is None:
-            url = 'https://media.valorant-api.com/currencies/85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741/displayicon.png'
-            image = url_to_image(url)
-            emoji = await ctx.guild.create_custom_emoji(image=image, name=name)
+            try:
+                url = 'https://media.valorant-api.com/currencies/85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741/displayicon.png'
+                image = url_to_image(url)
+                emoji = await ctx.guild.create_custom_emoji(image=image, name=name)
+            except Exception as e:
+                print(e)
+
     elif point == 'rad':
         name = 'RadianitePoint'
         emoji = discord.utils.get(ctx.bot.emojis, name=name) or discord.utils.get(ctx.guild.emojis, name=name)
         if emoji is None:
-            url = 'https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png'
-            image = url_to_image(url)
-            emoji = await ctx.guild.create_custom_emoji(image=image, name=name)
+            try:
+                url = 'https://media.valorant-api.com/currencies/e59aa87c-4cbf-517a-5983-6e81511be9b7/displayicon.png'
+                image = url_to_image(url)
+                emoji = await ctx.guild.create_custom_emoji(image=image, name=name)
+            except Exception as e:
+                print(e)
 
     return emoji
 
 async def get_emoji_tier(ctx, skin_uuid):
+
+    emoji = '\u200b' # if guild can't create emoji
+
     data = data_read('skins')
     uuid = data['skins'][skin_uuid]['tier']
     name = data['tiers'][uuid]['name']
 
     emoji = discord.utils.get(ctx.bot.emojis, name=name + 'Tier') or discord.utils.get(ctx.guild.emojis, name=name + 'Tier')
     if emoji is None:
-        icon = data['tiers'][uuid]['icon']
-        image = url_to_image(icon)
-        emoji = await ctx.guild.create_custom_emoji(image=image, name=name + 'Tier')
+        try:
+            icon = data['tiers'][uuid]['icon']
+            image = url_to_image(icon)
+            emoji = await ctx.guild.create_custom_emoji(image=image, name=name + 'Tier')
+        except Exception as e:
+            print(e)
     return emoji
 
 def get_emoji_point_bot(bot, point):
+    emoji = '\u200b' # if guild can't create emoji
     if point == 'vp':
         name = 'ValorantPoint'
         emoji = discord.utils.get(bot.emojis, name=name)
@@ -295,6 +312,7 @@ def get_emoji_point_bot(bot, point):
     return emoji
 
 def get_emoji_tier_bot(bot, skin_uuid):
+    emoji = '\u200b' # if guild can't create emoji
     data = data_read('skins')
     uuid = data['skins'][skin_uuid]['tier']
     name = data['tiers'][uuid]['name']

@@ -245,6 +245,7 @@ class valorant(commands.Cog):
         if mode == 'Spectified Skin':
             config = config_read()
             config["notify_mode"] = 'Spectified'
+            config_save(config)
 
             embed.title = "**Changed notify mode** - Spectified"
             embed.description = "Use `/notify` to add skins to the notify list."
@@ -309,6 +310,15 @@ class valorant(commands.Cog):
 
         if username and password:
             puuid, headers, region, ign = Auth(username, password).temp_auth()
+
+            # fetch_skin_for_quick_check
+            try:
+                skin_data = data_read('skins')
+                if skin_data['prices']["version"] != self.bot.game_version:
+                    fetch_price(region=region, headers=headers)
+            except KeyError:
+                fetch_price(region=region, headers=headers)
+
             nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
             riot_name = ign
         elif username or password:
