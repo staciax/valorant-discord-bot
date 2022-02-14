@@ -198,18 +198,23 @@ def pre_fetch_price():
         print(e)
         print("Can't fetch price")
 
-def fetch_price(user_id):
+def fetch_price(user_id=None, region=None, headers=None):
     data = data_read('skins')
-    database = data_read('users')
     session = requests.session()
 
-    print('Fetching price skin !')
+    print('Fetching price skin!')
 
-    headers = {
-        'Authorization': "Bearer " + database[str(user_id)]['rso'],
-        'X-Riot-Entitlements-JWT': database[str(user_id)]['emt']
-    }
-    region = database[str(user_id)]['region']
+    if region is not None and headers is not None:
+        region = region
+        headers = headers
+    elif user_id is not None:
+        database = data_read('users')
+        headers = {
+            'Authorization': "Bearer " + database[str(user_id)]['rso'],
+            'X-Riot-Entitlements-JWT': database[str(user_id)]['emt']
+            }
+        region = database[str(user_id)]['region']
+
     r = session.get('https://pd.{region}.a.pvp.net/store/v1/offers/'.format(region=region), headers=headers, verify=False)
     if r.status_code == 200:
         fetch = r.json()
@@ -345,13 +350,15 @@ def pillow_embed(name, user, duration) -> discord.Embed:
 
 async def embed_design_giorgio(ctx, uuid, name, price, icon) -> discord.Embed:
     embed = discord.Embed(color=0x0F1923)
-    embed.description = f"{await get_emoji_tier(ctx, uuid)} **{name}**\n{await get_emoji_point(ctx, 'vp')} {price}"
+    embed.title = f"{await get_emoji_tier(ctx, uuid)} {name}"
+    embed.description = f"{await get_emoji_point(ctx, 'vp')} {price}"
     embed.set_thumbnail(url=icon)
     return embed
 
 def embed_giorgio_notify(bot, uuid, name, price, icon) -> discord.Embed:
     embed = discord.Embed(color=0x0F1923)
-    embed.description = f"{get_emoji_tier_bot(bot, uuid)} **{name}**\n{get_emoji_point_bot(bot, 'vp')} {price}"
+    embed.title = f"{get_emoji_tier_bot(bot, uuid)} {name}"
+    embed.description = f"{get_emoji_point_bot(bot, 'vp')} {price}"
     embed.set_thumbnail(url=icon)
     return embed
 

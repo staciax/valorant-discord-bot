@@ -44,8 +44,18 @@ class valorant(commands.Cog):
 
         if username and password:
             puuid, headers, region, ign = Auth(username, password).temp_auth()
+
+            # fetch_skin_for_quick_check
+            try:
+                skin_data = data_read('skins')
+                if skin_data['prices']["version"] != self.bot.game_version:
+                    fetch_price(region=region, headers=headers)
+            except KeyError:
+                fetch_price(region=region, headers=headers)
+
             skin_list = VALORANT_API().temp_store(puuid, headers, region)
             riot_name = ign
+
         elif username or password:
             raise commands.CommandError("An unknown error occurred, sorry")
         else:
@@ -53,9 +63,9 @@ class valorant(commands.Cog):
             try:
                 skin_data = data_read('skins')
                 if skin_data['prices']["version"] != self.bot.game_version:
-                    fetch_price(ctx.author.id)
+                    fetch_price(user_id=ctx.author.id)
             except KeyError:
-                fetch_price(ctx.author.id)
+                fetch_price(user_id=ctx.author.id)
             
             skin_list = VALORANT_API(str(ctx.author.id)).get_store_offer()
 
@@ -209,9 +219,9 @@ class valorant(commands.Cog):
         try:
             skin_data = data_read('skins')
             if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(ctx.author.id)
+                fetch_price(user_id=ctx.author.id)
         except KeyError:
-            fetch_price(ctx.author.id)
+            fetch_price(user_id=ctx.author.id)
 
         view = Notify_list(ctx)
         await view.start()
@@ -227,9 +237,9 @@ class valorant(commands.Cog):
         try:
             skin_data = data_read('skins')
             if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(ctx.author.id)
+                fetch_price(user_id=ctx.author.id)
         except KeyError:
-            fetch_price(ctx.author.id)
+            fetch_price(user_id=ctx.author.id)
         
         embed = discord.Embed(color=0xfd4554)
         if mode == 'Spectified Skin':
@@ -284,8 +294,8 @@ class valorant(commands.Cog):
             raise commands.UserInputError("Can't fetch point")
 
         embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
-        embed.add_field(name='Valorant Points',value=f"{get_emoji_point_bot(self.bot, 'vp')} {vp}", inline=True)
-        embed.add_field(name='Radianite points',value=f"{get_emoji_point_bot(self.bot, 'rad')} {rad}", inline=True)
+        embed.add_field(name='Valorant Points',value=f"{await get_emoji_point(ctx, 'vp')} {vp}", inline=True)
+        embed.add_field(name='Radianite points',value=f"{await get_emoji_point(ctx, 'rad')} {rad}", inline=True)
 
         await ctx.respond(embed=embed)
 
