@@ -46,34 +46,47 @@ async def get_version():
 
 @bot.event
 async def on_message(message):
-
-    # SETUP OPTIONAL
+    # SETUP BOT
+    
     cog:commands.Cog = bot.get_cog('valorant')
     command  = cog.get_commands()
+
+    async def check_perm() -> bool:
+        if message.author.guild_permissions.administrator == True:
+            return True
+        await message.reply("You don't have **Administrator permission(s)** to run this command!", delete_after=30)
+        return False
     
     if message.content.startswith('-setup guild'):
-        await bot.register_commands(commands=command, force=True)
-        await message.channel.send('Setup in guild!')
+        if await check_perm():
+            msg = await message.reply('setting up . . .')
+            await bot.sync_commands(commands=command, guild_ids=[message.guild.id], register_guild_commands=True, force=True)
+            return await msg.edit('Setup in guild!')
 
     if message.content.startswith('-unsetup guild'):
-        await bot.sync_commands(commands=command, unregister_guilds=[message.guild.id], force=True)
-        await message.channel.send('Unsetup in guild!')
-    
+        if await check_perm():
+            msg = await message.reply('unsetup guild . . . ')
+            await bot.sync_commands(commands=command, register_guild_commands=True, unregister_guilds=[message.guild.id], force=True)
+            await msg.edit('Unsetup in guild!')
+
     if message.content.startswith('-setup global'):
-        await bot.register_commands(commands=command, guild_id=message.guild.id, force=True)
-        await message.channel.send('Setup in global!')
+        if await check_perm():
+            await bot.register_commands(commands=command, guild_id=message.guild.id, force=True)
+            return await message.reply('Setup in global!')
 
     # EMBED OPTIONAL
     data = config_read()
     if message.content.startswith('-embed pillow'):
-        data["embed_design"] = 'ꜱᴛᴀᴄɪᴀ.#7475'
-        config_save(data)
-        await message.channel.send('`changed to embed pillow by ꜱᴛᴀᴄɪᴀ.#7475`')
+        if await check_perm():
+            data["embed_design"] = 'ꜱᴛᴀᴄɪᴀ.#7475'
+            config_save(data)
+            return await message.reply('`changed to embed pillow(ꜱᴛᴀᴄɪᴀ.#7475)`')
     
     if message.content.startswith('-embed split'):
-        data["embed_design"] = 'Giorgio#0609'
-        config_save(data)
-        await message.channel.send('`changed to embed split by Giorgio#0609`')
+        if await check_perm():
+            data["embed_design"] = 'Giorgio#0609'
+            config_save(data)
+            return await message.reply('`changed to embed split(Giorgio#0609)`')
 
 if __name__ == "__main__":
     TOKEN = config_read()['TOKEN']
