@@ -34,17 +34,14 @@ class valorant(commands.Cog):
         await ctx.respond(embed=embed, ephemeral=True)
             
     @slash_command(description="Shows your daily store in your accounts")
-    async def store(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
+    async def store(self, ctx, username: Option(str, "Input username (temp login)", required=True), password: Option(str, "Input password (temp login)", required=True)):
         
-        is_private = False
-        if username is not None or password is not None:
-            is_private = True
-
-        await ctx.defer(ephemeral=is_private)
+        await ctx.defer(ephemeral=True)
 
         if username and password:
-            puuid, headers, region, ign = Auth(username, password).temp_auth()
-
+            auth = Auth(username, password)
+            puuid, headers, region, ign = await auth.authenticate()
+          
             # fetch_skin_for_quick_check
             try:
                 skin_data = data_read('skins')
@@ -55,21 +52,6 @@ class valorant(commands.Cog):
 
             skin_list = VALORANT_API().temp_store(puuid, headers, region)
             riot_name = ign
-
-        elif username or password:
-            raise commands.CommandError("An unknown error occurred, sorry")
-        else:
-            data = Auth(user_id=ctx.author.id).get_users()
-            try:
-                skin_data = data_read('skins')
-                if skin_data['prices']["version"] != self.bot.game_version:
-                    fetch_price(user_id=ctx.author.id)
-            except KeyError:
-                fetch_price(user_id=ctx.author.id)
-            
-            skin_list = VALORANT_API(str(ctx.author.id)).get_store_offer()
-
-            riot_name = data['IGN']
 
         config = config_read()
         design = config['embed_design']
@@ -100,217 +82,215 @@ class valorant(commands.Cog):
                 print(e)
                 raise commands.CommandError("An unknown error occurred, sorry")
    
-    @slash_command(description="Log in with your Riot acoount")
-    async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):
-        await ctx.defer(ephemeral=True)
+    # @slash_command(description="Log in with your Riot acoount")
+    # async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):
+    #     await ctx.defer(ephemeral=True)
         
-        create_json('users', {})
+    #     create_json('users', {})
 
-        auth = Auth(username, password, str(ctx.author.id))
-        login = auth.authenticate()
+    #     auth = Auth(username, password, str(ctx.author.id))
+    #     login = auth.authenticate()
         
-        if login['auth'] == 'response':
-            auth.get_entitlements_token()
-            auth.get_userinfo()
-            auth.get_region()
+    #     if login['auth'] == 'response':
+    #         auth.get_entitlements_token()
+    #         auth.get_userinfo()
+    #         auth.get_region()
 
-            data = data_read('users')
-            embed = discord.Embed(color=0xfd4554, description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']))
-            await ctx.respond(embed=embed)
-        else:
-            raise commands.UserInputError('Your username or password may be incorrect!')
+    #         data = data_read('users')
+    #         embed = discord.Embed(color=0xfd4554, description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']))
+    #         await ctx.respond(embed=embed)
+    #     else:
+    #         raise commands.UserInputError('Your username or password may be incorrect!')
                 
-    @slash_command(name='2fa', description="Enter your 2FA Code")
-    async def twofa(self, ctx, code: Option(str, "Input 2FA Code ")):
-        await ctx.defer(ephemeral=True)
-        if len(code) > 6 or len(code) < 6:
-            raise commands.UserInputError('You entered the code with more than 6 or less 6.')
+    # @slash_command(name='2fa', description="Enter your 2FA Code")
+    # async def twofa(self, ctx, code: Option(str, "Input 2FA Code ")):
+    #     await ctx.defer(ephemeral=True)
+    #     if len(code) > 6 or len(code) < 6:
+    #         raise commands.UserInputError('You entered the code with more than 6 or less 6.')
     
-        try:
-            data = data_read('users')
-            twoFA_timeout = data[str(ctx.author.id)]['WaitFor2FA'] 
-            future = datetime.fromtimestamp(twoFA_timeout) + timedelta(minutes=5)
-            if datetime.now() > future:
-                remove_user(ctx.author.id)
-                raise commands.UserInputError("**2FA Timeout!**, plz `/login` again")
-        except (KeyError, FileNotFoundError):
-            raise commands.UserInputError("if you're not registered! plz, `/login` to register")
+    #     try:
+    #         data = data_read('users')
+    #         twoFA_timeout = data[str(ctx.author.id)]['WaitFor2FA'] 
+    #         future = datetime.fromtimestamp(twoFA_timeout) + timedelta(minutes=5)
+    #         if datetime.now() > future:
+    #             remove_user(ctx.author.id)
+    #             raise commands.UserInputError("**2FA Timeout!**, plz `/login` again")
+    #     except (KeyError, FileNotFoundError):
+    #         raise commands.UserInputError("if you're not registered! plz, `/login` to register")
     
-        auth = Auth(user_id=str(ctx.author.id)).give2facode(str(code))
+    #     auth = Auth(user_id=str(ctx.author.id)).give2facode(str(code))
         
-        if auth:
-            data = data_read('users')
-            embed = discord.Embed(description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']), color=0xfd4554)
-            return await ctx.respond(embed=embed, ephemeral=True)
-        raise commands.UserInputError('Invalid 2FA code!')
+    #     if auth:
+    #         data = data_read('users')
+    #         embed = discord.Embed(description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']), color=0xfd4554)
+    #         return await ctx.respond(embed=embed, ephemeral=True)
+    #     raise commands.UserInputError('Invalid 2FA code!')
     
-    @slash_command(name='logout', description="Logout and delete your accounts")
-    async def logout(self, ctx):
-        await ctx.defer(ephemeral=True)
-        try:
-            data = data_read('users')
-            del data[str(ctx.author.id)]
-            data_save('users', data)
-            embed = discord.Embed(description='You have been logged out bot', color=0xfd4554)
-            return await ctx.respond(embed=embed, ephemeral=True)
-        except KeyError:
-            raise commands.UserInputError("I can't logout you if you're not registered!")
-        except Exception:
-            raise commands.UserInputError("I can't logout you")
+    # @slash_command(name='logout', description="Logout and delete your accounts")
+    # async def logout(self, ctx):
+    #     await ctx.defer(ephemeral=True)
+    #     try:
+    #         data = data_read('users')
+    #         del data[str(ctx.author.id)]
+    #         data_save('users', data)
+    #         embed = discord.Embed(description='You have been logged out bot', color=0xfd4554)
+    #         return await ctx.respond(embed=embed, ephemeral=True)
+    #     except KeyError:
+    #         raise commands.UserInputError("I can't logout you if you're not registered!")
+    #     except Exception:
+    #         raise commands.UserInputError("I can't logout you")
             
-    @slash_command(description="Set an notify for when a particular skin is in your store")
-    async def notify(self, ctx, skin: Option(str, "The name of the skin you want to notify")):
-        await ctx.defer() 
-        # get_user
+    # @slash_command(description="Set an notify for when a particular skin is in your store")
+    # async def notify(self, ctx, skin: Option(str, "The name of the skin you want to notify")):
+    #     await ctx.defer() 
+    #     # get_user
 
-        data = Auth(user_id=ctx.author.id).get_users()
+    #     data = Auth(user_id=ctx.author.id).get_users()
 
-        # check same skin
+    #     # check same skin
 
-        #setup emoji
-        await setup_emoji(ctx)
+    #     #setup emoji
+    #     await setup_emoji(ctx)
 
-        create_json('notifys', [])
+    #     create_json('notifys', [])
 
-        skindata = data_read('skins')
-        skindata['skins'].pop('version')
-        name_list = [skindata['skins'][x]['name'] for x in skindata['skins']]
+    #     skindata = data_read('skins')
+    #     skindata['skins'].pop('version')
+    #     name_list = [skindata['skins'][x]['name'] for x in skindata['skins']]
         
-        skin_name = get_close_matches(skin, name_list, 1)
+    #     skin_name = get_close_matches(skin, name_list, 1)
 
-        if skin_name:
-            notify_data = data_read('notifys')
+    #     if skin_name:
+    #         notify_data = data_read('notifys')
 
-            find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['name'] == skin_name[0]]
-            skin_uuid = find_skin[0]
+    #         find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['name'] == skin_name[0]]
+    #         skin_uuid = find_skin[0]
 
-            skin_source = skindata['skins'][skin_uuid]
+    #         skin_source = skindata['skins'][skin_uuid]
 
-            data_add = {
-                "id": str(ctx.author.id),
-                "uuid": skin_uuid,
-                "channel_id": ctx.channel.id
-            }
+    #         data_add = {
+    #             "id": str(ctx.author.id),
+    #             "uuid": skin_uuid,
+    #             "channel_id": ctx.channel.id
+    #         }
 
-            notify_data.append(data_add)
+    #         notify_data.append(data_add)
 
-            data_save('notifys', notify_data)
+    #         data_save('notifys', notify_data)
 
-            emoji = get_tier_emoji(skin_uuid, self.bot)
-            name = skin_source['name']
-            icon = skin_source['icon']
-            uuid = skin_source['uuid']
+    #         emoji = get_tier_emoji(skin_uuid, self.bot)
+    #         name = skin_source['name']
+    #         icon = skin_source['icon']
+    #         uuid = skin_source['uuid']
 
-            embed = discord.Embed(description=f'Successfully set an notify for the {emoji} **{name}**', color=0xfd4554)
-            embed.set_thumbnail(url=icon)
+    #         embed = discord.Embed(description=f'Successfully set an notify for the {emoji} **{name}**', color=0xfd4554)
+    #         embed.set_thumbnail(url=icon)
             
-            view = Notify(ctx.author.id, uuid, name)
-            view.message = await ctx.respond(embed=embed, view=view)
-            return
+    #         view = Notify(ctx.author.id, uuid, name)
+    #         view.message = await ctx.respond(embed=embed, view=view)
+    #         return
         
-        raise commands.UserInputError("Not found skin")
+    #     raise commands.UserInputError("Not found skin")
 
-    @slash_command(description="Shows all your skin notify")
-    async def notifys(self, ctx):
-        await ctx.defer(ephemeral=True)
+    # @slash_command(description="Shows all your skin notify")
+    # async def notifys(self, ctx):
+    #     await ctx.defer(ephemeral=True)
         
-        Auth(user_id=ctx.author.id).get_users()
+    #     Auth(user_id=ctx.author.id).get_users()
         
-        try:
-            skin_data = data_read('skins')
-            if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(user_id=ctx.author.id)
-        except KeyError:
-            fetch_price(user_id=ctx.author.id)
+    #     try:
+    #         skin_data = data_read('skins')
+    #         if skin_data['prices']["version"] != self.bot.game_version:
+    #             fetch_price(user_id=ctx.author.id)
+    #     except KeyError:
+    #         fetch_price(user_id=ctx.author.id)
 
-        view = Notify_list(ctx)
-        await view.start()
+    #     view = Notify_list(ctx)
+    #     await view.start()
     
-    @slash_command(description="Change notify mode")
-    async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Spectified)", choices=['Spectified Skin','All Skin','Off'])):
+    # @slash_command(description="Change notify mode")
+    # async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Spectified)", choices=['Spectified Skin','All Skin','Off'])):
         
-        await ctx.defer(ephemeral=True)
+    #     await ctx.defer(ephemeral=True)
 
-        Auth(user_id=ctx.author.id).get_users()
-        data = data_read('users')
+    #     Auth(user_id=ctx.author.id).get_users()
+    #     data = data_read('users')
 
-        try:
-            skin_data = data_read('skins')
-            if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(user_id=ctx.author.id)
-        except KeyError:
-            fetch_price(user_id=ctx.author.id)
+    #     try:
+    #         skin_data = data_read('skins')
+    #         if skin_data['prices']["version"] != self.bot.game_version:
+    #             fetch_price(user_id=ctx.author.id)
+    #     except KeyError:
+    #         fetch_price(user_id=ctx.author.id)
         
-        embed = discord.Embed(color=0xfd4554)
-        if mode == 'Spectified Skin':
-            config = config_read()
-            config["notify_mode"] = 'Spectified'
-            config_save(config)
+    #     embed = discord.Embed(color=0xfd4554)
+    #     if mode == 'Spectified Skin':
+    #         config = config_read()
+    #         config["notify_mode"] = 'Spectified'
+    #         config_save(config)
 
-            embed.title = "**Changed notify mode** - Spectified"
-            embed.description = "Use `/notify` to add skins to the notify list."
-            embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
+    #         embed.title = "**Changed notify mode** - Spectified"
+    #         embed.description = "Use `/notify` to add skins to the notify list."
+    #         embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
 
-            await ctx.respond(embed=embed)
+    #         await ctx.respond(embed=embed)
         
-        elif mode == 'All Skin':
-            config = config_read()
-            config["notify_mode"] = 'All'
-            config_save(config)
+    #     elif mode == 'All Skin':
+    #         config = config_read()
+    #         config["notify_mode"] = 'All'
+    #         config_save(config)
 
-            config_save(config)
-            data[str(ctx.author.id)]['channel'] = ctx.channel.id
-            data_save('users', data)
+    #         config_save(config)
+    #         data[str(ctx.author.id)]['channel'] = ctx.channel.id
+    #         data_save('users', data)
 
-            embed.title = "**Changed notify mode** - All"
-            embed.description = f"**Set Channel:** {ctx.channel.mention} for all notify"
-            embed.set_image(url='https://i.imgur.com/Gedqlzc.png')
+    #         embed.title = "**Changed notify mode** - All"
+    #         embed.description = f"**Set Channel:** {ctx.channel.mention} for all notify"
+    #         embed.set_image(url='https://i.imgur.com/Gedqlzc.png')
 
-            await ctx.respond(embed=embed)
+    #         await ctx.respond(embed=embed)
 
-        else:
-            config = config_read()
-            config["notify_mode"] = False
-            config_save(config)
-            embed.title = "**Changed notify mode** - Off"
-            embed.description = 'turn off notify'
+    #     else:
+    #         config = config_read()
+    #         config["notify_mode"] = False
+    #         config_save(config)
+    #         embed.title = "**Changed notify mode** - Off"
+    #         embed.description = 'turn off notify'
 
-            await ctx.respond(embed=embed)
+    #         await ctx.respond(embed=embed)
 
-    @slash_command(description="Shows your valorant point in your accounts")
-    async def point(self, ctx):
+    # @slash_command(description="Shows your valorant point in your accounts")
+    # async def point(self, ctx):
 
-        await ctx.defer()
+    #     await ctx.defer()
         
-        data = Auth(user_id=ctx.author.id).get_users()
-        user_id = str(ctx.author.id)
+    #     data = Auth(user_id=ctx.author.id).get_users()
+    #     user_id = str(ctx.author.id)
 
-        balances = get_valorant_point(user_id)
+    #     balances = get_valorant_point(user_id)
 
-        try:
-            balances = get_valorant_point(user_id)
-            vp = balances["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
-            rad = balances["e59aa87c-4cbf-517a-5983-6e81511be9b7"]            
-        except:
-            raise commands.UserInputError("Can't fetch point")
+    #     try:
+    #         balances = get_valorant_point(user_id)
+    #         vp = balances["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
+    #         rad = balances["e59aa87c-4cbf-517a-5983-6e81511be9b7"]            
+    #     except:
+    #         raise commands.UserInputError("Can't fetch point")
 
-        embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
-        embed.add_field(name='Valorant Points',value=f"{await get_emoji_point(ctx, 'vp')} {vp}", inline=True)
-        embed.add_field(name='Radianite points',value=f"{await get_emoji_point(ctx, 'rad')} {rad}", inline=True)
+    #     embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
+    #     embed.add_field(name='Valorant Points',value=f"{await get_emoji_point(ctx, 'vp')} {vp}", inline=True)
+    #     embed.add_field(name='Radianite points',value=f"{await get_emoji_point(ctx, 'rad')} {rad}", inline=True)
 
-        await ctx.respond(embed=embed)
+    #     await ctx.respond(embed=embed)
 
     @slash_command(name="nightmarket", description="Shows your nightmarket in your account")
-    async def night(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
-        
-        is_private = False
-        if username is not None or password is not None:
-            is_private = True
-        await ctx.defer(ephemeral=is_private)
+    async def night(self, ctx, username: Option(str, "Input username (temp login)", required=True), password: Option(str, "Input password (temp login)", required=True)):
+
+        await ctx.defer(ephemeral=True)
 
         if username and password:
-            puuid, headers, region, ign = Auth(username, password).temp_auth()
-
+            auth = Auth(username, password)
+            puuid, headers, region, ign = await auth.authenticate()
+          
             # fetch_skin_for_quick_check
             try:
                 skin_data = data_read('skins')
@@ -319,15 +299,9 @@ class valorant(commands.Cog):
             except KeyError:
                 fetch_price(region=region, headers=headers)
 
-            nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
+            skin_list, duration = VALORANT_API().temp_night(puuid, headers, region)
             riot_name = ign
-        elif username or password:
-            raise commands.CommandError("An unknown error occurred, sorry")
-        else:
-            data = Auth(user_id=ctx.author.id).get_users()
-            riot_name = data['IGN']
-            nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
-        
+      
         async def night_embed(uuid, name, price, dpice):
             embed = discord.Embed(color=0x0F1923)
             embed.description = f"{await get_emoji_tier(ctx, uuid)} **{name}**\n{await get_emoji_point(ctx, 'vp')} {dpice} ~~{price}~~"
@@ -338,12 +312,12 @@ class valorant(commands.Cog):
             embed = discord.Embed(color=0xfd4554)
             embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
 
-            skin1 = nightmarket['skin1']
-            skin2 = nightmarket['skin2']
-            skin3 = nightmarket['skin3']
-            skin4 = nightmarket['skin4']
-            skin5 = nightmarket['skin5']
-            skin6 = nightmarket['skin6']
+            skin1 = skin_list['skin1']
+            skin2 = skin_list['skin2']
+            skin3 = skin_list['skin3']
+            skin4 = skin_list['skin4']
+            skin5 = skin_list['skin5']
+            skin6 = skin_list['skin6']
             
             embed1 = await night_embed(skin1['uuid'],skin1['name'], skin1['price'], skin1['disprice'])
             embed2 = await night_embed(skin2['uuid'],skin2['name'], skin2['price'], skin2['disprice'])
