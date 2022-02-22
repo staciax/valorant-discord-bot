@@ -89,7 +89,7 @@ async def on_message(message):
             return await message.reply('`changed to embed split(Giorgio#0609)`')
 
 if __name__ == "__main__":
-    TOKEN = os.getenv("os")
+    TOKEN = os.getenv("TOKEN")
 
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):

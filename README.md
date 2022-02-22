@@ -18,9 +18,9 @@ pip install py-cord==2.0.0b4
 pip install requests
 ```
 
-* Store discord bot token in [config.json](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/config.json)
+* Store discord bot token in REPLET Secrets
 ```
-"TOKEN": "PUT YOUR DISCORD BOT TOKEN"
+TOKEN
 ```
 
 * Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-setup global`
