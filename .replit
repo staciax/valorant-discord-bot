@@ -1,6 +1,6 @@
 language="python3"
 run = """
-pip install py-cord
+pip install py-cord==2.0.0b4
 pip install requests
 pip install Flask
 pip install Pillow
