@@ -16,6 +16,9 @@ class valorant_bot(commands.Bot):
     async def on_ready(self):
         if not get_version.is_running():
             get_version.start()
+
+        if not clear_user.is_running():
+            clear_user.start()
             
         # create data folder
         data_folder()
@@ -43,6 +46,13 @@ async def get_version():
         fetch_skin()
         pre_fetch_price()
         fetch_tier()
+
+@tasks.loop(minutes=10)
+async def clear_user():
+    # clear users.json every 10 minutes
+    data = data_read('users')
+    data = {}
+    data_save('users', data)
 
 @bot.event
 async def on_message(message):

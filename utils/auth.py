@@ -28,28 +28,8 @@ class Auth:
             userdata = data[self.user_id]
         except (FileNotFoundError, KeyError):
             raise RuntimeError(f"you're not registered!, plz `/login` to register!") 
-        
-        config = config_read()
-        try:
-            token_exp = userdata['expiry_token']
-            if datetime.now() > datetime.fromtimestamp(token_exp) or config['refresh_token']:
-                await self.refresh_token(userdata)
-        except (FileNotFoundError, KeyError):
-            raise RuntimeError(f"you're not registered!, plz `/login` to register!") 
-        
+                
         return userdata
-
-    async def refresh_token(self, userdata):
-        try:
-            await self.redeem_cookies()
-        except RuntimeError as e:
-            if 'username' and 'password' in userdata:
-                self.username = userdata['username']
-                self.password = userdata['password']
-                await self.start()
-                return
-            self.remove_account()
-            raise RuntimeError(f'{e}')
 
     async def remove_account(self):
         data = data_read('users')
@@ -81,11 +61,6 @@ class Auth:
         cookies['cookie'] = {}
         for cookie in r.cookies.items():
             cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
-
-        config = config_read()
-        if config['store_password'] is True:
-            cookies['username'] = self.username
-            cookies['password'] = self.password
 
         # get access token
         data = {"type": "auth", "username": self.username, "password": self.password}
