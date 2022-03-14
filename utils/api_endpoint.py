@@ -11,6 +11,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class VALORANT_API:
     def __init__(self, user_id=None):
         self.user_id = user_id
+        self.session = requests.session()
         if user_id is not None:
             database = data_read('users')
 
@@ -18,24 +19,24 @@ class VALORANT_API:
             self.IGN = database[str(user_id)]['IGN']
             self.headers = {
                 'Authorization': "Bearer " + database[str(user_id)]['rso'],
-                'X-Riot-Entitlements-JWT': database[str(user_id)]['emt']
+                'X-Riot-Entitlements-JWT': database[str(user_id)]['emt'],
+                'X-Riot-ClientVersion': self.__get_current_version()
             }
             self.region = database[str(user_id)]['region']
-        self.session = requests.session()
 
     # STORE endpoints
     def fetch(self, endpoint='/') -> dict:
         data = None
-        r = self.session.get('https://pd.{region}.a.pvp.net{endpoint}'.format(region=self.region, endpoint=endpoint), headers=self.headers, verify=False)
+        r = self.session.get(f'https://pd.{self.region}.a.pvp.net{endpoint}', headers=self.headers, verify=False)
         if r.status_code == 200:
             data = r.json()
         if data is None:
-            raise RuntimeError("Failed to fetch store")
+            raise RuntimeError("API response failed")
         return data
 
     def store_fetch_offers(self) -> dict:
         '''Get Player' offer and duration'''
-        data = self.fetch('/store/v2/storefront/{puuid}'.format(puuid=self.puuid))
+        data = self.fetch(f'/store/v2/storefront/{self.puuid}')
         skin_uuid = data["SkinsPanelLayout"]["SingleItemOffers"]
         duration = data["SkinsPanelLayout"]["SingleItemOffersRemainingDurationInSeconds"]
         
@@ -43,7 +44,7 @@ class VALORANT_API:
 
     def store_fetch_nightmarket(self) -> dict:
         '''Get Player' offer and duration'''
-        data = self.fetch('/store/v2/storefront/{puuid}'.format(puuid=self.puuid))
+        data = self.fetch(f'/store/v2/storefront/{self.puuid}')
         
         night = data['BonusStore']['BonusStoreOffers']        
         duration = data['BonusStore']['BonusStoreRemainingDurationInSeconds']
@@ -68,6 +69,17 @@ class VALORANT_API:
         '''Get Skin price'''
         data = self.fetch('/store/v1/offers/')
         return data
+
+    # Contracts ENDPOINT
+    
+    def fetch_mission(self) -> dict:
+        '''
+        Get player daily/weekly missions
+        '''
+        data = self.fetch(f'/contracts/v1/contracts/{self.puuid}')
+        return data
+
+    # USEFUL
 
     def get_price(self, uuid) -> str:
         skindata = data_read('skins')
@@ -163,3 +175,8 @@ class VALORANT_API:
         self.headers = header
         self.region = region
         return self.store_fetch_nightmarket()
+
+    def __get_current_version(self) -> str:
+        data = self.session.get('https://valorant-api.com/v1/version')
+        data = data.json()['data']
+        return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}" # return formatted version string

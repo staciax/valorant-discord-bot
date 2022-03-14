@@ -6,12 +6,14 @@ from difflib import get_close_matches
 from datetime import datetime, timedelta
 
 # Local
+from utils.json_loader import *
+from utils.view import *
+from utils.cache import *
+from utils.emoji import *
 from utils.auth import Auth
-from utils.store import VALORANT_API
-from utils.json_loader import data_read, data_save, config_read, config_save
-from utils.useful import *
+from utils.api_endpoint import VALORANT_API
 from utils.pillow import generate_image
-from utils.view_notify import Notify, Notify_list
+from utils.embed import embed_design_giorgio, pillow_embed, night_embed
 
 class valorant(commands.Cog):
     def __init__(self, bot):
@@ -30,7 +32,7 @@ class valorant(commands.Cog):
         else:
             error = f"An unknown error occurred, sorry"
         
-        embed.description = f'{error}'
+        embed.description = f'{str(error)[:2000]}'
         await ctx.respond(embed=embed, ephemeral=True)
             
     @slash_command(description="Shows your daily store in your accounts")
@@ -90,10 +92,10 @@ class valorant(commands.Cog):
                 skin3 = skin_list['skin3']
                 skin4 = skin_list['skin4']
 
-                embed1 = await embed_design_giorgio(ctx, skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'])
-                embed2 = await embed_design_giorgio(ctx, skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'])
-                embed3 = await embed_design_giorgio(ctx, skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'])
-                embed4 = await embed_design_giorgio(ctx, skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'])
+                embed1 = embed_design_giorgio(skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'])
+                embed2 = embed_design_giorgio(skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'])
+                embed3 = embed_design_giorgio(skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'])
+                embed4 = embed_design_giorgio(skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'])
 
                 await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4])
             except Exception as e:
@@ -101,15 +103,15 @@ class valorant(commands.Cog):
                 raise commands.CommandError("An unknown error occurred, sorry")
    
     @slash_command(description="Log in with your Riot acoount")
-    async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):
-        await ctx.defer(ephemeral=True)
-        
+    async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):        
         create_json('users', {})
 
         auth = Auth(username, password, str(ctx.author.id))
         login = auth.authenticate()
         
         if login['auth'] == 'response':
+            await ctx.defer(ephemeral=True)
+
             auth.get_entitlements_token()
             auth.get_userinfo()
             auth.get_region()
@@ -117,33 +119,14 @@ class valorant(commands.Cog):
             data = data_read('users')
             embed = discord.Embed(color=0xfd4554, description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']))
             await ctx.respond(embed=embed)
+        
+        elif login['auth'] == '2fa':
+            error = login['error']
+            modal = TwoFA_UI(ctx, error)
+            await ctx.send_modal(modal)
         else:
             raise commands.UserInputError('Your username or password may be incorrect!')
-                
-    @slash_command(name='2fa', description="Enter your 2FA Code")
-    async def twofa(self, ctx, code: Option(str, "Input 2FA Code ")):
-        await ctx.defer(ephemeral=True)
-        if len(code) > 6 or len(code) < 6:
-            raise commands.UserInputError('You entered the code with more than 6 or less 6.')
-    
-        try:
-            data = data_read('users')
-            twoFA_timeout = data[str(ctx.author.id)]['WaitFor2FA'] 
-            future = datetime.fromtimestamp(twoFA_timeout) + timedelta(minutes=5)
-            if datetime.now() > future:
-                remove_user(ctx.author.id)
-                raise commands.UserInputError("**2FA Timeout!**, plz `/login` again")
-        except (KeyError, FileNotFoundError):
-            raise commands.UserInputError("if you're not registered! plz, `/login` to register")
-    
-        auth = Auth(user_id=str(ctx.author.id)).give2facode(str(code))
-        
-        if auth:
-            data = data_read('users')
-            embed = discord.Embed(description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']), color=0xfd4554)
-            return await ctx.respond(embed=embed, ephemeral=True)
-        raise commands.UserInputError('Invalid 2FA code!')
-    
+                    
     @slash_command(name='logout', description="Logout and delete your accounts")
     async def logout(self, ctx):
         await ctx.defer(ephemeral=True)
@@ -160,14 +143,12 @@ class valorant(commands.Cog):
             
     @slash_command(description="Set an notify for when a particular skin is in your store")
     async def notify(self, ctx, skin: Option(str, "The name of the skin you want to notify")):
-        await ctx.defer() 
+        await ctx.defer()
         # get_user
 
-        data = Auth(user_id=ctx.author.id).get_users()
+        user_id = ctx.author.id
+        Auth(user_id=user_id).get_users()
 
-        # check same skin
-
-        #setup emoji
         await setup_emoji(ctx)
 
         create_json('notifys', [])
@@ -185,6 +166,17 @@ class valorant(commands.Cog):
             skin_uuid = find_skin[0]
 
             skin_source = skindata['skins'][skin_uuid]
+            name = skin_source['name']
+            icon = skin_source['icon']
+            uuid = skin_source['uuid']
+            
+            emoji = get_emoji_tier(skin_uuid)
+
+            for skin in notify_data:
+                author = skin['id']
+                uuid = skin['uuid']
+                if author == str(user_id) and uuid == skin_uuid:
+                    raise RuntimeError(f'{emoji} **{name}** is already in your Notify')
 
             data_add = {
                 "id": str(ctx.author.id),
@@ -196,11 +188,6 @@ class valorant(commands.Cog):
 
             data_save('notifys', notify_data)
 
-            emoji = get_tier_emoji(skin_uuid, self.bot)
-            name = skin_source['name']
-            icon = skin_source['icon']
-            uuid = skin_source['uuid']
-
             embed = discord.Embed(description=f'Successfully set an notify for the {emoji} **{name}**', color=0xfd4554)
             embed.set_thumbnail(url=icon)
             
@@ -208,7 +195,7 @@ class valorant(commands.Cog):
             view.message = await ctx.respond(embed=embed, view=view)
             return
         
-        raise commands.UserInputError("Not found skin")
+        raise RuntimeError("Not found skin")
 
     @slash_command(description="Shows all your skin notify")
     async def notifys(self, ctx):
@@ -242,6 +229,7 @@ class valorant(commands.Cog):
             fetch_price(user_id=ctx.author.id)
         
         embed = discord.Embed(color=0xfd4554)
+        
         if mode == 'Spectified Skin':
             config = config_read()
             config["notify_mode"] = 'Spectified'
@@ -269,6 +257,7 @@ class valorant(commands.Cog):
             await ctx.respond(embed=embed)
 
         else:
+
             config = config_read()
             config["notify_mode"] = False
             config_save(config)
@@ -281,22 +270,68 @@ class valorant(commands.Cog):
     async def point(self, ctx):
 
         await ctx.defer()
-        
-        data = Auth(user_id=ctx.author.id).get_users()
-        user_id = str(ctx.author.id)
+        user_id = ctx.author.id
+        data = Auth(user_id=user_id).get_users()
 
-        balances = get_valorant_point(user_id)
+        balances = get_valorant_point(str(user_id))
 
         try:
-            balances = get_valorant_point(user_id)
+            balances = get_valorant_point(str(user_id))
             vp = balances["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
             rad = balances["e59aa87c-4cbf-517a-5983-6e81511be9b7"]            
         except:
             raise commands.UserInputError("Can't fetch point")
 
         embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
-        embed.add_field(name='Valorant Points',value=f"{await get_emoji_point(ctx, 'vp')} {vp}", inline=True)
-        embed.add_field(name='Radianite points',value=f"{await get_emoji_point(ctx, 'rad')} {rad}", inline=True)
+        embed.add_field(name='Valorant Points',value=f"{points['vp']} {vp}", inline=True)
+        embed.add_field(name='Radianite points',value=f"{points['rad']} {rad}", inline=True)
+
+        await ctx.respond(embed=embed)
+
+    @slash_command(description="Shows your daily/weelky mission")
+    async def mission(self, ctx):
+        await ctx.defer()
+
+        user = Auth(user_id=ctx.author.id).get_users()
+
+        data = VALORANT_API(str(ctx.author.id)).fetch_mission()
+        mission = data["Missions"]
+
+        def iso_to_time(iso):
+            timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
+            time = datetime.utcfromtimestamp(timestamp)
+            return time
+
+        weekly = []
+        daily = []
+        daily_end = ''
+        weekly_end = data['MissionMetadata']['WeeklyRefillTime']
+
+        def get_mission_by_id(ID):
+            data = data_read('missions')
+            mission = data['missions'][ID]
+            return mission
+        
+        for m in mission:
+            mission = get_mission_by_id(m['ID'])
+            *complete, = m['Objectives'].values()
+            title = mission['title']
+            progress = mission['progress']
+            xp = mission['xp']
+    
+            format_m = f"\n{title} | + {xp:,} XP\n- {complete[0]}/{progress}"
+
+            if mission['type'] == 'EAresMissionType::Weekly':
+                weekly.append(format_m)
+            if mission['type'] == 'EAresMissionType::Daily':
+                daily_end = m['ExpirationTime']
+                daily.append(format_m)
+
+        daily_format = ''.join(daily)
+        weekly_format = ''.join(weekly)
+        embed = discord.Embed(title=f"**Missions** | {user['IGN']}", color=0xfd4554)
+        embed.add_field(name='**Daily Missions**', value=f"{daily_format}\nEnd(s) at {format_dt(iso_to_time(daily_end), 'R')}", inline=False)
+        embed.add_field(name='**Weekly Missions**', value=f"{weekly_format}\nRefills {format_dt(iso_to_time(weekly_end), 'R')}", inline=False)
 
         await ctx.respond(embed=embed)
 
@@ -321,19 +356,15 @@ class valorant(commands.Cog):
 
             nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
             riot_name = ign
+        
         elif username or password:
             raise commands.CommandError("An unknown error occurred, sorry")
+        
         else:
             data = Auth(user_id=ctx.author.id).get_users()
             riot_name = data['IGN']
             nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
-        
-        async def night_embed(uuid, name, price, dpice):
-            embed = discord.Embed(color=0x0F1923)
-            embed.description = f"{await get_emoji_tier(ctx, uuid)} **{name}**\n{await get_emoji_point(ctx, 'vp')} {dpice} ~~{price}~~"
-            embed.set_thumbnail(url=get_skin_icon(uuid))
-            return embed
-        
+                
         try:
             embed = discord.Embed(color=0xfd4554)
             embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
@@ -345,12 +376,12 @@ class valorant(commands.Cog):
             skin5 = nightmarket['skin5']
             skin6 = nightmarket['skin6']
             
-            embed1 = await night_embed(skin1['uuid'],skin1['name'], skin1['price'], skin1['disprice'])
-            embed2 = await night_embed(skin2['uuid'],skin2['name'], skin2['price'], skin2['disprice'])
-            embed3 = await night_embed(skin3['uuid'],skin3['name'], skin3['price'], skin3['disprice'])
-            embed4 = await night_embed(skin4['uuid'],skin4['name'], skin4['price'], skin4['disprice'])
-            embed5 = await night_embed(skin5['uuid'],skin5['name'], skin5['price'], skin5['disprice'])
-            embed6 = await night_embed(skin6['uuid'],skin6['name'], skin6['price'], skin6['disprice'])
+            embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
+            embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
+            embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
+            embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
+            embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
+            embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
             
             await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
         except Exception as e:

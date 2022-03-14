@@ -1,7 +1,10 @@
 # Standard
 import discord
+from discord.ui import Modal, InputText
 from utils.json_loader import data_read, data_save
 from utils.useful import *
+from utils.auth import Auth
+from utils.emoji import points as Point_emoji, get_emoji_tier
 
 class Notify(discord.ui.View):
     def __init__(self, user_id, uuid, name):
@@ -95,14 +98,15 @@ class Notify_list(discord.ui.View):
                 'name': get_skin_name(skin),
                 'icon':  get_skin_icon(skin),
                 'price': get_skin_price(skin),
-                'emoji': get_tier_emoji(skin, self.bot)
+                'emoji': get_emoji_tier(skin)
             }
         self.skin_source = skin_source
 
     def main_embed(self) -> discord.Embed:        
         embed = discord.Embed(description='', title='Your Notify:',color=0xfd4554)
+        embed.set_footer(text='Click for remove')
         skin_list = self.skin_source
-        vlr_point = discord.utils.get(self.ctx.bot.emojis, name='ValorantPoint') or discord.utils.get(self.ctx.guild.emojis, name='ValorantPoint')
+        vlr_point = Point_emoji['vp']
 
         if len(skin_list) == 0:
             embed.description = f"You don't have skin notify"
@@ -126,3 +130,33 @@ class Notify_list(discord.ui.View):
         self.create_button()
         embed = self.main_embed()
         self.message = await self.ctx.respond(embed=embed, view=self)   
+
+class TwoFA_UI(Modal):
+    def __init__(self, ctx, error) -> None:
+        self.ctx = ctx
+        super().__init__(title='Two-factor authentication')
+        self.add_item(InputText(label="Input 2FA", placeholder=error, max_length=6, min_length=6))
+
+    async def callback(self, interaction: discord.Interaction):
+        
+        text_callback = self.children
+        
+        if text_callback:
+            code = text_callback[0].value
+            user_id = self.ctx.author.id
+            
+            data = Auth(user_id=str(user_id)).give2facode(str(code))
+            
+            if data['auth'] == 'response':
+            
+                embed = discord.Embed(color=0xfd4554)
+                embed.description = f"Successfully logged in as **{data['player']}!**"
+
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+
+            elif data['auth'] == 'failed':
+                await interaction.response.send_message(data['error'], ephemeral=True)
+                return
+        
+        await interaction.response.send_message("Failed to Input 2FA.", ephemeral=True)

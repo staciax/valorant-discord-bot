@@ -1,48 +1,56 @@
 # Standard
-import discord
 import os
+import discord
 from discord.ext import commands, tasks
 
 # Local
-from utils.json_loader import data_read, data_save, config_read, config_save
-from utils.useful import get_valorant_version, fetch_skin, fetch_tier, pre_fetch_price, data_folder, create_json
+from utils.json_loader import *
+from utils.cache import *
 
-class valorant_bot(commands.Bot):
-    def __init__(self, *args, **kwargs):
-        # Stuff
-        self.format_version = 1
-        super().__init__(command_prefix='.', case_insensitive = True, *args, **kwargs)
+discord.http.API_VERSION = 9
 
-    async def on_ready(self):
-        if not get_version.is_running():
-            get_version.start()
+bot = commands.Bot(case_insensitive = True)
+bot.format_version = 1
+
+@bot.event
+async def on_ready():
+    if not get_version.is_running():
+        get_version.start()
             
         # create data folder
         data_folder()
-        create_json('skins', {'formats': self.format_version})
+        create_json('skins', {'formats': bot.format_version})
+        create_json('missions', {'formats': bot.format_version})
         
         print(f'\nBot: {bot.user}')
         print('\nCog loaded:')
-
-bot = valorant_bot()
 
 @tasks.loop(minutes=30)
 async def get_version():
     bot.game_version = get_valorant_version()
 
-    # data_store
+    # cache_update
     data = data_read('skins')
     data['formats'] = bot.format_version
     data['gameversion'] = bot.game_version
     data_save('skins', data)
+
+    data = data_read('missions')
+    data['formats'] = bot.format_version
+    data['gameversion'] = bot.game_version
+    data_save('missions', data)
     
     try:
         if data['skins']["version"] != bot.game_version: fetch_skin()
         if data['tiers']["version"] != bot.game_version: fetch_tier()
+        if data['tiers']["version"] != bot.game_version: fetch_mission()
     except KeyError:
         fetch_skin()
         pre_fetch_price()
         fetch_tier()
+        fetch_mission()
+    finally:
+        print("\nLoaded cache")
 
 @bot.event
 async def on_message(message):
@@ -89,7 +97,7 @@ async def on_message(message):
             return await message.reply('`changed to embed split(Giorgio#0609)`')
 
 if __name__ == "__main__":
-    TOKEN = config_read()['TOKEN']
+    TOKEN = config_read()['DISCORD_TOKEN']
 
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):

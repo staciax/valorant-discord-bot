@@ -5,10 +5,12 @@ from datetime import time, datetime, timedelta
 
 # Local
 from utils.auth import Auth
-from utils.store import VALORANT_API
+from utils.api_endpoint import VALORANT_API
 from utils.json_loader import data_read, config_read
-from utils.view_notify import Notify
-from utils.useful import get_tier_emoji, format_dt, embed_giorgio_notify, notify_send
+from utils.view import Notify
+from utils.useful import format_dt
+from utils.emoji import get_notify_emoji
+from utils.embed import notify_send, embed_giorgio_notify
 from utils.pillow import generate_image
 
 class Notify_(commands.Cog):
@@ -59,7 +61,7 @@ class Notify_(commands.Cog):
                         icon = skin_data['skin1']['icon']
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
-                        embed = notify_send(get_tier_emoji(uuid, self.bot), name, duration, icon)
+                        embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
                         view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin2']['uuid']:
@@ -69,7 +71,7 @@ class Notify_(commands.Cog):
                         view = Notify(user_id, uuid, name)
                         icon = skin_data['skin2']['icon']
                         author = await self.bot.fetch_user(user_id)
-                        embed = notify_send(get_tier_emoji(uuid, self.bot), name, duration, icon)
+                        embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
                         view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin3']['uuid']:
@@ -79,7 +81,7 @@ class Notify_(commands.Cog):
                         icon = skin_data['skin3']['icon']
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
-                        embed = notify_send(get_tier_emoji(uuid, self.bot), name, duration, icon)
+                        embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
                         view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin4']['uuid']:
@@ -89,7 +91,7 @@ class Notify_(commands.Cog):
                         icon = skin_data['skin4']['icon']
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
-                        embed = notify_send(get_tier_emoji(uuid, self.bot), name, duration, icon)
+                        embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
                         view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
             except (KeyError, FileNotFoundError):
@@ -127,10 +129,10 @@ class Notify_(commands.Cog):
                         embed = discord.Embed(color=0xfd4554)
                         embed.description = f"Daily store for **{data_['IGN']}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
 
-                        embed1 = embed_giorgio_notify(self.bot, skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'])
-                        embed2 = embed_giorgio_notify(self.bot, skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'])
-                        embed3 = embed_giorgio_notify(self.bot, skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'])
-                        embed4 = embed_giorgio_notify(self.bot, skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'])
+                        embed1 = embed_giorgio_notify(skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'], self.bot)
+                        embed2 = embed_giorgio_notify(skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'], self.bot)
+                        embed3 = embed_giorgio_notify(skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'], self.bot)
+                        embed4 = embed_giorgio_notify(skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'], self.bot)
 
                         await channel.send(embeds=[embed, embed1, embed2, embed3, embed4])
                 

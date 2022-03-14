@@ -117,9 +117,13 @@ class Auth:
             database[self.user_id] = cookies
             database[self.user_id]['WaitFor2FA'] = int(datetime.timestamp(datetime.now()))
             data_save('users', database)
+
+            WaitFor2FA = {"auth": "2fa"}
             if r.json()['multifactor']['method'] == 'email':
-                raise RuntimeError(f"**Riot sent a code to {r.json()['multifactor']['email']}** `/2fa` to complete your login.")
-            raise RuntimeError('**You have 2FA enabled!** use `/2fa` to enter your code.')
+                WaitFor2FA['error'] = f"Riot sent a code to {r.json()['multifactor']['email']}"
+                return WaitFor2FA
+            WaitFor2FA['error'] = 'You have 2FA enabled!'
+            return WaitFor2FA
         raise RuntimeError('Your username or password may be incorrect!')
 
     def get_entitlements_token(self):
@@ -220,8 +224,13 @@ class Auth:
             self.get_entitlements_token()
             self.get_userinfo()
             self.get_region()
-            return True
-        return False
+
+            data = data_read('users')
+            player_name = data[self.user_id]['IGN']
+        
+            return {'auth': 'response', 'player': player_name}
+        
+        return {'auth': 'failed', 'error': 'Code is valid. Please login again'}
 
     def redeem_cookies(self):
         session = requests.session()

@@ -59,7 +59,7 @@ python bot.py
 | `point`  | Shows your valorant point |
 | `login`  | Log in with your Riot acoount |
 | `logout`  | Logout your Riot acoount |
-| `2fa`  | Enter your 2FA Code |
+| `misson`  | Shows your daily/weelky mission |
 | `notify`  | Set an notify for when a particular skin is in your store |
 | `notifys`  | Shows all your skin notify |
 | `notify_mode`  | Change notify mode `spectified skin` or `all skin` |
