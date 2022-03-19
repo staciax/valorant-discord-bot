@@ -36,7 +36,7 @@ pip install -r requirements.txt
 # manual install package
 
 pip install pillow
-pip install py-cord==2.0.0b4
+pip install py-cord==2.0.0b5
 pip install requests
 ```
 
