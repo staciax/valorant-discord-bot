@@ -1,7 +1,10 @@
 # Standard
 import os
 import discord
+from dotenv import load_dotenv
 from discord.ext import commands, tasks
+
+load_dotenv()
 
 # Local
 from utils.json_loader import *
@@ -97,10 +100,9 @@ async def on_message(message):
             return await message.reply('`changed to embed split(Giorgio#0609)`')
 
 if __name__ == "__main__":
-    TOKEN = config_read()['DISCORD_TOKEN']
 
     for file in os.listdir("./cogs"):
         if file.endswith(".py"):
             bot.load_extension(f'cogs.{file[:-3]}')
 
-    bot.run(TOKEN)
+    bot.run(os.getenv('DISCORD_TOKEN'))

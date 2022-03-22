@@ -12,10 +12,10 @@ def data_save(filename, data):
         json.dump(data, json_file, indent=2, ensure_ascii=False)
 
 def config_read():
-    with open("config.json", "r", encoding='utf-8') as json_file:
+    with open("settings.json", "r", encoding='utf-8') as json_file:
         data = json.load(json_file)
     return data
 
 def config_save(data):
-    with open("config.json", 'w', encoding='utf-8') as json_file:
+    with open("settings.json", 'w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=2, ensure_ascii=False)
