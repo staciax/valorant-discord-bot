@@ -38,11 +38,12 @@ pip install -r requirements.txt
 pip install pillow
 pip install py-cord==2.0.0b5
 pip install requests
+pip install python-dotenv
 ```
 
-* Store discord bot token in [config.json](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/config.json)
+* Store discord bot token in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
 ```
-"TOKEN": "PUT YOUR DISCORD BOT TOKEN"
+DISCORD_TOKEN='INPUT TOKEN HERE'
 ```
 * Run the bot
 ```
