@@ -2,21 +2,19 @@
 Discord bot that shows your daily store offer without open the VALORANT by using the Ingame API.
 written using Python and the [Pycord](https://github.com/Pycord-Development/pycord) library <br>
 
-#### NEW UPDATE 
-* `Notify skin, shows valorant point, Login, logout, more`
-* [`Night Market (end 23/02/2022)`](https://i.imgur.com/n1KSay4.png)
-
 ## Screenshot
 
-![image](https://i.imgur.com/I0rHtiM.png)
-<br>
-* Embed Design `-embed split` by [Giorgio#0609](https://github.com/giorgi-o)[`img`](https://i.imgur.com/qzrI0qF.png) | default : `-embed pillow` 
+* Embed Design by [Giorgio#0609](https://github.com/giorgi-o)
 
-![image](https://i.imgur.com/J1Dptta.png)
+![image](https://i.imgur.com/uF9THEa.png)
 
 * Notify skin
 
 ![image](https://i.imgur.com/ijjvQV3.png)
+
+* Battelpass
+
+![image](https://i.imgur.com/GhzLBSr.png)
 
 ## Installations
 
