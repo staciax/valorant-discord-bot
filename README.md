@@ -43,7 +43,7 @@ pip install python-dotenv
 
 * Store discord bot token in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
 ```
-DISCORD_TOKEN='INPUT TOKEN HERE'
+TOKEN='INPUT DISCORD TOKEN HERE'
 ```
 * Run the bot
 ```

@@ -105,4 +105,4 @@ if __name__ == "__main__":
         if file.endswith(".py"):
             bot.load_extension(f'cogs.{file[:-3]}')
 
-    bot.run(os.getenv('DISCORD_TOKEN'))
+    bot.run(os.getenv('TOKEN'))
