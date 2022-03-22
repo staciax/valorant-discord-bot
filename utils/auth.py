@@ -271,7 +271,7 @@ class Auth:
         if r.json()['type'] == 'response':
             data = r.json()
         elif r.json()['type'] == 'multifactor':
-            raise RuntimeError("if you're not registered! is not support 2FA, plz `/login` first")
+            raise RuntimeError("Quick check is not support 2FA, Please `/login` first !")
         else:
             raise RuntimeError('Your username or password may be incorrect!')
 

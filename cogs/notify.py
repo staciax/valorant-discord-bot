@@ -47,7 +47,7 @@ class Notify_(commands.Cog):
                         pass
             
                 for x in data:
-                    chennel = self.bot.get_channel(x['channel_id'])
+                    channel = self.bot.get_channel(x['channel_id'])
                     skin_data = VALORANT_API(x['id']).get_store_offer()
                     duration = skin_data['duration']
                     duration = format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')
@@ -62,7 +62,7 @@ class Notify_(commands.Cog):
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
                         embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
-                        view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
+                        view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin2']['uuid']:
                         name = skin_data['skin2']['name']
@@ -72,7 +72,7 @@ class Notify_(commands.Cog):
                         icon = skin_data['skin2']['icon']
                         author = await self.bot.fetch_user(user_id)
                         embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
-                        view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
+                        view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin3']['uuid']:
                         name = skin_data['skin3']['name']
@@ -82,7 +82,7 @@ class Notify_(commands.Cog):
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
                         embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
-                        view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
+                        view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
                     if x['uuid'] == skin_data['skin4']['uuid']:
                         name = skin_data['skin4']['name']
@@ -92,7 +92,7 @@ class Notify_(commands.Cog):
                         view = Notify(user_id, uuid, name)
                         author = await self.bot.fetch_user(user_id)
                         embed = notify_send(get_notify_emoji(uuid, self.bot), name, duration, icon)
-                        view.message = await chennel.send(content=f'||{author.mention}||', embed=embed, view=view)
+                        view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
 
             except (KeyError, FileNotFoundError):
                 pass

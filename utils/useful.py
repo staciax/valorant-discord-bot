@@ -1,6 +1,5 @@
 # Standard
 import base64
-import discord
 import json
 import re
 from contextlib import suppress
@@ -99,3 +98,52 @@ def get_valorant_point(user_id):
     if r.status_code == 200:
         balances = r.json()["Balances"]
         return balances
+
+# thanks Giorgio#0609
+def calculate_level_xp(level):
+    level_multiplier = 750
+    if level >= 2 and level <= 50:
+        return 2000 + (level - 2) * level_multiplier
+    elif level >= 51 and level <= 55:
+        return 36500
+    else:
+        return 0
+
+def get_item_battlepass(type, uuid):
+    
+    if type == 'Currency':
+        data = data_read('currencies')
+        name = data['currencies'][uuid]['name']
+        icon = data['currencies'][uuid]['icon']
+        return {"success": True, "data": {'type':'Point', 'name': '10 '+ name, 'icon': icon}}
+    
+    elif type == 'PlayerCard':
+        data = data_read('playercards')
+        name = data['playercards'][uuid]['name']
+        icon = data['playercards'][uuid]['icon']['wide']
+        return {"success": True, "data": {'type':'Player Card', 'name':name, 'icon': icon}}
+    
+    elif type == 'Title':
+        data = data_read('playertitles')
+        name = data['titles'][uuid]['name']
+        return {"success": True, "data": {'type':'Title', 'name':name, 'icon': False}}
+    
+    elif type == 'Spray':
+        data = data_read('sprays')
+        name = data['sprays'][uuid]['name']
+        icon = data['sprays'][uuid]['icon']
+        return {"success": True, "data": {'type':'Spray', 'name':name, 'icon': icon}}
+    
+    elif type == 'EquippableSkinLevel':
+        data = data_read('skins')
+        name = data['skins'][uuid]['name']
+        icon = data['skins'][uuid]['icon']
+        return {"success": True, "data": {'type':'Skin', 'name':name, 'icon': icon}}
+    
+    elif type == 'EquippableCharmLevel':
+        data = data_read('buddies')
+        name = data['buddies'][uuid]['name']
+        icon = data['buddies'][uuid]['icon']
+        return {"success": True, "data": {'type':'Buddie', 'name':name, 'icon': icon}}
+    
+    return {"success": False, "error": f"Failed to get : {type}"}

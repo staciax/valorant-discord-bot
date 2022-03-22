@@ -19,47 +19,21 @@ bot.format_version = 1
 async def on_ready():
     if not get_version.is_running():
         get_version.start()
-            
-        # create data folder
-        data_folder()
-        create_json('skins', {'formats': bot.format_version})
-        create_json('missions', {'formats': bot.format_version})
-        
+        create_all_file(bot)
+
         print(f'\nBot: {bot.user}')
         print('\nCog loaded:')
 
 @tasks.loop(minutes=30)
 async def get_version():
     bot.game_version = get_valorant_version()
-
-    # cache_update
-    data = data_read('skins')
-    data['formats'] = bot.format_version
-    data['gameversion'] = bot.game_version
-    data_save('skins', data)
-
-    data = data_read('missions')
-    data['formats'] = bot.format_version
-    data['gameversion'] = bot.game_version
-    data_save('missions', data)
-    
-    try:
-        if data['skins']["version"] != bot.game_version: fetch_skin()
-        if data['tiers']["version"] != bot.game_version: fetch_tier()
-        if data['tiers']["version"] != bot.game_version: fetch_mission()
-    except KeyError:
-        fetch_skin()
-        pre_fetch_price()
-        fetch_tier()
-        fetch_mission()
-    finally:
-        print("\nLoaded cache")
+    update_cache(bot)
 
 @bot.event
 async def on_message(message):
     # SETUP BOT
     
-    cog:commands.Cog = bot.get_cog('valorant')
+    cog: commands.Cog = bot.get_cog('valorant')
     command  = cog.get_commands()
 
     async def check_perm() -> bool:

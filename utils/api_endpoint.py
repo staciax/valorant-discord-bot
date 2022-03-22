@@ -8,6 +8,8 @@ from utils.json_loader import data_read
 # disable urllib3 warnings that might arise from making requests to 127.0.0.1
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+client_platfrom = 'ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9'
+
 class VALORANT_API:
     def __init__(self, user_id=None):
         self.user_id = user_id
@@ -20,7 +22,8 @@ class VALORANT_API:
             self.headers = {
                 'Authorization': "Bearer " + database[str(user_id)]['rso'],
                 'X-Riot-Entitlements-JWT': database[str(user_id)]['emt'],
-                'X-Riot-ClientVersion': self.__get_current_version()
+                'X-Riot-ClientVersion': self.__get_current_version(),
+                'X-Riot-ClientPlatform': client_platfrom
             }
             self.region = database[str(user_id)]['region']
 
@@ -72,12 +75,28 @@ class VALORANT_API:
 
     # Contracts ENDPOINT
     
-    def fetch_mission(self) -> dict:
+    def fetch_contracts(self) -> dict:
         '''
-        Get player daily/weekly missions
+        Get player daily/weekly missions/contracts
         '''
         data = self.fetch(f'/contracts/v1/contracts/{self.puuid}')
         return data
+
+    def get_content(self):
+        session = requests.session()
+        r = session.get(f'https://shared.{self.region}.a.pvp.net/content-service/v3/content', headers=self.headers)
+        data = None
+        if r.status_code == 200:
+            data = r.json()
+        return data
+    
+    def get_active_season(self):
+        content = self.get_content()
+        season_id = [season["ID"] for season in content["Seasons"] if season["IsActive"] and season["Type"] == "act"]
+        if not season_id:
+            return {"success":False, "error":"Failed to get Current Season."}
+        self.activeSeason = season_id[0]
+        return {"success":True, "data": season_id[0]}
 
     # USEFUL
 

@@ -1,5 +1,5 @@
 {
-  "notify_mode": "All",
+  "notify_mode": "Spectified",
   "embed_design": "Giorgio#0609",
   "store_password": false,
   "refresh_token": true

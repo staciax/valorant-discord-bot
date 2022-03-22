@@ -65,6 +65,7 @@ python bot.py
 | `notifys`  | Shows all your skin notify |
 | `notify_mode`  | Change notify mode `spectified skin` or `all skin` |
 | `nightmarket`  | Shows your nightmarket |
+| `battlepass`  | Shows your battlepass current tier |
 
 ## Special thanks
 

@@ -14,6 +14,7 @@ from utils.auth import Auth
 from utils.api_endpoint import VALORANT_API
 from utils.pillow import generate_image
 from utils.embed import embed_design_giorgio, pillow_embed, night_embed
+from utils.useful import get_item_battlepass, calculate_level_xp
 
 class valorant(commands.Cog):
     def __init__(self, bot):
@@ -294,7 +295,7 @@ class valorant(commands.Cog):
 
         user = Auth(user_id=ctx.author.id).get_users()
 
-        data = VALORANT_API(str(ctx.author.id)).fetch_mission()
+        data = VALORANT_API(str(ctx.author.id)).fetch_contracts()
         mission = data["Missions"]
 
         def iso_to_time(iso):
@@ -305,6 +306,7 @@ class valorant(commands.Cog):
         weekly = []
         daily = []
         daily_end = ''
+
         weekly_end = data['MissionMetadata']['WeeklyRefillTime']
 
         def get_mission_by_id(ID):
@@ -342,51 +344,111 @@ class valorant(commands.Cog):
         if username is not None or password is not None:
             is_private = True
         await ctx.defer(ephemeral=is_private)
-
-        if username and password:
-            puuid, headers, region, ign = Auth(username, password).temp_auth()
-
-            # fetch_skin_for_quick_check
-            try:
-                skin_data = data_read('skins')
-                if skin_data['prices']["version"] != self.bot.game_version:
-                    fetch_price(region=region, headers=headers)
-            except KeyError:
-                fetch_price(region=region, headers=headers)
-
-            nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
-            riot_name = ign
-        
-        elif username or password:
-            raise commands.CommandError("An unknown error occurred, sorry")
-        
-        else:
-            data = Auth(user_id=ctx.author.id).get_users()
-            riot_name = data['IGN']
-            nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
-                
         try:
-            embed = discord.Embed(color=0xfd4554)
-            embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
+            if username and password:
+                puuid, headers, region, ign = Auth(username, password).temp_auth()
 
-            skin1 = nightmarket['skin1']
-            skin2 = nightmarket['skin2']
-            skin3 = nightmarket['skin3']
-            skin4 = nightmarket['skin4']
-            skin5 = nightmarket['skin5']
-            skin6 = nightmarket['skin6']
+                # fetch_skin_for_quick_check
+                try:
+                    skin_data = data_read('skins')
+                    if skin_data['prices']["version"] != self.bot.game_version:
+                        fetch_price(region=region, headers=headers)
+                except KeyError:
+                    fetch_price(region=region, headers=headers)
+                
+                nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
+                riot_name = ign
             
-            embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
-            embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
-            embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
-            embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
-            embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
-            embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
+            elif username or password:
+                raise commands.CommandError("An unknown error occurred, sorry")
             
-            await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
-        except Exception as e:
-            print(e)
-            raise commands.CommandError("An unknown error occurred, sorry")
+            else:
+                data = Auth(user_id=ctx.author.id).get_users()
+                riot_name = data['IGN']
+                nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
+                    
+
+                embed = discord.Embed(color=0xfd4554)
+                embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
+
+                skin1 = nightmarket['skin1']
+                skin2 = nightmarket['skin2']
+                skin3 = nightmarket['skin3']
+                skin4 = nightmarket['skin4']
+                skin5 = nightmarket['skin5']
+                skin6 = nightmarket['skin6']
+                
+                embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
+                embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
+                embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
+                embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
+                embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
+                embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
+                
+                await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
+        except:
+            raise RuntimeError("._. NO NIGHT MARKET")
+
+    @slash_command(description="Shows your battlepass current tier")
+    async def battlepass(self, ctx):
+        await ctx.defer()
+
+        user = Auth(user_id=ctx.author.id).get_users()
+        api = VALORANT_API(str(ctx.author.id))
+
+        data_contracts = data_read('contracts')
+        data_contracts['contracts'].pop('version')
+        user_contracts = api.fetch_contracts()
+        season = api.get_active_season()
+        season_id = season['data']
+
+        uuid = [x for x in data_contracts['contracts'] if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id] #if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id
+        
+        if uuid:
+            battlepass = [x for x in user_contracts['Contracts'] if x['ContractDefinitionID'] == uuid[0]]
+            level = battlepass[0]['ProgressionLevelReached']
+            TOTAL_XP = battlepass[0]['ProgressionTowardsNextLevel']
+            REWARD = data_contracts['contracts'][uuid[0]]['reward']['chapters']
+            ACT_NAME = data_contracts['contracts'][uuid[0]]['name']
+
+            BTP_level = {}
+
+            count = 0
+            for lvl in REWARD:
+                for rw in lvl["levels"]:
+                    count += 1
+                    BTP_level[count] = rw['reward']
+            
+            next_reward = level + 1
+            if level == 55: next_reward = 55
+
+            current = BTP_level[next_reward]
+            
+            item = get_item_battlepass(current['type'], current['uuid'])
+            if item["success"]:
+                item_name = item['data']['name']
+                item_type = item['data']['type']
+                embed = discord.Embed(
+                    title=f"BATTLE PASS | {user['IGN']}",
+                    description = f"**Next Reward:** {item_name}\n**Type:** {item_type}\n**XP:** {TOTAL_XP:,}/{calculate_level_xp(level + 1):,}",
+                    color=0xfd4554
+                )    
     
+                if item['data']['icon']:
+                    if item['data']['type'] in ['Player Card', 'Skin', 'Spray']:
+                        embed.set_image(url=item['data']['icon'])
+                    else:
+                        embed.set_thumbnail(url=item['data']['icon'])
+                
+                if level >= 50:
+                    embed.color = 0xf1b82d
+
+                if level == 55:
+                    embed.description = f'{item_name}'
+
+                embed.set_footer(text=f'TIER {level} | {ACT_NAME}')
+            
+            await ctx.respond(embed=embed)
+
 def setup(bot):
     bot.add_cog(valorant(bot))
