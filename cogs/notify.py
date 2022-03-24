@@ -11,7 +11,6 @@ from utils.view import Notify
 from utils.useful import format_dt
 from utils.emoji import get_notify_emoji
 from utils.embed import notify_send, embed_giorgio_notify
-from utils.pillow import generate_image
 
 class Notify_(commands.Cog):
     def __init__(self, bot):
@@ -29,7 +28,6 @@ class Notify_(commands.Cog):
     async def notifys(self):
         
         config = config_read()
-        design = config['embed_design']
         notify_mode = config['notify_mode']
 
         if notify_mode == 'Spectified':
@@ -111,30 +109,21 @@ class Notify_(commands.Cog):
                     
                     channel = self.bot.get_channel(int(data_['channel']))
                     duration = skin_list['duration']
-                    
-                    if design == 'ꜱᴛᴀᴄɪᴀ.#7475':
+                                        
+                    skin1 = skin_list['skin1']
+                    skin2 = skin_list['skin2']
+                    skin3 = skin_list['skin3']
+                    skin4 = skin_list['skin4']
 
-                        file_ = generate_image(skin_list)
-                        embed = discord.Embed(description=f"**Daily Store for {data_['IGN']}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}",color=0xfd4554)
-                        embed.set_image(url='attachment://store-offers.png') 
-                        await channel.send(file=file_, embed=embed)
-                    
-                    elif design == 'Giorgio#0609':
+                    embed = discord.Embed(color=0xfd4554)
+                    embed.description = f"Daily store for **{data_['IGN']}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
 
-                        skin1 = skin_list['skin1']
-                        skin2 = skin_list['skin2']
-                        skin3 = skin_list['skin3']
-                        skin4 = skin_list['skin4']
+                    embed1 = embed_giorgio_notify(skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'], self.bot)
+                    embed2 = embed_giorgio_notify(skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'], self.bot)
+                    embed3 = embed_giorgio_notify(skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'], self.bot)
+                    embed4 = embed_giorgio_notify(skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'], self.bot)
 
-                        embed = discord.Embed(color=0xfd4554)
-                        embed.description = f"Daily store for **{data_['IGN']}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
-
-                        embed1 = embed_giorgio_notify(skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'], self.bot)
-                        embed2 = embed_giorgio_notify(skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'], self.bot)
-                        embed3 = embed_giorgio_notify(skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'], self.bot)
-                        embed4 = embed_giorgio_notify(skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'], self.bot)
-
-                        await channel.send(embeds=[embed, embed1, embed2, embed3, embed4])
+                    await channel.send(embeds=[embed, embed1, embed2, embed3, embed4])
                 
             except (KeyError, FileNotFoundError):
                 pass

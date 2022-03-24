@@ -12,7 +12,7 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 ![image](https://i.imgur.com/ijjvQV3.png)
 
-* Battelpass
+* Battlepass
 
 ![image](https://i.imgur.com/GhzLBSr.png)
 

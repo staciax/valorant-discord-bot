@@ -14,7 +14,13 @@ def pillow_embed(name, user, duration) -> discord.Embed:
         embed.set_footer(text=f'Requested by {user.display_name}', icon_url=user.display_avatar)
     return embed
 
-def embed_design_giorgio(uuid, name, price, icon) -> discord.Embed:
+def embed_design_giorgio(skin) -> discord.Embed:
+
+    uuid= skin['uuid']
+    name= skin['name']
+    price= skin['price']
+    icon= skin['icon']
+
     embed = discord.Embed(color=0x0F1923)
     embed.title = f"{get_emoji_tier(uuid)} {name}"
     embed.description = f"{points_emoji['vp']} {price}"

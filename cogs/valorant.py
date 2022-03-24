@@ -12,14 +12,13 @@ from utils.cache import *
 from utils.emoji import *
 from utils.auth import Auth
 from utils.api_endpoint import VALORANT_API
-from utils.pillow import generate_image
-from utils.embed import embed_design_giorgio, pillow_embed, night_embed
+from utils.embed import embed_design_giorgio, night_embed
 from utils.useful import get_item_battlepass, calculate_level_xp
 
 class valorant(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-         
+
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'-{self.__class__.__name__}')
@@ -35,7 +34,7 @@ class valorant(commands.Cog):
         
         embed.description = f'{str(error)[:2000]}'
         await ctx.respond(embed=embed, ephemeral=True)
-            
+
     @slash_command(description="Shows your daily store in your accounts")
     async def store(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
         
@@ -71,38 +70,18 @@ class valorant(commands.Cog):
                 fetch_price(user_id=ctx.author.id)
             
             skin_list = VALORANT_API(str(ctx.author.id)).get_store_offer()
-
             riot_name = data['IGN']
+        
+        embed = discord.Embed(color=0xfd4554)
+        embed.description = f"Daily store for **{riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
 
-        config = config_read()
-        design = config['embed_design']
-            
-        if design == 'ꜱᴛᴀᴄɪᴀ.#7475':
-            embed = pillow_embed(riot_name, ctx.author, skin_list['duration'])
-            file = generate_image(skin_list)
+        embed1 = embed_design_giorgio(skin_list['skin1'])
+        embed2 = embed_design_giorgio(skin_list['skin2'])
+        embed3 = embed_design_giorgio(skin_list['skin3'])
+        embed4 = embed_design_giorgio(skin_list['skin4'])
 
-            await ctx.respond(embed=embed, file=file)
+        await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4])
 
-        elif design == 'Giorgio#0609': # https://github.com/giorgi-o/
-            try:
-                embed = discord.Embed(color=0xfd4554)
-                embed.description = f"Daily store for **{riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
-
-                skin1 = skin_list['skin1']
-                skin2 = skin_list['skin2']
-                skin3 = skin_list['skin3']
-                skin4 = skin_list['skin4']
-
-                embed1 = embed_design_giorgio(skin1['uuid'], skin1['name'], skin1['price'], skin1['icon'])
-                embed2 = embed_design_giorgio(skin2['uuid'], skin2['name'], skin2['price'], skin2['icon'])
-                embed3 = embed_design_giorgio(skin3['uuid'], skin3['name'], skin3['price'], skin3['icon'])
-                embed4 = embed_design_giorgio(skin4['uuid'], skin4['name'], skin4['price'], skin4['icon'])
-
-                await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4])
-            except Exception as e:
-                print(e)
-                raise commands.CommandError("An unknown error occurred, sorry")
-   
     @slash_command(description="Log in with your Riot acoount")
     async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):        
         create_json('users', {})
