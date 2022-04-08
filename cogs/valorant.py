@@ -35,7 +35,7 @@ class valorant(commands.Cog):
         embed.description = f'{str(error)[:2000]}'
         await ctx.respond(embed=embed, ephemeral=True)
 
-    @slash_command(description="Shows your daily store in your accounts")
+    @slash_command(description="See what's on your daily store")
     async def store(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
         
         is_private = False
@@ -107,7 +107,7 @@ class valorant(commands.Cog):
         else:
             raise commands.UserInputError('Your username or password may be incorrect!')
                     
-    @slash_command(name='logout', description="Logout and delete your accounts")
+    @slash_command(name='logout', description="Logout and Delete your account")
     async def logout(self, ctx):
         await ctx.defer(ephemeral=True)
         try:
@@ -121,7 +121,7 @@ class valorant(commands.Cog):
         except Exception:
             raise commands.UserInputError("I can't logout you")
             
-    @slash_command(description="Set an notify for when a particular skin is in your store")
+    @slash_command(description="Set a notification when a specific skin is available on your store")
     async def notify(self, ctx, skin: Option(str, "The name of the skin you want to notify")):
         await ctx.defer()
         # get_user
@@ -177,7 +177,7 @@ class valorant(commands.Cog):
         
         raise RuntimeError("Not found skin")
 
-    @slash_command(description="Shows all your skin notify")
+    @slash_command(description="View skins you have set a notification for")
     async def notifys(self, ctx):
         await ctx.defer(ephemeral=True)
         
@@ -193,8 +193,8 @@ class valorant(commands.Cog):
         view = Notify_list(ctx)
         await view.start()
     
-    @slash_command(description="Change notify mode")
-    async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Spectified)", choices=['Spectified Skin','All Skin','Off'])):
+    @slash_command(description="Change notification mode")
+    async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Specified)", choices=['Specified Skin','All Skin','Off'])):
         
         await ctx.defer(ephemeral=True)
 
@@ -210,12 +210,12 @@ class valorant(commands.Cog):
         
         embed = discord.Embed(color=0xfd4554)
         
-        if mode == 'Spectified Skin':
+        if mode == 'Specified Skin':
             config = config_read()
-            config["notify_mode"] = 'Spectified'
+            config["notify_mode"] = 'Specified'
             config_save(config)
 
-            embed.title = "**Changed notify mode** - Spectified"
+            embed.title = "**Changed notify mode** - Specified"
             embed.description = "Use `/notify` to add skins to the notify list."
             embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
 
@@ -246,7 +246,7 @@ class valorant(commands.Cog):
 
             await ctx.respond(embed=embed)
 
-    @slash_command(description="Shows your valorant point in your accounts")
+    @slash_command(description="View your remaining Valorant and Riot Points (VP/RP)")
     async def point(self, ctx):
 
         await ctx.defer()
@@ -268,7 +268,7 @@ class valorant(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(description="Shows your daily/weelky mission")
+    @slash_command(description="View your daily/weekly mission progress")
     async def mission(self, ctx):
         await ctx.defer()
 
@@ -316,7 +316,7 @@ class valorant(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(name="nightmarket", description="Shows your nightmarket in your account")
+    @slash_command(name="nightmarket", description="See what's on your Night.Market")
     async def night(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
         
         is_private = False
@@ -367,7 +367,7 @@ class valorant(commands.Cog):
         except:
             raise RuntimeError("._. NO NIGHT MARKET")
 
-    @slash_command(description="Shows your battlepass current tier")
+    @slash_command(description="View your battlepass' current tier")
     async def battlepass(self, ctx):
         await ctx.defer()
 
