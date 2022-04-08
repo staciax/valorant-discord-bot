@@ -345,4 +345,4 @@ def update_cache(bot):
         fetch_tier()
         fetch_mission()
     finally:
-        print("\nLoaded cache")
+        print("\nBOT is Ready !")

@@ -323,6 +323,7 @@ class valorant(commands.Cog):
         if username is not None or password is not None:
             is_private = True
         await ctx.defer(ephemeral=is_private)
+        
         try:
             if username and password:
                 puuid, headers, region, ign = Auth(username, password).temp_auth()
@@ -341,30 +342,28 @@ class valorant(commands.Cog):
             elif username or password:
                 raise commands.CommandError("An unknown error occurred, sorry")
             
-            else:
-                data = Auth(user_id=ctx.author.id).get_users()
-                riot_name = data['IGN']
-                nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
-                    
-
-                embed = discord.Embed(color=0xfd4554)
-                embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
-
-                skin1 = nightmarket['skin1']
-                skin2 = nightmarket['skin2']
-                skin3 = nightmarket['skin3']
-                skin4 = nightmarket['skin4']
-                skin5 = nightmarket['skin5']
-                skin6 = nightmarket['skin6']
+            data = Auth(user_id=ctx.author.id).get_users()
+            riot_name = data['IGN']
+            nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
                 
-                embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
-                embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
-                embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
-                embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
-                embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
-                embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
-                
-                await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
+            embed = discord.Embed(color=0xfd4554)
+            embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
+
+            skin1 = nightmarket['skin1']
+            skin2 = nightmarket['skin2']
+            skin3 = nightmarket['skin3']
+            skin4 = nightmarket['skin4']
+            skin5 = nightmarket['skin5']
+            skin6 = nightmarket['skin6']
+            
+            embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
+            embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
+            embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
+            embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
+            embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
+            embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
+            
+            await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
         except:
             raise RuntimeError("._. NO NIGHT MARKET")
 

@@ -181,7 +181,9 @@ class Auth:
         body = {"id_token": token_id}
         r = session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant', headers=headers, json=body)
         try:
-            database[self.user_id]['region'] = r.json()['affinities']['live']
+            region = r.json()['affinities']['live']
+            if region in ['latam','br']: region = 'na'
+            database[self.user_id]['region'] = region
             data_save('users', database)
         except KeyError:
             raise RuntimeError(f'An unknown error occurred, plz /login again')
@@ -289,7 +291,9 @@ class Auth:
         
         body = {"id_token": response[1]}
         r = session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant', headers=headers, json=body)
+    
         region = r.json()['affinities']['live']
+        if region in ['latam','br']: region = 'na'
 
         session.close()
         return user_id, headers, region, ign
