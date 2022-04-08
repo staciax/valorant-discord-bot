@@ -58,12 +58,12 @@ python bot.py
 | `point`  | Shows your valorant point |
 | `login`  | Log in with your Riot acoount |
 | `logout`  | Logout your Riot acoount |
-| `misson`  | Shows your daily/weelky mission |
-| `notify`  | Set an notify for when a particular skin is in your store |
-| `notifys`  | Shows all your skin notify |
-| `notify_mode`  | Change notify mode `spectified skin` or `all skin` |
+| `misson`  | View your daily/weekly mission progress |
+| `notify`  | Set a notification when a specific skin is available on your store |
+| `notifys`  | View skins you have set a notification for |
+| `notify_mode`  | Change notification mode `Specified skin` or `all skin` |
 | `nightmarket`  | Shows your nightmarket |
-| `battlepass`  | Shows your battlepass current tier |
+| `battlepass`  | View your battlepass' current tier |
 
 ## Special thanks
 
