@@ -72,7 +72,7 @@ for providing a great API about Valorant!
 ### [Valorant-API.com](https://valorant-api.com/)
 for every skin names and images!
 
-### [Giorgio#0609](https://github.com/giorgi-o)
+### [Giorgio](https://github.com/giorgi-o)
 for embed design and helping me and more! <3
 
 ### [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
