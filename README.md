@@ -4,7 +4,7 @@ written using Python and the [Pycord](https://github.com/Pycord-Development/pyco
 
 ## Screenshot
 
-* Embed Design by [Giorgio#0609](https://github.com/giorgi-o)
+* Embed Design by [Giorgio](https://github.com/giorgi-o)
 
 ![image](https://i.imgur.com/uF9THEa.png)
 
@@ -33,7 +33,6 @@ pip install -r requirements.txt
 ```
 # manual install package
 
-pip install pillow
 pip install py-cord==2.0.0b5
 pip install requests
 pip install python-dotenv

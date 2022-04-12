@@ -59,20 +59,6 @@ async def on_message(message):
             await bot.register_commands(commands=command, guild_id=message.guild.id, force=True)
             return await message.reply('Setup in global!')
 
-    # EMBED OPTIONAL
-    data = config_read()
-    if message.content.startswith('-embed pillow'):
-        if await check_perm():
-            data["embed_design"] = 'ꜱᴛᴀᴄɪᴀ.#7475'
-            config_save(data)
-            return await message.reply('`changed to embed pillow(ꜱᴛᴀᴄɪᴀ.#7475)`')
-    
-    if message.content.startswith('-embed split'):
-        if await check_perm():
-            data["embed_design"] = 'Giorgio#0609'
-            config_save(data)
-            return await message.reply('`changed to embed split(Giorgio#0609)`')
-
 if __name__ == "__main__":
 
     for file in os.listdir("./cogs"):
