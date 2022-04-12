@@ -30,7 +30,7 @@ class Notify_(commands.Cog):
         config = config_read()
         notify_mode = config['notify_mode']
 
-        if notify_mode == 'Spectified':
+        if notify_mode == 'Specified':
             # NOTIFY IN YOUR LIST
             try:
                 data = data_read('notifys')
@@ -95,7 +95,7 @@ class Notify_(commands.Cog):
             except (KeyError, FileNotFoundError):
                 pass
             except Exception as e:
-                print(f'Notify Spectified error - {e}')
+                print(f'Notify Specified error - {e}')
 
         elif notify_mode == 'All':
 
