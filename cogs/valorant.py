@@ -1,432 +1,358 @@
-# Standard
 import discord
-from discord.commands import slash_command, Option
-from discord.ext import commands
+import contextlib
+from discord.ext import commands, tasks
+from discord import Interaction, app_commands, ui
+from datetime import datetime
+from typing import Literal
 from difflib import get_close_matches
-from datetime import datetime, timedelta
 
 # Local
-from utils.json_loader import *
-from utils.view import *
-from utils.cache import *
-from utils.emoji import *
-from utils.auth import Auth
-from utils.api_endpoint import VALORANT_API
-from utils.embed import embed_design_giorgio, night_embed
-from utils.useful import get_item_battlepass, calculate_level_xp
+from utils.valorant.useful import get_season_by_content
+from utils.valorant.embed import Embed, embed_store, embed_mission, embed_point, embed_nightmarket, embed_battlepass
+from utils.valorant.view import TwoFA_UI, BaseBundle
+from utils.valorant.endpoint import API_ENDPOINT
+from utils.valorant.db import DATABASE
+from utils.valorant.local import InteractionLanguage, ResponseLanguage
+from utils.valorant.cache import get_cache, get_valorant_version
+from utils.valorant.resources import setup_emoji
 
-class valorant(commands.Cog):
-    def __init__(self, bot):
+season_id = 'd929bc38-4ab6-7da4-94f0-ee84f8ac141e'
+season_end = datetime(2022, 4, 26, 17, 0, 0)
+current_season = season_id, season_end
+
+class ValorantCog(commands.Cog, name='Valorant'):
+    """Valorant API Commands"""
+
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.reload_cache.start()
+
+    def cog_unload(self) -> None:
+        self.reload_cache.cancel()
+
+    def funtion_reload_cache(self, force=False):
+        with contextlib.suppress(Exception):
+            cache = self.db.read_cache()
+            valorant_version = get_valorant_version()
+            if valorant_version != cache['ValorantVersion'] or force:
+                get_cache()
+                cache = self.db.read_cache()
+                cache['valorant_version'] = valorant_version
+                self.db.insert_cache(cache)
+                print('Updated cache')
+
+    @tasks.loop(minutes=30)
+    async def reload_cache(self) -> None:
+        self.funtion_reload_cache()
+
+    @reload_cache.before_loop
+    async def before_reload_cache(self) -> None:
+        await self.bot.wait_until_ready()
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        print(f'-{self.__class__.__name__}')
+    async def on_ready(self) -> None:
+        self.db: DATABASE = self.bot.db
+        self.endpoint: API_ENDPOINT = self.bot.endpoint
 
-    @commands.Cog.listener()
-    async def on_application_command_error(self, ctx, error):
-        embed = discord.Embed(color=0xfe676e)
-        
-        if isinstance(error, discord.ApplicationCommandInvokeError):
-            error = error.original
+    async def get_endpoint(self, user_id: int, auth:dict = {}) -> API_ENDPOINT:
+        if not auth:
+            data = await self.db.is_data(user_id)
         else:
-            error = f"An unknown error occurred, sorry"
+            data = auth
+        endpoint = self.endpoint
+        await endpoint.activate(data)
+        return endpoint
+
+    async def get_temp_auth(self, username: str, password: str):
+        auth = self.db.auth
+        return await auth.temp_auth(username, password)
+
+    @app_commands.command(description='Log in with your Riot acoount')
+    @app_commands.describe(username='Input username', password='Input password')
+    async def login(self, interaction: Interaction, username: str, password: str) -> None:
+
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
+
+        user_id = interaction.user.id
+        auth = self.db.auth
+        auth.language = language
+        authenticate = await auth.authenticate(username, password)
+
+        if authenticate['auth'] == 'response':
+            await interaction.response.defer(ephemeral=True)
+            login = await self.db.login(user_id, authenticate)
+
+            if login['auth']:
+                embed = Embed(f"{response.get('SUCCESS', 'Successfully logged in')} **{login['player']}!**")
+                return await interaction.followup.send(embed=embed, ephemeral=True)
+
+            raise RuntimeError(f"{response.get('FAILED', 'Failed to log in')}")
+
+        elif authenticate['auth'] == '2fa':
+            cookies = authenticate['cookie']
+            message = authenticate['message']
+            modal = TwoFA_UI(interaction, self.db, cookies, message)
+            await interaction.response.send_modal(modal)
+
+    @app_commands.command(description='Logout and Delete your account from database')
+    async def logout(self, interaction: Interaction) -> None:
         
-        embed.description = f'{str(error)[:2000]}'
-        await ctx.respond(embed=embed, ephemeral=True)
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
 
-    @slash_command(description="See what's on your daily store")
-    async def store(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
+        user_id = interaction.user.id
+        if logout := self.db.logout(user_id):
+            if logout:
+                #f"Successfully logged out!"
+                embed = Embed(response.get('SUCCESS', 'Successfully logged out!'))
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            raise RuntimeError(response.get('FAILED', 'Failed to logout, plz try again!'))
+
+    @app_commands.command(description="Shows your daily store in your accounts")
+    @app_commands.describe(username='Input username (without login)', password='password (without login)')
+    async def store(self, interaction: Interaction, username: str = None, password: str = None) -> None:
         
-        is_private = False
-        if username is not None or password is not None:
-            is_private = True
-
-        await ctx.defer(ephemeral=is_private)
-
-        if username and password:
-            puuid, headers, region, ign = Auth(username, password).temp_auth()
-
-            # fetch_skin_for_quick_check
-            try:
-                skin_data = data_read('skins')
-                if skin_data['prices']["version"] != self.bot.game_version:
-                    fetch_price(region=region, headers=headers)
-            except KeyError:
-                fetch_price(region=region, headers=headers)
-
-            skin_list = VALORANT_API().temp_store(puuid, headers, region)
-            riot_name = ign
-
-        elif username or password:
-            raise commands.CommandError("An unknown error occurred, sorry")
-        else:
-            data = Auth(user_id=ctx.author.id).get_users()
-            try:
-                skin_data = data_read('skins')
-                if skin_data['prices']["version"] != self.bot.game_version:
-                    fetch_price(user_id=ctx.author.id)
-            except KeyError:
-                fetch_price(user_id=ctx.author.id)
-            
-            skin_list = VALORANT_API(str(ctx.author.id)).get_store_offer()
-            riot_name = data['IGN']
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
         
-        embed = discord.Embed(color=0xfd4554)
-        embed.description = f"Daily store for **{riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=skin_list['duration'])), 'R')}"
+        # check if user is logged in
+        is_private_message = False
+        if username is not None and password is not None:
+            is_private_message = True
 
-        embed1 = embed_design_giorgio(skin_list['skin1'])
-        embed2 = embed_design_giorgio(skin_list['skin2'])
-        embed3 = embed_design_giorgio(skin_list['skin3'])
-        embed4 = embed_design_giorgio(skin_list['skin4'])
+        await interaction.response.defer(ephemeral=is_private_message)
 
-        await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4])
+        # setup emoji 
+        await setup_emoji(self.bot, interaction.guild)
 
-    @slash_command(description="Log in with your Riot acoount")
-    async def login(self, ctx, username: Option(str, "Input username"), password: Option(str, "Input password")):        
-        create_json('users', {})
+        # endpoint
+        if username is None and password is None:  # for user if logged in
+            endpoint = await self.get_endpoint(interaction.user.id)
+        elif username is not None and password is not None: # for quick check store
+            temp_auth = await self.get_temp_auth(username, password)
+            endpoint = await self.get_endpoint(interaction.user.id, temp_auth)
+        elif username or password: 
+            raise RuntimeError(f"Please provide both username and password!")
 
-        auth = Auth(username, password, str(ctx.author.id))
-        login = auth.authenticate()
+        # fetch skin price
+        skin_price = await endpoint.store_fetch_offers()
+        self.db.insert_skin_price(skin_price)
+
+        # data
+        data = await endpoint.store_fetch_storefront()
+        embeds = embed_store(endpoint.player, data, language, response, self.bot)
+
+        if not is_private_message:
+            return await interaction.followup.send(embeds=embeds)
+        await interaction.followup.send(content='\u200b')
+        await interaction.channel.send(embeds=embeds)
+
+    @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
+    async def point(self, interaction: Interaction) -> None:
+
+        await interaction.response.defer()
         
-        if login['auth'] == 'response':
-            await ctx.defer(ephemeral=True)
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
 
-            auth.get_entitlements_token()
-            auth.get_userinfo()
-            auth.get_region()
-
-            data = data_read('users')
-            embed = discord.Embed(color=0xfd4554, description='Successfully logged in as **{}**!'.format(data[str(ctx.author.id)]['IGN']))
-            await ctx.respond(embed=embed)
+        # setup emoji 
+        await setup_emoji(self.bot, interaction.guild)
         
-        elif login['auth'] == '2fa':
-            error = login['error']
-            modal = TwoFA_UI(ctx, error)
-            await ctx.send_modal(modal)
-        else:
-            raise commands.UserInputError('Your username or password may be incorrect!')
-                    
-    @slash_command(name='logout', description="Logout and Delete your account")
-    async def logout(self, ctx):
-        await ctx.defer(ephemeral=True)
-        try:
-            data = data_read('users')
-            del data[str(ctx.author.id)]
-            data_save('users', data)
-            embed = discord.Embed(description='You have been logged out bot', color=0xfd4554)
-            return await ctx.respond(embed=embed, ephemeral=True)
-        except KeyError:
-            raise commands.UserInputError("I can't logout you if you're not registered!")
-        except Exception:
-            raise commands.UserInputError("I can't logout you")
-            
-    @slash_command(description="Set a notification when a specific skin is available on your store")
-    async def notify(self, ctx, skin: Option(str, "The name of the skin you want to notify")):
-        await ctx.defer()
-        # get_user
+        # endpoint
+        endpoint = await self.get_endpoint(interaction.user.id)
 
-        user_id = ctx.author.id
-        Auth(user_id=user_id).get_users()
+        # data
+        data = await endpoint.store_fetch_wallet()
+        embed = embed_point(endpoint.player, data, language, response, self.bot)
 
-        await setup_emoji(ctx)
+        await interaction.followup.send(embed=embed)
 
-        create_json('notifys', [])
+    @app_commands.command(description='View your daily/weekly mission progress')
+    async def mission(self, interaction: Interaction) -> None:
 
-        skindata = data_read('skins')
-        skindata['skins'].pop('version')
-        name_list = [skindata['skins'][x]['name'] for x in skindata['skins']]
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
+
+        # endpoint
+        endpoint = await self.get_endpoint(interaction.user.id)
+
+        # data
+        data = await endpoint.fetch_contracts()
+        embed = embed_mission(endpoint.player, data, language, response)
+
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(description='Show skin offers on the nightmarket')
+    async def nightmarket(self, interaction: Interaction) -> None:
+
+        await interaction.response.defer()
+
+        # setup emoji 
+        await setup_emoji(self.bot, interaction.guild)
+
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
+
+        # endpoint
+        endpoint = await self.get_endpoint(interaction.user.id)
+
+        # fetch skin price
+        skin_price = await endpoint.store_fetch_offers()
+        self.db.insert_skin_price(skin_price)
+
+        # data
+        data = await endpoint.store_fetch_storefront()
+        embeds = embed_nightmarket(endpoint.player, data, language, response)
+
+        await interaction.followup.send(embeds=embeds)
+
+    @app_commands.command(description='View your battlepass current tier')
+    async def battlepass(self, interaction: Interaction) -> None:
+
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
+
+        # endpoint
+        endpoint = await self.get_endpoint(interaction.user.id)
+
+        # data
+        data = await endpoint.fetch_contracts()
+        content = await endpoint.fetch_content()
+        season = get_season_by_content(content)
+        embed = embed_battlepass(endpoint.player, data, season, language, response)
+
+        await interaction.response.send_message(embed=embed)
+
+    # inspired by https://github.com/giorgi-o
+    @app_commands.command(description="inspect a specific bundle")
+    @app_commands.describe(bundle="The name of the bundle you want to inspect!")
+    async def bundle(self, interaction: Interaction, bundle: str) -> None:
         
-        skin_name = get_close_matches(skin, name_list, 1)
+        await interaction.response.defer()
 
-        if skin_name:
-            notify_data = data_read('notifys')
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
 
-            find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['name'] == skin_name[0]]
-            skin_uuid = find_skin[0]
+        # setup emoji 
+        await setup_emoji(self.bot, interaction.guild)
 
-            skin_source = skindata['skins'][skin_uuid]
-            name = skin_source['name']
-            icon = skin_source['icon']
-            uuid = skin_source['uuid']
-            
-            emoji = get_emoji_tier(skin_uuid)
+        # cache
+        cache = self.db.read_cache()
 
-            for skin in notify_data:
-                author = skin['id']
-                uuid = skin['uuid']
-                if author == str(user_id) and uuid == skin_uuid:
-                    raise RuntimeError(f'{emoji} **{name}** is already in your Notify')
+        # default language language
+        bundle_language = 'en-US'
 
-            data_add = {
-                "id": str(ctx.author.id),
-                "uuid": skin_uuid,
-                "channel_id": ctx.channel.id
-            }
-
-            notify_data.append(data_add)
-
-            data_save('notifys', notify_data)
-
-            embed = discord.Embed(description=f'Successfully set an notify for the {emoji} **{name}**', color=0xfd4554)
-            embed.set_thumbnail(url=icon)
-            
-            view = Notify(ctx.author.id, uuid, name)
-            view.message = await ctx.respond(embed=embed, view=view)
-            return
+        # find bundle
+        find_bundle_entries = [cache['bundles'][i] for i in cache['bundles'] if get_close_matches(bundle.lower(), [cache['bundles'][i]['names'][bundle_language].lower()])]
         
-        raise RuntimeError("Not found skin")
-
-    @slash_command(description="View skins you have set a notification for")
-    async def notifys(self, ctx):
-        await ctx.defer(ephemeral=True)
-        
-        Auth(user_id=ctx.author.id).get_users()
-        
-        try:
-            skin_data = data_read('skins')
-            if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(user_id=ctx.author.id)
-        except KeyError:
-            fetch_price(user_id=ctx.author.id)
-
-        view = Notify_list(ctx)
+        # bundle view
+        view = BaseBundle(interaction, find_bundle_entries)
         await view.start()
     
-    @slash_command(description="Change notification mode")
-    async def notify_mode(self, ctx, mode: Option(str, "Choose notify mode (default = Specified)", choices=['Specified Skin','All Skin','Off'])):
+    # inspired by https://github.com/giorgi-o
+    @app_commands.command(description="Show the current featured bundles")
+    async def bundles(self, interaction: Interaction) -> None:
+
+        await interaction.response.defer()
         
-        await ctx.defer(ephemeral=True)
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
 
-        Auth(user_id=ctx.author.id).get_users()
-        data = data_read('users')
+        # endpoint
+        endpoint = await self.get_endpoint(interaction.user.id)
 
-        try:
-            skin_data = data_read('skins')
-            if skin_data['prices']["version"] != self.bot.game_version:
-                fetch_price(user_id=ctx.author.id)
-        except KeyError:
-            fetch_price(user_id=ctx.author.id)
-        
-        embed = discord.Embed(color=0xfd4554)
-        
-        if mode == 'Specified Skin':
-            config = config_read()
-            config["notify_mode"] = 'Specified'
-            config_save(config)
+        # default bundle language
+        bundle_language = 'en-US' # or bundle_language = language
 
-            embed.title = "**Changed notify mode** - Specified"
-            embed.description = "Use `/notify` to add skins to the notify list."
-            embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
+        # data
+        bundle_entries = await endpoint.store_fetch_storefront()
 
-            await ctx.respond(embed=embed)
-        
-        elif mode == 'All Skin':
-            config = config_read()
-            config["notify_mode"] = 'All'
-            config_save(config)
+        # bundle view
+        view = BaseBundle(interaction, bundle_entries)
+        await view.start_furture()
 
-            config_save(config)
-            data[str(ctx.author.id)]['channel'] = ctx.channel.id
-            data_save('users', data)
+    # ---------- ROAD MAP ---------- #
 
-            embed.title = "**Changed notify mode** - All"
-            embed.description = f"**Set Channel:** {ctx.channel.mention} for all notify"
-            embed.set_image(url='https://i.imgur.com/Gedqlzc.png')
+    # @app_commands.command()
+    # async def contract(self, interaction: Interaction) -> None:
+    #     # change agent contract
 
-            await ctx.respond(embed=embed)
+    # @app_commands.command()
+    # async def party(self, interaction: Interaction) -> None:
+    #     # curren party
+    #     # pick agent
+    #     # current map
 
-        else:
-
-            config = config_read()
-            config["notify_mode"] = False
-            config_save(config)
-            embed.title = "**Changed notify mode** - Off"
-            embed.description = 'turn off notify'
-
-            await ctx.respond(embed=embed)
-
-    @slash_command(description="View your remaining Valorant and Riot Points (VP/RP)")
-    async def point(self, ctx):
-
-        await ctx.defer()
-        user_id = ctx.author.id
-        data = Auth(user_id=user_id).get_users()
-
-        balances = get_valorant_point(str(user_id))
-
-        try:
-            balances = get_valorant_point(str(user_id))
-            vp = balances["85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741"]
-            rad = balances["e59aa87c-4cbf-517a-5983-6e81511be9b7"]            
-        except:
-            raise commands.UserInputError("Can't fetch point")
-
-        embed = discord.Embed(title=f"{data['IGN']} Points:",color=0xfd4554)
-        embed.add_field(name='Valorant Points',value=f"{points['vp']} {vp}", inline=True)
-        embed.add_field(name='Radianite points',value=f"{points['rad']} {rad}", inline=True)
-
-        await ctx.respond(embed=embed)
-
-    @slash_command(description="View your daily/weekly mission progress")
-    async def mission(self, ctx):
-        await ctx.defer()
-
-        user = Auth(user_id=ctx.author.id).get_users()
-
-        data = VALORANT_API(str(ctx.author.id)).fetch_contracts()
-        mission = data["Missions"]
-
-        def iso_to_time(iso):
-            timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
-            time = datetime.utcfromtimestamp(timestamp)
-            return time
-
-        weekly = []
-        daily = []
-        daily_end = ''
-
-        weekly_end = data['MissionMetadata']['WeeklyRefillTime']
-
-        def get_mission_by_id(ID):
-            data = data_read('missions')
-            mission = data['missions'][ID]
-            return mission
-        
-        for m in mission:
-            mission = get_mission_by_id(m['ID'])
-            *complete, = m['Objectives'].values()
-            title = mission['title']
-            progress = mission['progress']
-            xp = mission['xp']
+    # @app_commands.command()
+    # async def career(self, interaction: Interaction) -> None:
+    #     # match history
     
-            format_m = f"\n{title} | + {xp:,} XP\n- {complete[0]}/{progress}"
+    # ---------- DEBUGs ---------- #
 
-            if mission['type'] == 'EAresMissionType::Weekly':
-                weekly.append(format_m)
-            if mission['type'] == 'EAresMissionType::Daily':
-                daily_end = m['ExpirationTime']
-                daily.append(format_m)
+    # hybird command
+    @app_commands.command(description='Command debug for the bot')
+    async def debug(self, interaction: Interaction, debug: Literal['Skin Price', 'Emoji not loaded', 'Cache']) -> None:
 
-        daily_format = ''.join(daily)
-        weekly_format = ''.join(weekly)
-        embed = discord.Embed(title=f"**Missions** | {user['IGN']}", color=0xfd4554)
-        embed.add_field(name='**Daily Missions**', value=f"{daily_format}\nEnd(s) at {format_dt(iso_to_time(daily_end), 'R')}", inline=False)
-        embed.add_field(name='**Weekly Missions**', value=f"{weekly_format}\nRefills {format_dt(iso_to_time(weekly_end), 'R')}", inline=False)
-
-        await ctx.respond(embed=embed)
-
-    @slash_command(name="nightmarket", description="See what's on your Night.Market")
-    async def night(self, ctx, username: Option(str, "Input username (temp login)", required=False), password: Option(str, "Input password (temp login)", required=False)):
+        await interaction.response.defer(ephemeral=True)
         
-        is_private = False
-        if username is not None or password is not None:
-            is_private = True
-        await ctx.defer(ephemeral=is_private)
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage(interaction.command.name, language)
         
-        try:
-            if username and password:
-                puuid, headers, region, ign = Auth(username, password).temp_auth()
+        if debug == 'Skin Price':
+            # endpoint
+            endpoint = await self.get_endpoint(interaction.user.id)
 
-                # fetch_skin_for_quick_check
-                try:
-                    skin_data = data_read('skins')
-                    if skin_data['prices']["version"] != self.bot.game_version:
-                        fetch_price(region=region, headers=headers)
-                except KeyError:
-                    fetch_price(region=region, headers=headers)
-                
-                nightmarket, duration = VALORANT_API().temp_night(puuid, headers, region)
-                riot_name = ign
-            
-            elif username or password:
-                raise commands.CommandError("An unknown error occurred, sorry")
-            
-            data = Auth(user_id=ctx.author.id).get_users()
-            riot_name = data['IGN']
-            nightmarket, duration = VALORANT_API(str(ctx.author.id)).store_fetch_nightmarket()
-                
-            embed = discord.Embed(color=0xfd4554)
-            embed.description = f"**NightMarket for {riot_name}** | Remaining {format_dt((datetime.utcnow() + timedelta(seconds=duration)), 'R')}"
+            # fetch skin price
+            skin_price = await endpoint.store_fetch_offers()
+            self.db.insert_skin_price(skin_price, force=True)
 
-            skin1 = nightmarket['skin1']
-            skin2 = nightmarket['skin2']
-            skin3 = nightmarket['skin3']
-            skin4 = nightmarket['skin4']
-            skin5 = nightmarket['skin5']
-            skin6 = nightmarket['skin6']
-            
-            embed1 = night_embed(skin1['uuid'], skin1['name'], skin1['price'], skin1['disprice'])
-            embed2 = night_embed(skin2['uuid'], skin2['name'], skin2['price'], skin2['disprice'])
-            embed3 = night_embed(skin3['uuid'], skin3['name'], skin3['price'], skin3['disprice'])
-            embed4 = night_embed(skin4['uuid'], skin4['name'], skin4['price'], skin4['disprice'])
-            embed5 = night_embed(skin5['uuid'], skin5['name'], skin5['price'], skin5['disprice'])
-            embed6 = night_embed(skin6['uuid'], skin6['name'], skin6['price'], skin6['disprice'])
-            
-            await ctx.respond(embeds=[embed, embed1, embed2, embed3, embed4, embed5, embed6])
-        except:
-            raise RuntimeError("._. NO NIGHT MARKET")
+            await interaction.response.send_message(embed=Embed(response.get('SUCCESS', 'Successfully updated skin price!')))
 
-    @slash_command(description="View your battlepass' current tier")
-    async def battlepass(self, ctx):
-        await ctx.defer()
-
-        user = Auth(user_id=ctx.author.id).get_users()
-        api = VALORANT_API(str(ctx.author.id))
-
-        data_contracts = data_read('contracts')
-        data_contracts['contracts'].pop('version')
-        user_contracts = api.fetch_contracts()
-        season = api.get_active_season()
-        season_id = season['data']
-
-        uuid = [x for x in data_contracts['contracts'] if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id] #if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id
+        elif debug == 'Emoji':
+            await setup_emoji(self.bot, interaction.guild)
+            await interaction.response.send_message(embed=Embed(response.get('SUCCESS', 'Successfully updated emoji!')))
         
-        if uuid:
-            battlepass = [x for x in user_contracts['Contracts'] if x['ContractDefinitionID'] == uuid[0]]
-            level = battlepass[0]['ProgressionLevelReached']
-            TOTAL_XP = battlepass[0]['ProgressionTowardsNextLevel']
-            REWARD = data_contracts['contracts'][uuid[0]]['reward']['chapters']
-            ACT_NAME = data_contracts['contracts'][uuid[0]]['name']
-
-            BTP_level = {}
-
-            count = 0
-            for lvl in REWARD:
-                for rw in lvl["levels"]:
-                    count += 1
-                    BTP_level[count] = rw['reward']
+        elif debug == 'Reload Cache':
+            await self.funtion_reload_cache(force=True)
+            await interaction.response.send_message(embed=Embed(response.get('SUCCESS', 'Successfully reloaded cache!')))
             
-            next_reward = level + 1
-            if level == 55: next_reward = 55
+    # ---------- CREDITs ---------- #
 
-            current = BTP_level[next_reward]
-            
-            item = get_item_battlepass(current['type'], current['uuid'])
-            if item["success"]:
-                item_name = item['data']['name']
-                item_type = item['data']['type']
-                embed = discord.Embed(
-                    title=f"BATTLE PASS | {user['IGN']}",
-                    description = f"**Next Reward:** {item_name}\n**Type:** {item_type}\n**XP:** {TOTAL_XP:,}/{calculate_level_xp(level + 1):,}",
-                    color=0xfd4554
-                )    
-    
-                if item['data']['icon']:
-                    if item['data']['type'] in ['Player Card', 'Skin', 'Spray']:
-                        embed.set_image(url=item['data']['icon'])
-                    else:
-                        embed.set_thumbnail(url=item['data']['icon'])
-                
-                if level >= 50:
-                    embed.color = 0xf1b82d
+    @app_commands.command(description='Shows basic information about the bot.')
+    async def about(self, interaction: Interaction) -> None:
+        
+        owner_id = 240059262297047041
+        owner_url = f'https://discord.com/users/{owner_id}'
+        github_project = 'https://github.com/staciax/ValorantStoreChecker-discord-bot'
+        support_url = 'https://discord.gg/FJSXPqQZgz'
+        
+        embed = discord.Embed(color=0xffffff)
+        embed.set_author(name='ᴠᴀʟᴏʀᴀɴᴛ ʙᴏᴛ ᴘʀᴏᴊᴇᴄᴛ', url=github_project)
+        embed.set_thumbnail(url='https://i.imgur.com/ZtuNW0Z.png')
+        embed.add_field(
+            name='ᴀʙᴏᴜᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ:',
+            value=f"ᴏᴡɴᴇʀ: [ꜱᴛᴀᴄɪᴀ.#7475]({owner_url}, '┐(・。・┐) ♪')",
+            inline=False
+        )
+        view = ui.View()
+        view.add_item(ui.Button(label='ᴅᴇᴠ ᴅɪꜱᴄᴏʀᴅ', url=owner_url, emoji='<:stacia_icon:948850880617250837>',row=0))
+        view.add_item(ui.Button(label='ɢɪᴛʜᴜʙ', url=github_project, emoji='<:github_icon:966706759697842176>', row=0))
+        view.add_item(ui.Button(label='ꜱᴜᴘᴘᴏʀᴛ ꜱᴇʀᴠᴇʀ', url=support_url, emoji='<:latte_support:941971854728511529>', row=1))
+        view.add_item(ui.Button(label='ᴅᴏɴᴀᴛᴇ', url='https://tipme.in.th/renlyx', emoji='<:tipme:967989967697608754>', row=1))
+        view.add_item(ui.Button(label='ᴋᴏ-ꜰɪ', url='https://ko-fi.com/staciax', emoji='<:kofi:967989830476779620>', row=1))
 
-                if level == 55:
-                    embed.description = f'{item_name}'
+        await interaction.response.send_message(embed=embed, view=view)
 
-                embed.set_footer(text=f'TIER {level} | {ACT_NAME}')
-            
-            await ctx.respond(embed=embed)
-
-def setup(bot):
-    bot.add_cog(valorant(bot))
+async def setup(bot) -> None:
+    await bot.add_cog(ValorantCog(bot))

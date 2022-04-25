@@ -1,6 +1,6 @@
 # Valorant store checker - Discord Bot (BETA)
 Discord bot that shows your daily store offer without open the VALORANT by using the Ingame API.
-written using Python and the [Pycord](https://github.com/Pycord-Development/pycord) library <br>
+written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) library <br>
 
 ## Screenshot
 
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 ```
 # manual install package
 
-pip install py-cord==2.0.0b5
+pip install git+https://github.com/Rapptz/discord.py@master
 pip install requests
 pip install python-dotenv
 ```
@@ -41,13 +41,14 @@ pip install python-dotenv
 * Store discord bot token in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
 ```
 TOKEN='INPUT DISCORD TOKEN HERE'
+OWNER_ID='INPUT YOUR DISCORD ID'
 ```
 * Run the bot
 ```
 python bot.py
 ```
-* Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-setup global`
-* if you want use in server now `-setup guild` to setup the commands. | remove command `-unsetup guild`
+* Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-sync global`
+* if you want use in server now `-sync guild` to setup the commands.
 
 ## Usage
 
@@ -58,11 +59,15 @@ python bot.py
 | `login`  | Log in with your Riot acoount |
 | `logout`  | Logout your Riot acoount |
 | `misson`  | View your daily/weekly mission progress |
-| `notify`  | Set a notification when a specific skin is available on your store |
-| `notifys`  | View skins you have set a notification for |
-| `notify_mode`  | Change notification mode `Specified skin` or `all skin` |
+| `notify add`  | Set a notification when a specific skin is available on your store |
+| `notify list`  | View skins you have set a notification for |
+| `notify mode`  | Change notification mode `Specified skin` or `all skin` |
+| `notify test`  | Testing notification |
 | `nightmarket`  | Shows your nightmarket |
 | `battlepass`  | View your battlepass' current tier |
+| `bundle`  | inspect a specific bundle `credit by Giorgio` |
+| `bundles`  | Show the current featured bundles `credit by Giorgio` |
+| `debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
 ## Special thanks
 
@@ -81,3 +86,9 @@ developer community for valorant api
 ### Support Me
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/staciax)
+
+<a href="https://tipme.in.th/renlyx">
+<img link="https://ko-fi.com/staciax" src="https://static.tipme.in.th/img/logo.f8267020b29b.svg" width="170" />
+</a>
+
+<!-- [![Tipme](https://static.tipme.in.th/img/logo.f8267020b29b.svg)](https://ko-fi.com/staciax) -->

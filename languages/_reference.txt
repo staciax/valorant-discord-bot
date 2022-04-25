@@ -1,0 +1,123 @@
+'en-US' american_english / # default
+'en-US' british_english / # default
+'zh-CN' chinese
+'zh-TW' taiwan_chinese
+'fr-FR' french
+'de-DE' german
+'it-IT' italian
+'ja-JP' japanese
+'ko-KR' korean
+'pl-PL' polish
+'pt-BR' portuguese_brazil
+'ru-RU' russian
+'es-ES' spanish
+'th-TH' thai /
+'tr-TR' turkish
+'vi-VN' vietnamese
+
+# REF FOR PULL REQUEST
+# Do not edit text in curly brackets. {}
+
+# NAME and DESCRIPTION will support in the future
+
+{
+    "commands": {
+        "login": {
+            "NAME": "login",
+            "DESCRIPTION": "Log in with your Riot acoount", 
+            "SUCCESS": "Successfully logged in",
+            "FAILED": "Failed to log in please try again"
+        },
+        "logout": {
+            "NAME": "logout",
+            "DESCRIPTION": "Logout and Delete your account from database",
+            "SUCCESS": "Successfully logged out!",
+            "FAILED": "Failed to logout, plz try again!"
+        },
+        "store": {
+            "NAME": "store",
+            "DESCRIPTION": "Shows your daily store in your accounts",
+            "RESPONSE": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "point": {
+            "NAME": "point",
+            "DESCRIPTION": "View your daily/weekly mission progress",
+            "POINT": "Points"
+        },
+        "mission": {
+            "NAME": "mission",
+            "DESCRIPTION": "View your daily/weekly mission progress",
+            "TITLE": "Mission",
+            "DAILY":"Daily",
+            "WEEKLY":"Weekly",
+            "NEWPLAYER":"New Player",
+            "NO_MISSION":"No missions available"
+        },
+        "nightmarket": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "Show skin offers on the nightmarket",
+            "RESPONSE": "NightMarket for **{username}** | Remaining {duration}",
+            "NIGMARKET_HAS_END": "Nightmarket has been ended"
+        },
+        "battlepass": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "View your battlepass current tier",
+            "RESPONSE": "**Next Reward:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT END:** {end}",
+            "TIER": "Tier",
+            "PLAYER_CARD": "Player Card",
+            "SPRAY": "Spray",
+            "BUDDY": "Buddie",
+            "POINT": "Point",
+            "PLAYER_TITLE": "Title",
+            "SKIN": "Skin"
+        },
+        "notify_add": {
+            "NAME": "notifys",
+            "DESCRIPTION": "Set a notification when a specific skin is available on your store"
+        },
+        "notify_list": {
+            "NAME": "notify_list",
+            "DESCRIPTION": "View skins you have set a for notification.",
+            "RESPONSE":""
+        },
+        "notify_mode": {
+            "NAME": "notify_mode",
+            "DESCRIPTION": "Change notification mode",
+            "RESPONSE":""
+        },
+        "notify_test": {
+            "NAME": "notify_test",
+            "DESCRIPTION": "Testing notification",
+            "RESPONSE":""
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "",
+            "RESPONSE_ALL": ""
+        }
+    
+    },
+    "errors": {
+        "UNKNOW_ERROR": "An unknown error occurred.",
+        "AUTH": {
+            "INVALID_PASSWORD": "Your username or password may be incorrect!",
+            "RATELIMIT": "Please wait a few minutes and try again.",
+            "COOKIES_EXPIRED": "Cookies is expired, plz /login again!",
+            "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
+            "2FA": "You have 2FA enabled!",
+            "2FA_EMAIL": "Riot sent a code to",
+            "2FA_INVALID_CODE": "Code is Invalid. Please `/login` again",
+            "REGION_NOT_FOUND": "An unknown error occurred, plz `/login` again",
+            "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "you're not registered!, plz `/login` to register!",
+            "FAILED_LOGIN": "Fail to login, plz try again!",
+            "LOGOUT_NOT_LOGIN": "I can't logout you if you're not registered!",
+            "LOGOUT_EXCEPT": "ไม่สามารถออกจากระบบคุณได้"
+        },
+        "API" : {
+            "FAILED": "Failed to activate API",
+            "REQUEST_FAILED": "API Response Failed !"
+        }
+    }
+}

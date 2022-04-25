@@ -1,68 +1,115 @@
 # Standard
 import os
+import traceback
+import aiohttp
 import discord
 from dotenv import load_dotenv
-from discord.ext import commands, tasks
+from typing import Union
+from discord import Embed, Interaction
+from discord.ext import commands
+from discord.app_commands import (
+    AppCommandError,
+    CommandInvokeError,
+    CommandNotFound,
+    MissingPermissions,
+    BotMissingPermissions
+)
+
+# Local
+from utils.valorant.db import DATABASE
+from utils.valorant.endpoint import API_ENDPOINT
+from utils.valorant.cache import get_cache
 
 load_dotenv()
 
-# Local
-from utils.json_loader import *
-from utils.cache import *
+initial_extensions = [
+    'cogs.valorant',
+    'cogs.notify'
+]  
 
-discord.http.API_VERSION = 9
+class ValorantBot(commands.Bot):
+    def __init__(self) -> None:
+        intents = discord.Intents.default()
+        intents.message_content = True
+        super().__init__(command_prefix='-', case_insensitive=True, intents=intents)
+        owner_id = os.getenv('OWNER_ID')
+        if owner_id is not None:
+            try:
+                self.owner_id = int(owner_id)
+            except ValueError:
+                pass
+        self.languages = {}
+        self.theme = 0xffffff
+        self.bot_version = '0.0.1a'
+        
+    async def load_cogs(self) -> None:
+        for ext in initial_extensions:
+            await self.load_extension(ext)
 
-bot = commands.Bot(case_insensitive = True)
-bot.format_version = 1
-
-@bot.event
-async def on_ready():
-    if not get_version.is_running():
-        get_version.start()
-        create_all_file(bot)
-
-        print(f'\nBot: {bot.user}')
-        print('\nCog loaded:')
-
-@tasks.loop(minutes=30)
-async def get_version():
-    bot.game_version = get_valorant_version()
-    update_cache(bot)
-
-@bot.event
-async def on_message(message):
-    # SETUP BOT
+    def setup_cache(self) -> None:
+        try:
+            open('data/cache.json')
+        except FileNotFoundError:
+            get_cache()
+              
+    async def setup_hook(self) -> None:
+        self.session = aiohttp.ClientSession()
+        
+        self.db = DATABASE()
+        self.endpoint = API_ENDPOINT(self.session)
+        
+        self.setup_cache()
+        await self.load_cogs()
+        
+    async def close(self) -> None:
+        await self.session.close()
+            
+    async def on_ready(self) -> None:     
+        await self.tree.sync()
+        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
     
-    cog: commands.Cog = bot.get_cog('valorant')
-    command  = cog.get_commands()
+bot = ValorantBot()
 
-    async def check_perm() -> bool:
-        if message.author.guild_permissions.administrator == True:
-            return True
-        await message.reply("You don't have **Administrator permission(s)** to run this command!", delete_after=30)
-        return False
+@bot.command()
+# @commands.is_owner()
+async def sync(ctx: commands.Context, sync_type: str):
+
+    if bot.owner_id is None:
+        if ctx.author.guild_permissions.administrator != True:
+            await ctx.reply("You don't have **Administrator permission(s)** to run this command!", delete_after=30)
+            return
+
+    try:
+        if sync_type == 'guild':
+            guild = discord.Object(id=ctx.guild.id)
+            bot.tree.copy_global_to(guild=guild)
+            await bot.tree.sync(guild=guild)
+            await ctx.reply(f"Synced guild !")
+        elif sync_type == 'global':
+            await bot.tree.sync()
+            await ctx.reply(f"Synced global !")
+    except discord.Forbidden:
+        await ctx.send("Bot don't have permission to sync. : https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png")
+    except discord.HTTPException:
+        await ctx.send('Failed to sync.', delete_after=30)
+
+@bot.tree.error
+async def tree_error_handler(interaction: Interaction, error: AppCommandError) -> None:
+    """ Handles errors for all application commands."""
+
+    if isinstance(error, CommandInvokeError):
+        error = error.original
+        traceback.print_exception(type(error), error, error.__traceback__)
+    elif isinstance(error, Union[CommandNotFound, MissingPermissions, BotMissingPermissions]):
+        error = error
+    else:
+        error = f"An unknown error occurred, sorry"
+        traceback.print_exception(type(error), error, error.__traceback__)
     
-    if message.content.startswith('-setup guild'):
-        if await check_perm():
-            msg = await message.reply('setting up . . .')
-            await bot.sync_commands(commands=command, guild_ids=[message.guild.id], register_guild_commands=True, force=True)
-            return await msg.edit('Setup in guild!')
+    embed = Embed(description=f'{str(error)[:2000]}', color=0xfe676e)
+    if interaction.response.is_done():
+        return await interaction.followup.send(embed=embed, ephemeral=True)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    if message.content.startswith('-unsetup guild'):
-        if await check_perm():
-            msg = await message.reply('unsetup guild . . . ')
-            await bot.sync_commands(commands=command, register_guild_commands=True, unregister_guilds=[message.guild.id], force=True)
-            await msg.edit('Unsetup in guild!')
-
-    if message.content.startswith('-setup global'):
-        if await check_perm():
-            await bot.register_commands(commands=command, guild_id=message.guild.id, force=True)
-            return await message.reply('Setup in global!')
-
-if __name__ == "__main__":
-
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
-            bot.load_extension(f'cogs.{file[:-3]}')
-
+if __name__ == '__main__':
     bot.run(os.getenv('TOKEN'))

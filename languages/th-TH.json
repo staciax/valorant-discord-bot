@@ -1,0 +1,101 @@
+{
+    "commands": {
+        "login": {
+            "NAME": "login",
+            "DESCRIPTION": "เข้าสู่ระบบด้วยบัญชี Riot",
+            "SUCCESS": "เข้าสู่ระบบสำเร็จ",
+            "FAILED": "เข้าสู่ระบบไม่สำเร็จ กรุณาลองอีกครั้ง"
+        },
+        "logout": {
+            "NAME": "logout",
+            "DESCRIPTION": "ออกจากระบบและลบบัญชีของคุณจากฐานข้อมูล",
+            "SUCCESS": "ออกจากระบบแล้ว",
+            "FAILED": "เกิดข้อผิดพลาดในการออกจากระบบ"
+        },
+        "store": {
+            "NAME": "store",
+            "DESCRIPTION": "ดูร้านค้ารายวัน",
+            "RESPONSE": "ร้านค้าของคุณ **{username}** | จะหมดเวลาภายใน {duration}"
+        },
+        "point": {
+            "NAME": "point",
+            "DESCRIPTION": "ดูจำนวนพอยท์ที่เหลือ",
+            "POINT": "จำนวนพอยท์ของคุณ"
+        },
+        "mission": {
+            "NAME": "mission",
+            "DESCRIPTION": "ดูความคืบหน้าเควสรายวัน/รายสัปดาห์ของคุณ",
+            "TITLE": "ความคืบหน้าเควส",
+            "DAILY":"เควสรายวัน",
+            "WEEKLY":"เควสรายสัปดาห์",
+            "NEWPLAYER":"เควสผู้เล่นใหม่",
+            "NO_MISSION":"คุณได้เควสทั้งหมดแล้ว"
+        },
+        "nightmarket": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "ดูตลาดกลางคืน",
+            "RESPONSE": "ร้านค้ากลางคืนของคุณ {username} | จะหมดเวลาภายใน {duration}",
+            "NIGMARKET_HAS_END": "Nightmarket สิ้นสุดแล้ว"
+        },
+        "battlepass": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "ดูความคืบหน้าของ battlepass",
+            "RESPONSE": "**รางวัลถัดไป:** {next}\n**ประเภท:** {type}\n**XP:** {xp}\n**สิ้นสุดใน:** {end}",
+            "TIER": "ระดับ",
+            "PLAYER_CARD": "การ์ดผู้เล่น",
+            "SPRAY": "สเปรย์",
+            "BUDDY": "บัดดี้",
+            "POINT": "พอยท์",
+            "PLAYER_TITLE": "ฉายา",
+            "SKIN": "สกิน"
+        },
+        "notify_add": {
+            "NAME": "notifys",
+            "DESCRIPTION": "",
+            "RESPONSE":""
+        },
+        "notify_list": {
+            "NAME": "notify_list",
+            "DESCRIPTION": "",
+            "RESPONSE":""
+        },
+        "notify_mode": {
+            "NAME": "notify_mode",
+            "DESCRIPTION": "",
+            "RESPONSE":""
+        },
+        "notify_test": {
+            "NAME": "notify_test",
+            "DESCRIPTION": "",
+            "RESPONSE":""
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** อยู่ในร้านค้าของคุณ!\nจะหมดเวลาภายใน {duration}",
+            "RESPONSE_ALL": "ร้านค้าของคุณ **{username}** | จะหมดเวลาภายใน {duration}"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "เกิดข้อผิดพลาดโดยไม่ทราบสาเหตุ",
+        "AUTH": {
+            "INVALID_PASSWORD": "ชื่อผู้ใช้หรือรหัสผ่านของคุณอาจไม่ถูกต้อง!",
+            "RATELIMIT": "คุณเข้าสู้ระบบบ่อยเกินไป โปรดรอสักครู่แล้วลองอีกครั้ง",
+            "COOKIES_EXPIRED": "คุกกี้หมดอายุ กรุณา `/login` เข้าสู่ระบบอีกครั้ง!",
+            "NO_NAME_TAG": "ผู้ใช้รายนี้ยังไม่ได้สร้างชื่อหรือแทค",
+            "2FA": "คุณได้เปิดใช้งาน 2FA!",
+            "2FA_EMAIL": "Riot ส่งรหัสไปที่ อีเมล",
+            "2FA_INVALID_CODE": "2FA โค้ดไม่ถูกต้อง โปรด `/login' อีกครั้ง",
+            "REGION_NOT_FOUND": "เกิดข้อผิดพลาดโดยไม่ทราบสาเหตุ โปรด `/login' อีกครั้ง",
+            "LOGIN_COOKIE_FAILED": "เข้าสู่ระบบด้วยคุกกี้ไม่สำเร็จ"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "คุณยังไม่ได้เข้าสู่ระบบ!, โปรด `/login' เพื่อลงเข้าสู่ระบบ!",
+            "FAILED_LOGIN": "ไม่สามารถเข้าสู่ระบบ กรุณาลองอีกครั้ง!",
+            "LOGOUT_NOT_LOGIN": "ไม่สามารถออกจากระบบคุณได้ หากคุณไม่ได้เข้าสู่ระบบ!",
+            "LOGOUT_EXCEPT": "เกิดข้อผิดพลาดในระหว่างออกจากระบบ"
+        },
+        "API" : {
+            "FAILED": "เกิดข้อผิดพลาดในการเชื่อมต่อ API โปรดลองอีกครั้ง",
+            "REQUEST_FAILED": "การตอบกลับ API ล้มเหลว โปรดลองอีกครั้ง"
+        }
+    }
+}
