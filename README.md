@@ -18,7 +18,7 @@ written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) 
 
 * Install requirements
 
-* Create the [discord bot](https://discord.com/developers/applications) and invite bot to server with scope `applications.commands`
+* **Create** the [discord bot](https://discord.com/developers/applications) and Enable Privileged Gateway Intents `MESSAGE CONTENT INTENT` then invite bot to server with scope `applications.commands`
 
 * Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
 
