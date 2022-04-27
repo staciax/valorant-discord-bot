@@ -1,0 +1,160 @@
+{   
+    "translation_by": "ꜱᴛᴀᴄɪᴀ.#7475",
+    "commands": {
+        "login": {
+            "NAME": "login",
+            "DESCRIPTION": "เข้าสู่ระบบด้วยบัญชี Riot",
+            "DESCRIBE": {
+                "username": "กรุณาใส่ username !",
+                "password": "กรุณาใส่ password!"
+            },
+            "SUCCESS": "เข้าสู่ระบบสำเร็จ",
+            "FAILED": "เข้าสู่ระบบไม่สำเร็จ กรุณาลองอีกครั้ง"
+        },
+        "logout": {
+            "NAME": "logout",
+            "DESCRIPTION": "ออกจากระบบและลบบัญชีของคุณจากฐานข้อมูล",
+            "SUCCESS": "ออกจากระบบแล้ว",
+            "FAILED": "เกิดข้อผิดพลาดในการออกจากระบบ"
+        },
+        "store": {
+            "NAME": "store",
+            "DESCRIPTION": "ดูร้านค้ารายวัน",
+            "DESCRIBE": {
+                "username": "กรุณาใส่ username! (เข้าสู่ระบบแบบชั่วคราวเท่านั้น)",
+                "password": "กรุณาใส่ password! (เข้าสู่ระบบแบบชั่วคราวเท่านั้น)"
+            },
+            "RESPONSE": "ร้านค้าของคุณ **{username}** | จะหมดเวลาภายใน {duration}"
+        },
+        "point": {
+            "NAME": "point",
+            "DESCRIPTION": "ดูจำนวนพอยท์ที่เหลือ",
+            "POINT": "จำนวนพอยท์ของคุณ"
+        },
+        "mission": {
+            "NAME": "mission",
+            "DESCRIPTION": "ดูความคืบหน้าเควสรายวัน/รายสัปดาห์ของคุณ",
+            "TITLE": "ความคืบหน้าเควส",
+            "DAILY":"เควสรายวัน",
+            "WEEKLY":"เควสรายสัปดาห์",
+            "NEWPLAYER":"เควสผู้เล่นใหม่",
+            "NO_MISSION":"คุณได้เควสทั้งหมดแล้ว"
+        },
+        "nightmarket": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "ดูตลาดกลางคืน",
+            "RESPONSE": "ร้านค้ากลางคืนของคุณ {username} | จะหมดเวลาภายใน {duration}",
+            "NIGMARKET_HAS_END": "Nightmarket สิ้นสุดแล้ว"
+        },
+        "battlepass": {
+            "NAME": "battlepass",
+            "DESCRIPTION": "ดูความคืบหน้าของ battlepass",
+            "RESPONSE": "**รางวัลถัดไป:** {next}\n**ประเภท:** {type}\n**XP:** {xp}\n**สิ้นสุดใน:** {end}",
+            "TIER": "ระดับ",
+            "PLAYER_CARD": "การ์ดผู้เล่น",
+            "SPRAY": "สเปรย์",
+            "BUDDY": "บัดดี้",
+            "POINT": "พอยท์",
+            "PLAYER_TITLE": "ฉายา",
+            "SKIN": "สกิน"
+        },
+        "notify_add": {
+            "NAME": "add",
+            "DESCRIPTION": "ตั้งค่าการแจ้งเตือนเมื่อมีสกินเข้ามาในร้านค้าของคุณ",
+            "DESCRIBE": {
+                "skin": "ชื่อสกินที่คุณต้องการเพิ่มไปยังแจ้งเตือน"
+            },
+            "SUCCESS": "เพิ่มสกิน {emoji} **{skin}** ไปยังแจ้งเตือน เรียบร้อยแล้ว",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** สกินนี้มีอยู่ในรายการแจ้งเตือนอยู่แล้ว",
+            "NOT_FOUND": "ไม่พบสกินนี้",
+            "REMOVE_NOTIFY": "ลบแจ้งเตือน",
+            "REMOVED_NOTIFY": "ลบแจ้งเตือน **{skin}** เรียบร้อยแล้ว"
+        },
+        "notify_list": {
+            "NAME": "list",
+            "DESCRIPTION": "ดูสกินที่คุณตั้งค่าไว้สำหรับการแจ้งเตือน",
+            "TITLE":"รายการแจ้งเตือนของคุณ",
+            "DONT_HAVE_NOTIFY": "คุณไม่มีการแจ้งเตือนใด ๆ",
+            "REMOVE_NOTIFY": "กดปุ่มเพื่อลบออกจากแจ้งเตือน"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "เปลี่ยนโหมดแจ้งเตือน",
+            "DESCRIBE": {
+                "mode": "เลือกโหมดที่ต้องการเปลี่ยน"
+            },
+            "SUCCESS":"เปลี่ยนโหมดการแจ้งเตือนของคุณเป็น **{mode}** สำเร็จแล้ว",
+            "TURN_OFF": "ปิดแจ้งเตือน"
+        },
+        "notify_test": {
+            "NAME": "test",
+            "DESCRIPTION": "ทดสอบแจ้งเตือน",
+            "NOTIFY_IS_WORKING":"โหมดแจ้งเตือนทำงานได้ปกติ",
+            "NOTIFY_TURN_OFF": "คุณไม่ได้เปิดโหมดแจ้งเตือน",
+            "EMPTY_LIST":"รายการแจ้งเตือนว่างเปล่า",
+            "BOT_MISSING_PERM": "**ฉันไม่มีสิทธิ์ในการส่งการแจ้งเตือนในช่องนี้!** \nตรวจสอบว่าบอทสามารถ `ดูช่องนี้`, `ส่งข้อความ`, `ฝังลิงก์` และ `ใช้งานอีโมจิจากภายนอก` ในช่องนี้ได้หรือไม่, หลังจากนั่น ลอง `/notify test`. ใหม่อีกครั่ง",
+            "FAILED_SEND_NOTIFY": "ฉันไม่สามารถส่งข้อความได้ โปรดลองอีกครั่ง"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** อยู่ในร้านค้าของคุณ!\nจะหมดเวลาภายใน {duration}",
+            "RESPONSE_ALL": "ร้านค้าของคุณ **{username}** | จะหมดเวลาภายใน {duration}"
+        },
+        "bundle": {
+            "NAME": "bundle",
+            "DESCRIPTION": "View your bundle progress",
+            "DESCRIBE": {
+                "bundle": "ชื่อคอลเลคชั่นที่คุณต้องการตรวจสอบ!"
+            },
+            "TITLE": "คอลเลคชั่น",
+            "DROPDOWN_CHOICE_TITLE": "เลือก คอลเลคชั่น:",
+            "NOT_FOUND_BUNDLE": "ไม่พบคอลเลคชั่น !"
+        },
+        "bundles": {
+            "NAME": "bundles",
+            "DESCRIPTION": "View your bundle progress",
+            "TITLE": "คอลเลคชั่นพิเศษ: {bundle}"
+        },
+        "debug": {
+            "NAME": "debug",
+            "DESCRIPTION": "คำสั่งแก้บัคของบอท",
+            "DESCRIBE": {
+                "bug": "เลือกบัคที่คุณต้องการแก้ไข",
+                "choice":{
+                    "skin_price_not_loading": "ราคาสกินไม่โหลด",
+                    "emoji_price_not_loading": "อีโมจิราคาไม่โหลด",
+                    "cache_price_not_loading": "แคชไม่หลด"
+                }
+            },
+            "SUCCESS": "แก้ไขบัค **{bug}** เรียบร้อยแล้ว"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "เกิดข้อผิดพลาดโดยไม่ทราบสาเหตุ",
+        "AUTH": {
+            "INVALID_PASSWORD": "ชื่อผู้ใช้หรือรหัสผ่านของคุณอาจไม่ถูกต้อง!",
+            "RATELIMIT": "คุณเข้าสู้ระบบบ่อยเกินไป โปรดรอสักครู่แล้วลองอีกครั้ง",
+            "COOKIES_EXPIRED": "คุกกี้หมดอายุ กรุณา `/login` เข้าสู่ระบบอีกครั้ง!",
+            "NO_NAME_TAG": "ผู้ใช้รายนี้ยังไม่ได้สร้างชื่อหรือแทค",
+            "REGION_NOT_FOUND": "เกิดข้อผิดพลาดโดยไม่ทราบสาเหตุ โปรด `/login` อีกครั้ง",
+            "LOGIN_COOKIE_FAILED": "เข้าสู่ระบบด้วยคุกกี้ไม่สำเร็จ",
+            "INPUT_2FA_CODE": "กรุณาใส่รหัส 2FA",
+            "2FA_ENABLE": "คุณได้เปิดใช้งาน 2FA!",
+            "2FA_TO_EMAIL": "Riot ส่งรหัสไปที่ อีเมล",
+            "2FA_INVALID_CODE": "2FA โค้ดไม่ถูกต้อง โปรด `/login` อีกครั้ง"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "คุณยังไม่ได้เข้าสู่ระบบ!, โปรด `/login` เพื่อลงเข้าสู่ระบบ!",
+            "LOGIN_ERROR": "ไม่สามารถเข้าสู่ระบบ กรุณาลองอีกครั้ง!",
+            "LOGOUT_ERROR": "ไม่สามารถออกจากระบบคุณได้ หากคุณไม่ได้เข้าสู่ระบบ!",
+            "LOGOUT_EXCEPT": "เกิดข้อผิดพลาดในระหว่างออกจากระบบ"
+        },
+        "API" : {
+            "FAILED_ACTIVE": "เกิดข้อผิดพลาดในการเชื่อมต่อ API โปรดลองอีกครั้ง",
+            "REQUEST_FAILED": "การตอบกลับ API ล้มเหลว โปรดลองอีกครั้ง"
+        },
+        "SETUP_EMOJI":{
+            "MISSING_PERM": "บอทไม่ได้รับอนุญาตให้สร้างอิโมจิ !",
+            "FAILED_CREATE_EMOJI": "ไม่สามารถสร้างอีโมจิได้ โปรดลองอีกครั้ง"
+        }
+    }
+}

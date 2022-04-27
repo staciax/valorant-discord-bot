@@ -32,12 +32,12 @@ class Auth:
     def __init__(self) -> None:
         self.user_agent = 'RiotClient/43.0.1.4195386.4190634 rso-auth (Windows;10;;Professional, x64)'
         
-        self.language = 'en-US' # default language
+        self.locale_code = 'en-US' # default language
         self.response = {} # prepare response for local response
 
     def local_response(self) -> LocalErrorResponse:
         '''This function is used to check if the local response is enabled.'''
-        self.response = LocalErrorResponse('AUTH', self.language)
+        self.response = LocalErrorResponse('AUTH', self.locale_code)
         return self.response
 
     async def authenticate(self, username: str, password: str) -> Optional[Dict]:
@@ -94,11 +94,15 @@ class Auth:
                 raise RuntimeError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
             
             WaitFor2FA = {"auth": "2fa", "cookie": cookies}
+
+            label_modal = local_response.get('INPUT_2FA_CODE')
             if data['multifactor']['method'] == 'email':
-                WaitFor2FA['message'] = f"{local_response.get('2FA_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                WaitFor2FA['message'] = f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                WaitFor2FA['label'] = label_modal
                 return WaitFor2FA
             
-            WaitFor2FA['message'] = local_response.get('2FA', 'You have 2FA enabled!')
+            WaitFor2FA['message'] = local_response.get('2FA_ENABLE', 'You have 2FA enabled!')
+            WaitFor2FA['label'] = label_modal
             return WaitFor2FA
 
         raise RuntimeError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))

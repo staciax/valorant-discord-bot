@@ -2,6 +2,7 @@ import discord
 import requests
 from io import BytesIO
 from discord.ext import commands
+from .local import LocalErrorResponse
 
 # ---------- URL AND REGION FORMAT ---------- # https://github.com/colinhartigan/
 
@@ -68,7 +69,10 @@ def url_to_image(url):
     if r.status_code in range(200, 299):
         return image_value
 
-async def setup_emoji(bot: commands.Bot, guild: discord.Guild):
+async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str):
+
+    response = LocalErrorResponse('SETUP_EMOJI', local_code)
+
     """Setup emoji"""
     for find_emoji in emoji_icon_assests.items():
         name = find_emoji[0]
@@ -78,8 +82,8 @@ async def setup_emoji(bot: commands.Bot, guild: discord.Guild):
             try:
                 emoji = await guild.create_custom_emoji(name=name, image=url_to_image(emoji_url))
             except discord.Forbidden:
-                raise RuntimeError(f'Missing permissions to create emoji !')
+                raise RuntimeError(response.get('MISSING_PERM'))
             except discord.HTTPException:
-                print(f'Failed to create emoji {name}')
+                print(response.get('FAILED_CREATE_EMOJI'))
                 continue
                 # raise RuntimeError(f'Failed to create emoji !')

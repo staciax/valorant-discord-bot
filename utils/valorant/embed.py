@@ -45,7 +45,7 @@ def embed_design_giorgio(skin: Dict, bot: commands.Bot) -> discord.Embed:
 def embed_store(player: str, offer: Dict, language: str, response: Dict, bot: commands.Bot) -> List[discord.Embed]:
     """Embed Store"""
 
-    msg_response = response.get('RESPONSE', 'Daily store for **{username}** | Remaining {duration}')
+    msg_response = response.get('RESPONSE')
 
     data = get_skin_list(offer, language)
 
@@ -65,11 +65,11 @@ def embed_mission(player:str, mission: Dict, language: str, response: Dict) -> d
     """Embed Mission"""
 
     # language
-    mission_lang = response.get('TITLE', 'Mission')
-    daily_lang = response.get('DAILY', 'Daily')
-    weekly_lang = response.get('WEEKLY', 'Weekly')
-    newplayer_lang = response.get('NEWPLAYER', 'New Player')
-    no_mission_lang = response.get('NO_MISSION', 'No missions available')
+    mission_lang = response.get('TITLE')
+    daily_lang = response.get('DAILY')
+    weekly_lang = response.get('WEEKLY')
+    newplayer_lang = response.get('NEWPLAYER')
+    no_mission_lang = response.get('NO_MISSION')
 
     # mission format
     data = get_mission_format(mission, language)
@@ -119,7 +119,7 @@ def embed_point(player:str, wallet: Dict, language: str, response: Dict, bot: co
     """Embed Point"""
 
     # language
-    title_point = response.get('POINT', 'Points')
+    title_point = response.get('POINT')
 
     cache = json_read('cache')
     point = cache['currencies']
@@ -160,7 +160,7 @@ def embed_nightmarket(player:str, offer: Dict, language: str, response: Dict) ->
     """Embed Nightmarket"""
 
     # language
-    msg_response = response.get('RESPONSE', 'NightMarket for **{username}** | Remaining {duration}')
+    msg_response = response.get('RESPONSE')
     
     night_mk = get_nightmarket(offer, language, response)    
     skins = night_mk['nightmarket']
@@ -181,8 +181,8 @@ def embed_battlepass(player:str, data: Dict, season: Dict, language: str, respon
     """Embed Battlepass"""
 
     # language
-    MSG_RESPONSE = response.get('RESPONSE', '**Next Reward:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT END:** {end}')
-    MSG_TIER = response.get('TIER', 'TIER')
+    MSG_RESPONSE = response.get('RESPONSE')
+    MSG_TIER = response.get('TIER')
 
     BTP = get_battlepass(data, season, language, response)
     
@@ -222,7 +222,8 @@ def notify_specified_send(uuid: str) -> discord.Embed:
     ...
 
 def notify_all_send(player:str, offer: Dict, language:str, response: Dict, bot: commands.Bot) -> discord.Embed:
-    description_format = response.get('RESPONSE_ALL', 'Daily store for **{username}** | Remaining {duration}')
+    
+    description_format = response.get('RESPONSE_ALL')
 
     data = get_skin_list(offer, language)
 

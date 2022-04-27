@@ -1,0 +1,9 @@
+'en-US' american_english / # default
+'en-US' british_english / # default
+'th' thai / # default
+'fr' French /  translate by ness#0452
+
+Look up the language code for your language in https://discord.com/developers/docs/reference#locales
+
+# Do not edit text in curly brackets. {}
+# NAME and DESCRIPTION and DESCRIBE will support in the future

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from .auth import Auth
 from .useful import json_read, json_save
 from .cache import fetch_price
+from .local import LocalErrorResponse, ResponseLanguage
 
 def timestamp_utc() -> datetime:
     return datetime.timestamp(datetime.utcnow())
@@ -31,20 +32,25 @@ class DATABASE:
         """ Insert cache """
         json_save('cache', data)
 
-    async def is_login(self, user_id: int, login: bool=False) -> Optional[Dict]:
+    async def is_login(self, user_id: int, response: Dict) -> Optional[Dict]:
         """Check if user is logged in"""
-        
+
         db = self.read_db()
         data = db.get(str(user_id), None)
 
+        login = False
+
         if data is None:
-            raise RuntimeError("you're not registered!, plz `/login` to register!")
+            raise RuntimeError(response.get('NOT_LOGIN'))
         elif login:
             return False
         return data
 
-    async def login(self, user_id: int, data: dict) -> Optional[Dict]:
+    async def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict]:
         """Login to database"""
+
+        # language
+        response = LocalErrorResponse('DATABASE', locale_code)
 
         db = self.read_db()
         auth = self.auth
@@ -80,29 +86,36 @@ class DATABASE:
             self.insert_user(db)
         except Exception as e:
             print(e)
-            raise RuntimeError(f'Fail to login, plz try again!')
+            raise RuntimeError(response.get('LOGIN_ERROR'))
         else:
             return {'auth': True, 'player': player_name}
     
-    def logout(self, user_id: int) -> Optional[bool]:
+    def logout(self, user_id: int, locale_code: str) -> Optional[bool]:
         """Logout from database"""
+
+        # language
+        response = LocalErrorResponse('DATABASE', locale_code)
+
+        print(response)
 
         try:
             db = self.read_db()
             del db[str(user_id)]
             self.insert_user(db)
         except KeyError:
-            raise RuntimeError("I can't logout you if you're not registered!") #LOGOUT_NOT_LOGIN
+            raise RuntimeError(response.get('LOGOUT_ERROR')) 
         except Exception as e:
             print(e)
-            raise RuntimeError("An error occurred while logging out.") #LOGOUT_EXCEPT
+            raise RuntimeError(response.get('LOGOUT_EXCEPT')) 
         else:
             return True
     
-    async def is_data(self, user_id:int) -> Optional[Dict]:
+    async def is_data(self, user_id:int, locale_code: str = 'en-US') -> Optional[Dict]:
         """Check if user is registered"""
 
-        auth = await self.is_login(user_id)  
+        response = LocalErrorResponse('DATABASE', locale_code)
+
+        auth = await self.is_login(user_id, response)  
         puuid = auth['puuid']
         region = auth['region']
         username = auth['username']
@@ -159,12 +172,14 @@ class DATABASE:
 
     def get_user_is_notify(self) -> Dict:
         """Get user is notify """
+        
         database = json_read('users')
         notifys = [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
         return notifys
 
     def insert_skin_price(self, skin_price: Dict, force=False) -> None:
         """Insert skin price to database"""
+        
         cache = self.read_cache()
         price = cache['prices']
         check_price = price.get('is_price', None)

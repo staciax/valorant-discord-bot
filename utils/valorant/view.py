@@ -15,15 +15,18 @@ from .useful import (
     get_item_by_type,
     get_bundle
 )
-from .resources import points as points_emoji, get_item_type
+from .resources import get_item_type
 from .db import DATABASE
+from .local import InteractionLanguage
 
 class NotifyView(discord.ui.View):
-    def __init__(self, user_id, uuid, name):
+    def __init__(self, user_id:int, uuid:str, name:str, response: Dict ):
         self.user_id = user_id
         self.uuid = uuid
         self.name = name
+        self.response = response
         super().__init__(timeout=600)
+        self.remove_notify.label = response.get('REMOVE_NOTIFY')
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id == int(self.user_id):
@@ -37,7 +40,7 @@ class NotifyView(discord.ui.View):
             await self.message.edit_original_message(view=self)
 
     @discord.ui.button(label='Remove Notify', emoji='✖️', style=discord.ButtonStyle.red)
-    async def remve_notify(self, interaction:discord.Interaction, button:discord.Button):
+    async def remove_notify(self, interaction:discord.Interaction, button:discord.Button):
         data = json_read('notifys')
         
         for i in range(len(data)):
@@ -47,9 +50,11 @@ class NotifyView(discord.ui.View):
         
         json_save('notifys', data)
 
-        self.remve_notify.disabled = True
+        self.remove_notify.disabled = True
         await interaction.response.edit_message(view=self)
-        await interaction.followup.send(f'**{self.name}** been removed from notify', ephemeral=True)
+
+        removed_notify = self.response.get('REMOVED_NOTIFY')
+        await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)
 
 class NotifyListButton(discord.ui.Button):
     def __init__(self, label, custom_id):
@@ -77,11 +82,12 @@ class NotifyListButton(discord.ui.Button):
         await self.view.interaction.edit_original_message(embed=embed, view=self.view)
 
 class NotifyViewList(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction):
+    def __init__(self, interaction: discord.Interaction, response: Dict):
         self.interaction = interaction
+        self.response = response
         self.bot: commands.Bot = getattr(interaction, "client", interaction._state._get_client())
         self.default_language = 'en-US'
-        super().__init__()
+        super().__init__(timeout=600)
     
     async def on_timeout(self) -> None:
         embed = discord.Embed(color=0x2F3136, description='🕙 Timeout')
@@ -124,12 +130,16 @@ class NotifyViewList(discord.ui.View):
         skin_list: dict = self.skin_source
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
-        embed = discord.Embed(description='\u200b', title='Your Notify:', color=0xfd4554)
-        embed.set_footer(text='Click button for remove')
+        title = self.response.get('TITLE')
+        embed = discord.Embed(description='\u200b', title=title, color=0xfd4554)
+
+        click_for_remove = self.response.get('REMOVE_NOTIFY')
 
         if len(skin_list) == 0:
-            embed.description = f"You don't have skin notify"
+            description =  self.response.get('DONT_HAVE_NOTIFY')
+            embed.description = description
         else:
+            embed.set_footer(text=click_for_remove)
             count = 0
             text_format = []
             for skin in skin_list:
@@ -155,12 +165,14 @@ class NotifyViewList(discord.ui.View):
 class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     '''Modal for riot login with 2 factor authentication'''
     
-    def __init__(self, interaction: Interaction, db: DATABASE, cookie: dict, message: str) -> None:
+    def __init__(self, interaction: Interaction, db: DATABASE, cookie: dict, message: str, label:str, response: Dict) -> None:
         super().__init__(timeout=600)
         self.interaction = interaction
         self.db = db
         self.cookie = cookie
+        self.response = response
         self.two2fa.placeholder = message
+        self.two2fa.label = label
     
     two2fa = ui.TextInput(
         label='Input 2FA Code',
@@ -185,28 +197,31 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             if not code.isdigit():
                 return await send_embed(f"`{code}` is not a number")
 
-            response = await auth.give2facode(code, cookie)
+            auth = await auth.give2facode(code, cookie)
 
-            if response['auth'] == 'response':
+            if auth['auth'] == 'response':
                 
-                login = await self.db.login(user_id, response)
+                login = await self.db.login(user_id, auth, self.interaction.locale)
                 if login['auth']:
-                    return await send_embed(f"Successfully logged in as **{login['player']}!**")
+                    return await send_embed(f"{self.response.get('SUCCESS')} **{login['player']}!**")
                 
                 return await send_embed(login['error'])
                 
-            elif response['auth'] == 'failed':
+            elif auth['auth'] == 'failed':
                 return await send_embed(login['error'])
     
     async def on_error(self, error: Exception, interaction: Interaction) -> None:
+        print(error)
         embed = Embed(description = 'Oops! Something went wrong.', color=0xfd4554)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # inspired by https://github.com/giorgi-o
 class BaseBundle(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, entries: Dict):
+    def __init__(self, interaction: discord.Interaction, entries: Dict, response: Dict, language: str) -> None:
         self.interaction = interaction
         self.entries = entries
+        self.response = response
+        self.language = language
         self.bot: commands.Bot = getattr(interaction, "client", interaction._state._get_client())
         self.current_page: int = 0
         self.embeds: List[List[discord.Embed]] = []
@@ -231,19 +246,22 @@ class BaseBundle(discord.ui.View):
     
         embeds_list = []
         embeds = []
-        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):
+
+        collection_title = self.response.get('TITLE')
+
+        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names'][self.language]), start=1):
             if index == selected_bundle:
-                embeds.append(discord.Embed(title=bundle['names']['en-US'] + " Collection", description=f"{vp_emoji} {bundle['price']}",color=0xfd4554).set_image(url=bundle['icon']))
+                embeds.append(discord.Embed(title=bundle['names'][self.language] + f" {collection_title}", description=f"{vp_emoji} {bundle['price']}",color=0xfd4554).set_image(url=bundle['icon']))
                 
                 for items in bundle['items']:
                     item = get_item_by_type(items['type'], items['uuid'])
                     item_type = get_item_type(items['type'])
 
-                    emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if items['type'] == 'Skin' else ''
+                    emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
                     icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
                     color = 0xfd4554 if item_type == 'Skins' else 0x0F1923
                 
-                    embed = self.base_embed(f"{emoji} {item['names']['en-US']}", f"{vp_emoji} {items['price']}", icon, color)
+                    embed = self.base_embed(f"{emoji} {item['names'][self.language]}", f"{vp_emoji} {items['price']}", icon, color)
                     embeds.append(embed)
 
                     if len(embeds) == 10:
@@ -258,9 +276,10 @@ class BaseBundle(discord.ui.View):
     def build_Featured_Bundle(self, bundle: List[Dict]) -> List[discord.Embed]:
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
-        name = bundle['names']['en-US']
+        name = bundle['names'][self.language]
 
-        embed = discord.Embed(title=f"Featured Bundle: {name} Collection", description=f"{vp_emoji} {bundle['price']}",color=0xfd4554).set_image(url=bundle['icon'])
+        featured_bundle_title = self.response.get('TITLE')
+        embed = discord.Embed(title=featured_bundle_title.format(bundle=name), description=f"{vp_emoji} **{bundle['price']}** ~~{bundle['base_price']}~~",color=0xfd4554).set_image(url=bundle['icon'])
 
         embed_list = []
 
@@ -270,10 +289,10 @@ class BaseBundle(discord.ui.View):
 
             item = get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
-            emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if items['type'] == 'Skin' else ''
+            emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
             icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
             color = 0xfd4554 if item_type == 'Skins' else 0x0F1923
-            embed = self.base_embed(f"{emoji} {item['names']['en-US']}", f"{vp_emoji} {items['price']}", icon, color)
+            embed = self.base_embed(f"{emoji} {item['names'][self.language]}", f"**{vp_emoji} {items['price']}** ~~{items['base_price']}~~", icon, color)
             embeds.append(embed)
 
             if len(embeds) == 10:
@@ -328,9 +347,15 @@ class BaseBundle(discord.ui.View):
             self.update_button()
             embeds = self.embeds[0]
             return await self.interaction.followup.send(embeds=embeds, view=self)
-        self.add_item(self.select_bundle)
-        self.build_select()
-        await self.interaction.followup.send('\u200b', view=self)
+        elif len(self.entries) != 0:
+            self.add_item(self.select_bundle)
+            placeholder = self.response.get('DROPDOWN_CHOICE_TITLE')
+            self.select_bundle.placeholder = placeholder
+            self.build_select()
+            return await self.interaction.followup.send('\u200b', view=self)
+        
+        not_found_bundle = self.response.get('NOT_FOUND_BUNDLE')
+        raise RuntimeError(not_found_bundle)
 
     async def start_furture(self):
         FBundle = self.entries['FeaturedBundle']['Bundle']

@@ -44,7 +44,7 @@ def fetch_skin() -> None:
                 'uuid': skinone['uuid'],
                 'names': skin['displayName'],
                 'icon': skinone['displayIcon'],
-                'tier': skin['contentTierUuid'],
+                'tier': skin['contentTierUuid']
             }
         data['skins'] = json
         json_save('cache', data)
@@ -273,28 +273,28 @@ def fetch_contracts() -> None:
         json_save('cache', data)
     session.close()
 
-def fetch_ranktiers(lang: str):
-    """ Fetch rank tiers from from valorant-api.com """
+# def fetch_ranktiers(lang: str):
+#     """ Fetch rank tiers from from valorant-api.com """
 
-    data = json_read('cache')
-    session = requests.session()
-    print('Fetching ranktiers !')
-    resp = session.get(f'https://valorant-api.com/v1/competitivetiers?language={lang}')
-    if resp.status_code == 200:
-        json = {}
-        for rank in resp.json()['data']:
-            for i in rank['tiers']:
-                json[i['tier']] = {
-                    'tier':i['tier'],
-                    'name':i['tierName'],
-                    'subname':i['divisionName'],
-                    'icon':i['largeIcon'],
-                    'rankup':i['rankTriangleUpIcon'],
-                    'rankdown':i['rankTriangleDownIcon'],
-                }
-        data['ranktiers'] = json
-        json_save('cache', data)
-    session.close()
+#     data = json_read('cache')
+#     session = requests.session()
+#     print('Fetching ranktiers !')
+#     resp = session.get(f'https://valorant-api.com/v1/competitivetiers?language={lang}')
+#     if resp.status_code == 200:
+#         json = {}
+#         for rank in resp.json()['data']:
+#             for i in rank['tiers']:
+#                 json[i['tier']] = {
+#                     'tier':i['tier'],
+#                     'name':i['tierName'],
+#                     'subname':i['divisionName'],
+#                     'icon':i['largeIcon'],
+#                     'rankup':i['rankTriangleUpIcon'],
+#                     'rankdown':i['rankTriangleDownIcon'],
+#                 }
+#         data['ranktiers'] = json
+#         json_save('cache', data)
+#     session.close()
 
 def fetch_currencies() -> None:
     """ Fetch currencies from valorant-api.com """
@@ -323,61 +323,61 @@ def fetch_buddies() -> None:
 
     print('Fetching buddies !')
 
-    r = session.get(f'https://valorant-api.com/v1/buddies?language=all')
-    if r.status_code == 200:
+    resp = session.get(f'https://valorant-api.com/v1/buddies?language=all')
+    if resp.status_code == 200:
         json = {}
-        for uuid in r.json()['data']:
-            buddy = uuid['levels'][0]
-            json[buddy['uuid']] = {
-                'uuid': buddy['uuid'],
-                'names': uuid['displayName'],
-                'icon': buddy['displayIcon']
+        for buddy in resp.json()['data']:
+            buddyone = buddy['levels'][0]
+            json[buddyone['uuid']] = {
+                'uuid': buddyone['uuid'],
+                'names': buddy['displayName'],
+                'icon': buddyone['displayIcon']
             }
         data['buddies'] = json
         json_save('cache', data)
     session.close()
 
-def fetch_price(data_price: dict) -> None:
+def fetch_price(data_price: Dict) -> None:
     """ Fetch the price of an skin """
 
     data = json_read('cache')
     prices = {}
-    for x in data_price['Offers']:
-        if x["OfferID"] in data['skins']:
-            *cost, = x["Cost"].values()
-            prices[x['OfferID']] = cost[0]
+    for skin in data_price['Offers']:
+        if skin["OfferID"] in data['skins']:
+            *cost, = skin["Cost"].values()
+            prices[skin['OfferID']] = cost[0]
     # prices['is_price'] = True
     data['prices'] = prices
     json_save('cache', data)
 
-def fetch_skinchromas() -> None:
-    """ Fetch skin chromas from valorant-api.com """
+# def fetch_skinchromas() -> None:
+#     """ Fetch skin chromas from valorant-api.com """
 
-    create_json('skinchromas', {})
+#     create_json('skinchromas', {})
 
-    data = json_read('skinchromas')
-    session = requests.session()
+#     data = json_read('skinchromas')
+#     session = requests.session()
 
-    print('Fetching season !')
+#     print('Fetching season !')
 
-    resp = session.get('https://valorant-api.com/v1/weapons/skinchromas?language=all')
-    if resp.status_code == 200:
-        json = {}
-        # json['version'] = get_valorant_version()
-        for chroma in resp.json()['data']:
-            json[chroma['uuid']] = {
-                'uuid': chroma['uuid'],
-                'names': chroma['displayName'],
-                'icon': chroma['displayIcon'],
-                'full_render': chroma['fullRender'],
-                'swatch': chroma['swatch'],
-                'video': chroma['streamedVideo'],
-            }
+#     resp = session.get('https://valorant-api.com/v1/weapons/skinchromas?language=all')
+#     if resp.status_code == 200:
+#         json = {}
+#         # json['version'] = get_valorant_version()
+#         for chroma in resp.json()['data']:
+#             json[chroma['uuid']] = {
+#                 'uuid': chroma['uuid'],
+#                 'names': chroma['displayName'],
+#                 'icon': chroma['displayIcon'],
+#                 'full_render': chroma['fullRender'],
+#                 'swatch': chroma['swatch'],
+#                 'video': chroma['streamedVideo'],
+#             }
 
-        data['chromas'] = json
-        json_save('skinchromas', data)
+#         data['chromas'] = json
+#         json_save('skinchromas', data)
 
-    session.close()
+#     session.close()
 
 def get_cache() -> None:
     """ Get all cache from valorant-api.com """

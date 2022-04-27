@@ -55,11 +55,12 @@ class Notify(commands.Cog):
                 
                 # language response
                 try:
-                    language = data['language']
+                    locale_code = data['locale_code']
                 except KeyError:
-                    language = 'en-US'
-                    
-                response = ResponseLanguage('notify_send', language)
+                    locale_code = 'en-US'
+                
+                language = InteractionLanguage(locale_code)
+                response = ResponseLanguage('notify_send', locale_code)
 
                 user_skin_list = [skin for skin in notify_data if skin['id'] == str(user_id)]
                 user_skin_list_uuid = [skin['uuid'] for skin in notify_data if skin['id'] == str(user_id)]
@@ -74,7 +75,11 @@ class Notify(commands.Cog):
                             name = skin['names'][language]
                             icon = skin['icon']
                             emoji = get_emoji_tier_by_bot(uuid, self.bot)
-                            embed = Embed(f"{emoji} **{name}** is in your daily store!\nRemaining {format_relative(datetime.utcnow() + timedelta(seconds=duration))}", color=0xfd4554)
+
+                            notify_send:str = response.get('RESPONSE_SPECIFIED')
+                            duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
+
+                            embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xfd4554)
                             embed.set_thumbnail(url=icon)
                             view = NotifyView(user_id, uuid, name)
                             view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
@@ -98,9 +103,10 @@ class Notify(commands.Cog):
                 continue
 
     @tasks.loop(time=time(hour=0, minute=0, second=10)) #utc 00:00:15
+    # @tasks.loop(seconds=10)
     async def notifys(self) -> None:
-        __verify_time = datetime.utcnow()
-        if __verify_time.hour == 0 and __verify_time.minute <= 10:
+        # __verify_time = datetime.utcnow()
+        # if __verify_time.hour == 0 and __verify_time.minute <= 10:
             await self.send_notify()
         
     @notifys.before_loop
@@ -116,7 +122,7 @@ class Notify(commands.Cog):
 
         # language
         language = InteractionLanguage(interaction.locale)
-        # response = ResponseLanguage(interaction.command.name, language)
+        response = ResponseLanguage('notify_add', interaction.locale)
 
         # check file if or not
         create_json('notifys', [])
@@ -142,7 +148,8 @@ class Notify(commands.Cog):
 
             for skin in notify_data:
                 if skin['id'] == str(interaction.user.id) and skin['uuid'] == skin_uuid:
-                    raise RuntimeError(f'{emoji} **{name}** is already in your Notify')
+                    skin_already = response.get('SKIN_ALREADY_IN_LIST')
+                    raise RuntimeError(skin_already.format(emoji=emoji, skin=name))
 
             payload = {"id": str(interaction.user.id), "uuid": skin_uuid, "channel_id": interaction.channel.id}
 
@@ -160,10 +167,11 @@ class Notify(commands.Cog):
                 userdata[str(interaction.user.id)]['notify_mode'] = 'Specified'
                 json_save('users', userdata)
 
-            embed = Embed(f'Successfully set an notify for the {emoji} **{name}**')
+            success = response.get('SUCCESS')
+            embed = Embed(success.format(emoji=emoji, skin=name))
             embed.set_thumbnail(url=icon)
 
-            view = NotifyView(interaction.user.id, uuid, name)
+            view = NotifyView(interaction.user.id, uuid, name, response)
             await interaction.response.send_message(embed=embed, view=view)
             return
 
@@ -174,31 +182,34 @@ class Notify(commands.Cog):
         
         # language
         language = InteractionLanguage(interaction.locale)
-        # response = ResponseLanguage(interaction.command.name, language)
+        response = ResponseLanguage('notify_list', interaction.locale)
 
         await self.db.is_data(interaction.user.id) # check if user is in db
-        view = NotifyViewList(interaction)
+        view = NotifyViewList(interaction, response)
         await view.start()
 
     @notify.command(name='mode', description='Change notification mode')
-    @app_commands.describe(mode='Choose notification')
+    @app_commands.describe(mode='Select the mode you want to change.')
     async def notify_mode(self, interaction: Interaction, mode: Literal['Specified Skin','All Skin', 'Off']) -> None:
         
         # language
         language = InteractionLanguage(interaction.locale)
-        # response = ResponseLanguage(interaction.command.name, language)
+        response = ResponseLanguage('notify_mode', interaction.locale)
  
-        await self.db.is_login(interaction.user.id) # check if user is logged in
+        await self.db.is_login(interaction.user.id, interaction.locale) # check if user is logged in
         self.db.check_notify_list(interaction.user.id) # check total notify list
         self.db.change_notify_mode(interaction.user.id, mode, interaction.channel_id) # change notify mode
 
-        embed = Embed(f'Successfully changed your notification mode to **{mode}**')
+        success = response.get("SUCCESS")
+        turn_off = response.get("TURN_OFF")
+
+        embed = Embed(success.format(mode=mode))
         if mode == 'Specified Skin':
             embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
         elif mode == 'All Skin':
             embed.set_image(url='https://i.imgur.com/Gedqlzc.png')
         elif mode == 'Off':
-            embed.description = 'Turn off notification mode'
+            embed.description = turn_off
         
         await interaction.response.send_message(embed=embed)
     
@@ -206,10 +217,10 @@ class Notify(commands.Cog):
     async def notify_test(self, interaction: Interaction) -> None:
 
         # language
-        # language = InteractionLanguage(interaction.locale)
-        # response = ResponseLanguage(interaction.command.name, language)
-        language = 'en-US'
-        response = ResponseLanguage('notify_send', language)
+        language = InteractionLanguage(interaction.locale)
+        response_test = ResponseLanguage('notify_test', interaction.locale)
+        response_send = ResponseLanguage('notify_send', interaction.locale)
+        response_add = ResponseLanguage('notify_add', interaction.locale)
 
         await interaction.response.defer()
 
@@ -225,7 +236,8 @@ class Notify(commands.Cog):
         user_skin_list = [skin for skin in notify_data if skin['id'] == str(interaction.user.id)]
         
         if len(user_skin_list) == 0:
-            raise RuntimeError("No skin set for notification")
+            empty_list = response_test.get('EMPTY_LIST')
+            raise RuntimeError(empty_list)
         
         try:
             if data['notify_mode'] == 'Specified':
@@ -236,27 +248,37 @@ class Notify(commands.Cog):
                     name = skin['names'][language]
                     icon = skin['icon']
                     emoji = get_emoji_tier_by_bot(uuid, self.bot)
-                    embed = Embed(f"{emoji} **{name}** is in your daily store!\nRemaining {format_relative(datetime.utcnow() + timedelta(seconds=duration))}", color=0xfd4554)
+
+                    notify_send:str = response_send.get('RESPONSE_SPECIFIED')
+                    duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
+
+                    embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xfd4554)
                     embed.set_thumbnail(url=icon)
-                    view = NotifyView(interaction.user.id, uuid, name)
+                    view = NotifyView(interaction.user.id, uuid, name, response_add)
                     view.message = await channel.send(content=f'||{interaction.user.mention}||', embed=embed, view=view)
                     break
-                await interaction.followup.send(Embed(f'Notification is working'))
             
             elif data['notify_mode'] == 'All':
                 channel = self.bot.get_channel(int(data['notify_channel']))
-                embeds = notify_all_send(endpoint.player, offer, language, response, self.bot)
+                embeds = notify_all_send(endpoint.player, offer, language, response_send, self.bot)
                 await channel.send(content=f'||{interaction.user.mention}||', embeds=embeds)
-                await interaction.followup.send(embed=Embed(f'Notification is working'))
-
+             
             else:
-                await interaction.followup.send(embed=Embed(f"You're not turn on notification mode"))
-        
-        except (HTTPException, Forbidden):
-            raise RuntimeError("Notification failed or bot don't have permission to send message")
+                notify_turn_off = response_test.get('NOTIFY_TURN_OFF')
+                raise RuntimeError(notify_turn_off)
+        except Forbidden:
+            bot_missing_perm = response_test.get('BOT_MISSING_PERM')
+            raise RuntimeError(bot_missing_perm)
+        except HTTPException:
+            failed_to_send = response_test.get('FAILED_SEND_NOTIFY')
+            raise RuntimeError(failed_to_send)
         except Exception as e:
             print(e)
-            raise RuntimeError("Notification failed")
+            failed_to_send = response_test.get('FAILED_SEND_NOTIFY')
+            raise RuntimeError(f"{failed_to_send} - {e}")
+        else:
+            notify_is_working = response_test.get('NOTIFY_IS_WORKING')
+            await interaction.followup.send(embed=Embed(notify_is_working, color=0x77dd77))
 
 async def setup(bot) -> None:
     await bot.add_cog(Notify(bot))

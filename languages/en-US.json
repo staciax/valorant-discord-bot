@@ -1,0 +1,160 @@
+{   
+    "translation_by": "ꜱᴛᴀᴄɪᴀ.#7475",
+    "commands": {
+        "login": {
+            "NAME": "login",
+            "DESCRIPTION": "Log in with your Riot acoount", 
+            "DESCRIBE": {
+                "username": "กรุณาใส่ username!",
+                "password": "กรุณาใส่ password!"
+            },
+            "SUCCESS": "Successfully logged in",
+            "FAILED": "Failed to log in please try again"
+        },
+        "logout": {
+            "NAME": "logout",
+            "DESCRIPTION": "Logout and Delete your account from database",
+            "SUCCESS": "Successfully logged out!",
+            "FAILED": "Failed to logout, please try again!"
+        },
+        "store": {
+            "NAME": "store",
+            "DESCRIPTION": "Shows your daily store in your accounts",
+            "DESCRIBE": {
+                "username": "Input username! (temporary login)",
+                "password": "Input username! (temporary login)"
+            },
+            "RESPONSE": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "point": {
+            "NAME": "point",
+            "DESCRIPTION": "View your daily/weekly mission progress",
+            "POINT": "Points"
+        },
+        "mission": {
+            "NAME": "mission",
+            "DESCRIPTION": "View your daily/weekly mission progress",
+            "TITLE": "Mission",
+            "DAILY":"Daily",
+            "WEEKLY":"Weekly",
+            "NEWPLAYER":"New Player",
+            "NO_MISSION":"No missions available"
+        },
+        "nightmarket": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "Show skin offers on the nightmarket",
+            "RESPONSE": "NightMarket for **{username}** | Remaining {duration}",
+            "NIGMARKET_HAS_END": "Nightmarket has been ended"
+        },
+        "battlepass": {
+            "NAME": "battlepass",
+            "DESCRIPTION": "View your battlepass current tier",
+            "RESPONSE": "**Next Reward:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT END:** {end}",
+            "TIER": "Tier",
+            "PLAYER_CARD": "Player Card",
+            "SPRAY": "Spray",
+            "BUDDY": "Buddie",
+            "POINT": "Point",
+            "PLAYER_TITLE": "Title",
+            "SKIN": "Skin"
+        },
+        "notify_add": {
+            "NAME": "add",
+            "DESCRIPTION": "Set a notification when a specific skin is available on your store",
+            "DESCRIBE": {
+                "skin": "The name of the skin you want to notify"
+            },
+            "SUCCESS": "Successfully set an notify for the {emoji} **{skin}**",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** is already added to your notification list",
+            "NOT_FOUND": "Skin is not found",
+            "REMOVE_NOTIFY": "Remove Notify",
+            "REMOVED_NOTIFY": "**{skin}** been removed from notify"
+        },
+        "notify_list": {
+            "NAME": "list",
+            "DESCRIPTION": "View skins you have set a for notification.",
+            "TITLE":"Your Notify List",
+            "DONT_HAVE_NOTIFY": "You don't have any notification",
+            "REMOVE_NOTIFY": "Click button for remove from notify"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "Change notification mode",
+            "DESCRIBE": {
+                "mode": "The mode you want to change to"
+            },
+            "SUCCESS":"Successfully changed your notification mode to **{mode}**",
+            "TURN_OFF": "Turn off notification mode"
+        },
+        "notify_test": {
+            "NAME": "test",
+            "DESCRIPTION": "Testing notification",
+            "NOTIFY_IS_WORKING": "Notification is working",
+            "NOTIFY_TURN_OFF": "You're not turn on notification mode",
+            "EMPTY_LIST":"Notify list is empty",
+            "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
+            "FAILED_SEND_NOTIFY": "Failed to send notification, please try again"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store!\nRemaining {duration}",
+            "RESPONSE_ALL": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "bundle": {
+            "NAME": "bundle",
+            "DESCRIPTION": "View your bundle progress",
+            "DESCRIBE": {
+                "bundle": "The name of the bundle you want to inspect!"
+            },
+            "TITLE": "Collection",
+            "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
+            "NOT_FOUND_BUNDLE": "Not found any bundle"
+        },
+        "bundles": {
+            "NAME": "bundles",
+            "DESCRIPTION": "View your bundle progress",
+            "TITLE": "Featured Bundle: {bundle} Collection"
+        },
+        "debug": {
+            "NAME": "debug",
+            "DESCRIPTION": "The command debug for the bot",
+            "DESCRIBE": {
+                "bug": "The bug you want to fix.",
+                "choice":{
+                    "skin_price_not_loading": "Skin price not loading",
+                    "emoji_price_not_loading": "Emoji not loading",
+                    "cache_price_not_loading": "Cache not loading"
+                }
+            },
+            "SUCCESS": "Successfully debuged: **{bug}**"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "An unknown error occurred.",
+        "AUTH": {
+            "INVALID_PASSWORD": "Your username or password may be incorrect!",
+            "RATELIMIT": "Please wait a few minutes and try again.",
+            "COOKIES_EXPIRED": "Cookies is expired, please `/login` again!",
+            "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
+            "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again",
+            "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
+            "INPUT_2FA_CODE": "Input 2FA code!",
+            "2FA_ENABLE": "You have 2FA enabled!",
+            "2FA_TO_EMAIL": "Riot sent a code to",
+            "2FA_INVALID_CODE": "Code is Invalid. Please `/login` again"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "you're not registered!, please `/login` to register!",
+            "LOGIN_ERROR": "Fail to login, please try again!",
+            "LOGOUT_ERROR": "I can't logout you if you're not registered!",
+            "LOGOUT_EXCEPT": "An error occurred while logging out."
+        },
+        "API" : {
+            "FAILED_ACTIVE": "Failed to activate API",
+            "REQUEST_FAILED": "API Response Failed !"
+        },
+        "SETUP_EMOJI":{
+            "MISSING_PERM": "I doesn't have permission to create emoji !",
+            "FAILED_CREATE_EMOJI": "I Can't create emoji please try again"
+        }
+    }
+}

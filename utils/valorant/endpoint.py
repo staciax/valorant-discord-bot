@@ -13,6 +13,7 @@ from .resources import (
     base_endpoint_shared
 )
 from .auth import Auth
+from .local import LocalErrorResponse
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -35,6 +36,9 @@ class API_ENDPOINT:
         # client platform
         self.client_platform = 'ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9'
         
+        # language
+        self.locale_code = 'en-US'
+
     async def activate(self, auth: Dict) -> None:
         '''activate api'''
     
@@ -45,10 +49,16 @@ class API_ENDPOINT:
             self.puuid = auth['puuid']
             self.region = auth['region']
             self.player = auth['player_name']
+            self.locale_code = auth.get('locale_code', 'en-US')
             self.__format_region()
             self.__build_urls()
         except:
-            raise RuntimeError('Failed to activate API')
+            raise RuntimeError(self.response.get('FAILED_ACTIVE'))
+
+    def locale_response(self) -> LocalErrorResponse:
+        '''This function is used to check if the local response is enabled.'''
+        self.response = LocalErrorResponse('API', self.locale_code)
+        return self.response
 
     # async def refresh_token(self) -> None:
         # cookies = self.cookie
@@ -57,6 +67,8 @@ class API_ENDPOINT:
         # self.__build_headers()
         
     async def fetch(self, endpoint: str='/', url: str='pd', errors: Dict={}) -> Dict:
+
+        self.locale_response()
         endpoint_url = getattr(self, url)
         
         data = None
@@ -71,12 +83,15 @@ class API_ENDPOINT:
             return data
 
         if data["httpStatus"] == 400:
-            raise RuntimeError(f"{data}") #COOKIE EXPIRED
+            response = LocalErrorResponse('AUTH', self.locale_code)
+            raise RuntimeError(response.get('COOKIES_EXPIRED')) 
             # await self.refresh_token()
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
     async def put(self, endpoint: str="/", url: str='pd', body: Dict={}, errors: Dict={}) -> Dict:
     
+        self.locale_response()
+
         body = body if type(body) is list else json.dumps(body)
 
         endpoint_url = getattr(self, url)
@@ -88,7 +103,7 @@ class API_ENDPOINT:
         if data is not None:
             return data
         else:
-            raise RuntimeError("API Response Failed !")
+            raise RuntimeError(self.response.get('REQUEST_FAILED'))
 
     # contracts endpoints
 
