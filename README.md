@@ -18,7 +18,7 @@ written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) 
 
 * Install requirements
 
-* **Create** the [discord bot](https://discord.com/developers/applications) and Enable Privileged Gateway Intents `MESSAGE CONTENT INTENT` then invite bot to server with scope `applications.commands`
+* **Create** the [discord bot](https://discord.com/developers/applications) and **Enable Privileged Gateway Intents** [`MESSAGE CONTENT INTENT`](https://i.imgur.com/TiiaYR9.png) then invite bot to server with scope [`applications.commands`](https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png)
 
 * Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
 
@@ -33,7 +33,7 @@ pip install requests
 pip install python-dotenv
 ```
 
-* Store discord bot token in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
+* Store discord bot token and owner ID in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
 ```
 TOKEN='INPUT DISCORD TOKEN HERE'
 OWNER_ID='INPUT YOUR DISCORD ID'
@@ -49,20 +49,20 @@ python bot.py
 
 | Command                       | Action                                                                                                     |
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `store`  | Shows your daily store |
-| `point`  | Shows your valorant point |
-| `login`  | Log in with your Riot acoount |
-| `logout`  | Logout your Riot acoount |
-| `misson`  | View your daily/weekly mission progress |
-| `notify add`  | Set a notification when a specific skin is available on your store |
-| `notify list`  | View skins you have set a notification for |
-| `notify mode`  | Change notification mode `Specified skin` or `all skin` |
-| `notify test`  | Testing notification |
-| `nightmarket`  | Shows your nightmarket |
-| `battlepass`  | View your battlepass' current tier |
-| `bundle`  | inspect a specific bundle `credit by Giorgio` |
-| `bundles`  | Show the current featured bundles `credit by Giorgio` |
-| `debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
+| `/store`  | Shows your daily store |
+| `/point`  | Shows your valorant point |
+| `/login`  | Log in with your Riot acoount |
+| `/logout`  | Logout your Riot acoount |
+| `/misson`  | View your daily/weekly mission progress |
+| `/notify add`  | Set a notification when a specific skin is available on your store |
+| `/notify list`  | View skins you have set a notification for |
+| `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
+| `/notify test`  | Testing notification |
+| `/nightmarket`  | Shows your nightmarket |
+| `/battlepass`  | View your battlepass' current tier |
+| `/bundle`  | inspect a specific bundle `credit by Giorgio` |
+| `/bundles`  | Show the current featured bundles `credit by Giorgio` |
+| `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
 ## Translations (credit by [giorgio](https://github.com/giorgi-o))
 
