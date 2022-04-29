@@ -69,7 +69,7 @@ def url_to_image(url):
     if r.status_code in range(200, 299):
         return image_value
 
-async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str):
+async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str, force=False):
 
     response = LocalErrorResponse('SETUP_EMOJI', local_code)
 
@@ -82,7 +82,9 @@ async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str):
             try:
                 emoji = await guild.create_custom_emoji(name=name, image=url_to_image(emoji_url))
             except discord.Forbidden:
-                raise RuntimeError(response.get('MISSING_PERM'))
+                if force:
+                    raise RuntimeError(response.get('MISSING_PERM'))
+                continue
             except discord.HTTPException:
                 print(response.get('FAILED_CREATE_EMOJI'))
                 continue

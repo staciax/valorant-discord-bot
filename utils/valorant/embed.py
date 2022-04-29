@@ -65,11 +65,14 @@ def embed_mission(player:str, mission: Dict, language: str, response: Dict) -> d
     """Embed Mission"""
 
     # language
-    mission_lang = response.get('TITLE')
-    daily_lang = response.get('DAILY')
-    weekly_lang = response.get('WEEKLY')
-    newplayer_lang = response.get('NEWPLAYER')
-    no_mission_lang = response.get('NO_MISSION')
+    title_mission = response.get('TITLE')
+    title_daily = response.get('DAILY')
+    title_weekly = response.get('WEEKLY')
+    title_newplayer = response.get('NEWPLAYER')
+    clear_all_mission = response.get('NO_MISSION')
+    reset_in = response.get('DAILY_RESET')
+    refill_in = response.get('REFILLS')
+
 
     # mission format
     data = get_mission_format(mission, language)
@@ -86,30 +89,31 @@ def embed_mission(player:str, mission: Dict, language: str, response: Dict) -> d
 
     weekly_end_time = ''
     with contextlib.suppress(Exception):
-        weekly_end_time = f"Refills {format_relative(iso_to_time(weekly_end))}"
+        weekly_end_time = f"{refill_in.format(duration=format_relative(iso_to_time(weekly_end)))}"
 
-    embed = Embed(title=f"**{mission_lang}**")
+    embed = Embed(title=f"**{title_mission}**")
     embed.set_footer(text=player)
     if len(daily) != 0:
         embed.add_field(
-            name=f"**{daily_lang}**",
-            value=f"{daily}\nEnd(s) at {format_relative(iso_to_time(daily_end))}",
+            name=f"**{title_daily}**",
+            value=f"{daily}\n{reset_in.format(duration=format_relative(iso_to_time(daily_end)))}",
             inline=False
         )
     if len(weekly) != 0:
         embed.add_field(
-            name=f"**{weekly_lang}**",
+            name=f"**{title_weekly}**",
             value=f"{weekly}\n\n{weekly_end_time}",
             inline=False
         )
     if len(newplayer) != 0:
         embed.add_field(
-            name=f"**{newplayer_lang}**",
+            name=f"**{title_newplayer}**",
             value=f"{newplayer}",
             inline=False
         )
     if len(embed.fields) == 0:
-        embed.description = no_mission_lang
+        embed.color = 0x77dd77
+        embed.description = clear_all_mission
     
     return embed
 

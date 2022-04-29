@@ -17,10 +17,9 @@ from .useful import (
 )
 from .resources import get_item_type
 from .db import DATABASE
-from .local import InteractionLanguage
 
 class NotifyView(discord.ui.View):
-    def __init__(self, user_id:int, uuid:str, name:str, response: Dict ):
+    def __init__(self, user_id:int, uuid:str, name:str, response: Dict) -> None:
         self.user_id = user_id
         self.uuid = uuid
         self.name = name
@@ -34,7 +33,7 @@ class NotifyView(discord.ui.View):
         await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
         return False
 
-    async def on_timeout(self):
+    async def on_timeout(self) -> None:
         with contextlib.suppress(Exception):
             self.remve_notify.disabled = True
             await self.message.edit_original_message(view=self)
@@ -57,7 +56,7 @@ class NotifyView(discord.ui.View):
         await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)
 
 class NotifyListButton(discord.ui.Button):
-    def __init__(self, label, custom_id):
+    def __init__(self, label, custom_id) -> None:
         super().__init__(
             label=label,
             style=discord.enums.ButtonStyle.red,
@@ -82,7 +81,7 @@ class NotifyListButton(discord.ui.Button):
         await self.view.interaction.edit_original_message(embed=embed, view=self.view)
 
 class NotifyViewList(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, response: Dict):
+    def __init__(self, interaction: discord.Interaction, response: Dict) -> None:
         self.interaction = interaction
         self.response = response
         self.bot: commands.Bot = getattr(interaction, "client", interaction._state._get_client())
@@ -99,16 +98,16 @@ class NotifyViewList(discord.ui.View):
         await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
         return False
 
-    def update_button(self):
+    def update_button(self) -> None:
         self.clear_items()
         self.create_button()
 
-    def create_button(self):
+    def create_button(self) -> None:
         data = self.skin_source
         for index, skin in enumerate(data, start=1):
             self.add_item(NotifyListButton(label=index, custom_id=skin))
 
-    def get_data(self):
+    def get_data(self) -> None:
         database = json_read('notifys')
         notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]
         skin_source:dict = {}
@@ -156,7 +155,7 @@ class NotifyViewList(discord.ui.View):
         
         return embed
     
-    async def start(self):
+    async def start(self) -> Awaitable[None]:
         self.get_data()
         self.create_button()
         embed = self.main_embed()
@@ -229,7 +228,7 @@ class BaseBundle(discord.ui.View):
         super().__init__()
         self.clear_items()
         
-    def fill_items(self, force=False):
+    def fill_items(self, force=False) -> None:
         self.clear_items()
         if len(self.embeds) > 1 or force:
             self.add_item(self.back_button)
@@ -240,7 +239,7 @@ class BaseBundle(discord.ui.View):
         embed.set_thumbnail(url=icon)
         return embed
 
-    def build_embeds(self, selected_bundle: int = 1):
+    def build_embeds(self, selected_bundle: int = 1) -> None:
 
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
     
@@ -304,7 +303,7 @@ class BaseBundle(discord.ui.View):
 
         return embed_list
 
-    def build_select(self):
+    def build_select(self) -> None:
         for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):
             self.select_bundle.add_option(label=bundle['names']['en-US'], value=index)
 
@@ -330,7 +329,7 @@ class BaseBundle(discord.ui.View):
         self.update_button()
         await interaction.response.edit_message(embeds=embeds, view=self)
 
-    def update_button(self):
+    def update_button(self) -> None:
         self.next_button.disabled = self.current_page == len(self.embeds) - 1
         self.back_button.disabled = self.current_page == 0
 
@@ -340,7 +339,7 @@ class BaseBundle(discord.ui.View):
         await interaction.response.send_message('This menus cannot be controlled by you, sorry!', ephemeral=True)
         return False
         
-    async def start(self):
+    async def start(self) -> Awaitable[None]:
         if len(self.entries) == 1:
             self.build_embeds()
             self.fill_items()
@@ -357,7 +356,7 @@ class BaseBundle(discord.ui.View):
         not_found_bundle = self.response.get('NOT_FOUND_BUNDLE')
         raise RuntimeError(not_found_bundle)
 
-    async def start_furture(self):
+    async def start_furture(self) -> Awaitable[None]:
         FBundle = self.entries['FeaturedBundle']['Bundle']
 
         bundle_payload = {

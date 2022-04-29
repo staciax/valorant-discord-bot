@@ -59,17 +59,6 @@ def json_save(filename: str, data: Dict) -> None:
         create_json(filename, {})
         return json_save(filename, data)
     
-def setting_read():
-    """Read settings"""
-    try:
-        with open("settings.json", "r", encoding='utf-8') as json_file:
-            data = json.load(json_file)
-    except FileNotFoundError:
-        from .cache import create_json
-        create_json('settings', {})
-        return setting_read()
-    return data
-
 # ---------- GET DATA ---------- #
 
 def get_item_by_type(Itemtype: str, uuid: str) -> Dict:
@@ -166,9 +155,9 @@ def get_season_by_content(content: Dict) -> Tuple[str, str]:
         season_id = season_data[0]['ID']
         season_end = iso_to_time(season_data[0]['EndTime'])
         
-    except (IndexError, KeyError):
-        season_id = 'd929bc38-4ab6-7da4-94f0-ee84f8ac141e'
-        season_end = datetime(2022, 4, 26, 17, 0, 0)
+    except (IndexError, KeyError, TypeError):
+        season_id = 'd80f3ef5-44f5-8d70-6935-f2840b2d3882'
+        season_end = datetime(2022, 6, 22, 17, 0, 0)
     
     return {'id': season_id, 'end': season_end}
 
@@ -420,7 +409,7 @@ def get_btp_info(contracts: Dict, data_contracts: Dict, season_id: str, language
     
     return {"success": False, "error": "Failed to get battlepass info"}
 
-def get_battlepass(data: Dict, season: str, language: str, response) -> Dict:
+def get_battlepass(data: Dict, season: str, language: str, response: Dict) -> Dict:
     
     data = data['Contracts']
     contracts = json_read('cache')

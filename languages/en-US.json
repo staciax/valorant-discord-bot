@@ -38,13 +38,15 @@
             "DAILY":"Daily",
             "WEEKLY":"Weekly",
             "NEWPLAYER":"New Player",
-            "NO_MISSION":"No missions available"
+            "NO_MISSION":"No missions available",
+            "DAILY_RESET":"Resets {duration}",
+            "REFILLS": "Refills {duration}"
         },
         "nightmarket": {
             "NAME": "nightmarket",
             "DESCRIPTION": "Show skin offers on the nightmarket",
             "RESPONSE": "NightMarket for **{username}** | Remaining {duration}",
-            "NIGMARKET_HAS_END": "Nightmarket has been ended"
+            "NIGMARKET_HAS_END": "**NightMarket** has been ended"
         },
         "battlepass": {
             "NAME": "battlepass",

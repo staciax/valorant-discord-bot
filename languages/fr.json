@@ -5,8 +5,8 @@
             "NAME": "login",
             "DESCRIPTION": "Connectez-vous avec votre compte Riot", 
             "DESCRIBE": {
-                "username": "Input username!",
-                "password": "Input password!"
+                "username": "Entrez le nom d'utilisateur !",
+                "password": "Entrez le mot de passe !"
             },
             "SUCCESS": "Vous êtes bien connecté !",
             "FAILED": "Impossible de vous connecter, veuillez réessayer !"
@@ -21,8 +21,8 @@
             "NAME": "store",
             "DESCRIPTION": "Affiche la boutique quotidienne de votre compte",
             "DESCRIBE": {
-                "username": "Input username! (temporary login)",
-                "password": "Input password! (temporary login)"
+                "username": "Entrez le nom d'utilisateur ! (Connexion temporaire)",
+                "password": "Entrez le mot de passe ! (Connexion temporaire)"
             },
             "RESPONSE": "Boutique du jour pour **{username}** | Temps restant {duration}"
         },
@@ -38,13 +38,15 @@
             "DAILY":"Quotidienne",
             "WEEKLY":"Hebdomadaire",
             "NEWPLAYER":"Nouveau Joueur",
-            "NO_MISSION":"Pas de mission disponible"
+            "NO_MISSION":"Pas de mission disponible",
+            "DAILY_RESET":"Réinitialisation {duration}",
+            "REFILLS": "Recharge {duration}"
         },
         "nightmarket": {
             "NAME": "nightmarket",
             "DESCRIPTION": "Affiche les skins du NightMarket",
             "RESPONSE": "NightMarket pour **{username}** | Temps restant {duration}",
-            "NIGMARKET_HAS_END": "Le Nightmarket est terminé"
+            "NIGMARKET_HAS_END": "Le **NightMarket** est terminé"
         },
         "battlepass": {
             "NAME": "nightmarket",
@@ -62,38 +64,38 @@
             "NAME": "add",
             "DESCRIPTION": "Définir une notification quand un skin spécifique est disponible dans votre boutique",
             "DESCRIBE": {
-                "skin": "The name of the skin you want to notify"
+                "skin": "Le nom du skin dont vous souhaitez être notifié"
             },
-            "SUCCESS": "Successfully set an notify for the {emoji} **{name}**",
-            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** is already added to your notification list",
-            "NOT_FOUND": "Skin is not found",
-            "REMOVE_NOTIFY": "Remove Notify",
-            "REMOVED_NOTIFY": "**{name}** been removed from notify"
+            "SUCCESS": "Vous avez bien activé une notification pour {emoji} **{name}**",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** est déjà dans votre liste de notification !",
+            "NOT_FOUND": "Le skin n'a pas été trouvé",
+            "REMOVE_NOTIFY": "Supprimer la notification",
+            "REMOVED_NOTIFY": "**{name}** a bien été retiré des notifications"
         },
         "notify_list": {
             "NAME": "list",
             "DESCRIPTION": "Regardez les skins pour lesquels vous avez des notifications",
-            "TITLE":"Your Notify List",
-            "DONT_HAVE_NOTIFY": "You don't have any notification",
-            "REMOVE_NOTIFY": "Click button for remove from notify"
+            "TITLE":"Votre liste de notifications",
+            "DONT_HAVE_NOTIFY": "Vous n'avez aucune notification",
+            "REMOVE_NOTIFY": "Cliquez pour supprimer la notification"
         },
         "notify_mode": {
             "NAME": "mode",
             "DESCRIPTION": "Changer le mode de notification",
             "DESCRIBE": {
-                "mode": "The mode you want to change to"
+                "mode": "Le mode que vous voulez changer"
             },
-            "SUCCESS":"Successfully changed your notification mode to **{mode}**",
-            "TURN_OFF": "Turn off notification mode"
+            "SUCCESS":"Vous avez bien changez le mode de notification pour **{mode}**",
+            "TURN_OFF": "Désactiver le mode de notification"
         },
         "notify_test": {
             "NAME": "test",
             "DESCRIPTION": "Test de la notification",
-            "NOTIFY_IS_WORKING": "Notification is working",
-            "NOTIFY_TURN_OFF": "You're not turn on notification mode",
-            "EMPTY_LIST":"Notify list is empty",
-            "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
-            "FAILED_SEND_NOTIFY": "Failed to send notification, plz try again"
+            "NOTIFY_IS_WORKING": "La notification fonctionne",
+            "NOTIFY_TURN_OFF": "Vous n'avez pas activé le mode de notification",
+            "EMPTY_LIST":"La liste de notification est vide",
+            "BOT_MISSING_PERM": "**Je n'ai pas la permission pour envoyer une notification dans ce channel !** \n Veuillez vérifier les notifications du bot `View channel`, `Send messages`, `Embed links` et `Use external emoji`. dans ce channel, puis essayez `/notify test`.",
+            "FAILED_SEND_NOTIFY": "Erreur lors de l'envoi de la notification, veuillez réessayer"
         },
         "notify_send": {
             "RESPONSE_SPECIFIED": "{emoji} **{name}** est dans votre boutique du jour !\nTemps restant {duration}",
@@ -101,31 +103,31 @@
         },
         "bundle": {
             "NAME": "bundle",
-            "DESCRIPTION": "View your bundle progress",
+            "DESCRIPTION": "Regardez la progression de votre bundle",
             "DESCRIBE": {
-                "bundle": "The name of the bundle you want to inspect!"
+                "bundle": "Le nom du bundle que vous souhaitez voir"
             },
             "TITLE": "Collection",
-            "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
-            "NOT_FOUND_BUNDLE": "Not found any bundle"
+            "DROPDOWN_CHOICE_TITLE": "Selectionnez un bundle:",
+            "NOT_FOUND_BUNDLE": "Aucun bundle trouvé"
         },
         "bundles": {
             "NAME": "bundles",
-            "DESCRIPTION": "View your bundle progress",
+            "DESCRIPTION": "Regardez la progression de votre bundle",
             "TITLE": "Featured Bundle: {bundle} Collection"
         },
         "debug": {
             "NAME": "debug",
-            "DESCRIPTION": "The command debug for the bot",
+            "DESCRIPTION": "La commande de debug pour le bot",
             "describe": {
-                "bug": "The bug you want to fix.",
+                "bug": "Le bug que vous souhaitez régler",
                 "choice":{
-                    "skin_price_not_loading": "Skin price not loading",
-                    "emoji_price_not_loading": "Emoji not loading",
-                    "cache_price_not_loading": "Cache not loading"
+                    "skin_price_not_loading": "Le prix du skin ne s'affiche pas",
+                    "emoji_price_not_loading": "L'emoji ne s'affiche pas",
+                    "cache_price_not_loading": "Le cache ne charge pas"
                 }
             },
-            "SUCCESS": "Successfully debuged: **{bug}**"
+            "SUCCESS": "Vous avez bien débugger: **{bug}**"
         }
     },
     "errors": {
@@ -137,7 +139,7 @@
             "NO_NAME_TAG": "Cet utilisateur n'a pas créer de nom ou de slogan pour le moment.",
             "REGION_NOT_FOUND": "Une erreur s'est produite, utilisez `/login` à nouveau !",
             "LOGIN_COOKIE_FAILED": "La connexion avec cookies a échouer !",
-            "INPUT_2FA_CODE": "Input 2FA code!",
+            "INPUT_2FA_CODE": "Inserez le facteur à double authentifications",
             "2FA_ENABLE": "Vous avez le facteur à double authentifications d'activé !",
             "2FA_TO_EMAIL": "Riot a envoyé un code à",
             "2FA_INVALID_CODE": "Le code est incorrect. Utilisez `/login` à nouveau !"
@@ -145,7 +147,7 @@
         "DATABASE": {
             "NOT_LOGIN": "Vous n'êtes pas inscrit !, utilisez `/login` pour vous inscrire!",
             "FAILED_LOGIN": "Echec de la connexion, veuillez rééssayer!",
-            "LOGOUT_NOT_LOGIN": "Je ne peux pas vous déconnecter si vous n'êtes pas inscrit !",
+            "LOGOUT_ERROR": "Je ne peux pas vous déconnecter si vous n'êtes pas inscrit !",
             "LOGOUT_EXCEPT": "Impossible de vous déconnecter"
         },
         "API" : {
@@ -153,8 +155,8 @@
             "REQUEST_FAILED": "Pas de réponse de l'API"
         },
         "SETUP_EMOJI":{
-            "MISSING_PERM": "I doesn't have permission to create emoji !",
-            "FAILED_CREATE_EMOJI": "I Can't create emoji please try again"
+            "MISSING_PERM": "Je n'ai pas la permission pour crééer un emoji !",
+            "FAILED_CREATE_EMOJI": "Je ne peux pas créer d'émoji, veuillez rééssayer"
         }
     }
 }

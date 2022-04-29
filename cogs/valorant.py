@@ -2,7 +2,6 @@ import discord
 import contextlib
 from discord.ext import commands, tasks
 from discord import Interaction, app_commands, ui
-from datetime import datetime
 from typing import Literal
 
 # Local
@@ -15,9 +14,10 @@ from utils.valorant.local import InteractionLanguage, ResponseLanguage
 from utils.valorant.cache import get_cache, get_valorant_version
 from utils.valorant.resources import setup_emoji
 
-season_id = 'd929bc38-4ab6-7da4-94f0-ee84f8ac141e'
-season_end = datetime(2022, 4, 26, 17, 0, 0)
-current_season = season_id, season_end
+def owner_only() -> app_commands.check:
+    async def predicate(interaction: Interaction):
+        return await interaction.client.is_owner(interaction.user)
+    return app_commands.check(predicate)
 
 class ValorantCog(commands.Cog, name='Valorant'):
     """Valorant API Commands"""
@@ -108,13 +108,13 @@ class ValorantCog(commands.Cog, name='Valorant'):
         user_id = interaction.user.id
         if logout := self.db.logout(user_id, interaction.locale):
             if logout:
-                #f"Successfully logged out!"
                 embed = Embed(response.get('SUCCESS'))
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
             raise RuntimeError(response.get('FAILED'))
 
     @app_commands.command(description="Shows your daily store in your accounts")
     @app_commands.describe(username='Input username (without login)', password='password (without login)')
+    @app_commands.guild_only()
     async def store(self, interaction: Interaction, username: str = None, password: str = None) -> None:
         
         # language
@@ -123,9 +123,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
         
         # check if user is logged in
         is_private_message = False
-        if username is not None and password is not None:
+        if username is not None or password is not None:
             is_private_message = True
-
+        
         await interaction.response.defer(ephemeral=is_private_message)
 
         # setup emoji 
@@ -154,6 +154,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         await interaction.channel.send(embeds=embeds)
 
     @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
+    @app_commands.guild_only()
     async def point(self, interaction: Interaction) -> None:
 
         await interaction.response.defer()
@@ -236,6 +237,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
     # inspired by https://github.com/giorgi-o
     @app_commands.command(description="inspect a specific bundle")
     @app_commands.describe(bundle="The name of the bundle you want to inspect!")
+    @app_commands.guild_only()
     async def bundle(self, interaction: Interaction, bundle: str) -> None:
         
         await interaction.response.defer()
@@ -275,9 +277,6 @@ class ValorantCog(commands.Cog, name='Valorant'):
         # endpoint
         endpoint = await self.get_endpoint(interaction.user.id)
 
-        # default bundle language
-        bundle_language = 'en-US' # or bundle_language = language
-
         # data
         bundle_entries = await endpoint.store_fetch_storefront()
 
@@ -306,6 +305,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     # hybird command
     @app_commands.command(description='The command debug for the bot')
     @app_commands.describe(bug="The bug you want to fix")
+    @app_commands.guild_only()
+    @owner_only()
     async def debug(self, interaction: Interaction, bug: Literal['Skin price not loading', 'Emoji not loading', 'Cache not loading']) -> None:
 
         await interaction.response.defer(ephemeral=True)
@@ -323,7 +324,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
             self.db.insert_skin_price(skin_price, force=True)
 
         elif bug == 'Emoji not loading':
-            await setup_emoji(self.bot, interaction.guild, interaction.locale)
+            await setup_emoji(self.bot, interaction.guild, interaction.locale, force=True)
         
         elif bug == 'Cache not loading':
             self.funtion_reload_cache(force=True)
