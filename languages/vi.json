@@ -1,0 +1,160 @@
+{   
+    "translation_by": "TMADZ#0712,
+    "commands": {
+        "login": {
+            "NAME": "Đăng Nhập",
+            "DESCRIPTION": "Đăng Nhập Vào Tài Khoản Riot Games của bạn", 
+            "DESCRIBE": {
+                "username": "Nhập username!",
+                "password": "Nhập password!"
+            },
+            "SUCCESS": "Đăng Nhập Thành Công",
+            "FAILED": "Đăng Nhập Không Thành Công, Vui Lòng Thử Lại"
+        },
+        "logout": {
+            "NAME": "Đăng Xuất",
+            "DESCRIPTION": "Đăng Xuất Khỏi Tài Khoản Của Bạn",
+            "SUCCESS": "Đăng Xuất Thành Công",
+            "FAILED": "Đăng Xuất Không Thành Công, Vui Lòng Thử Lại!"
+        },
+        "store": {
+            "NAME": "Cửa Hàng",
+            "DESCRIPTION": "Kiểm tra cửa hàng của bạn hôm nay",
+            "DESCRIBE": {
+                "username": "Nhập username! (Đăng Nhập Tạm Thời)",
+                "password": "Nhập password! (Đăng Nhập Tạm Thời)"
+            },
+            "RESPONSE": "Store của **{username}** | Thời hạn {duration}"
+        },
+        "point": {
+            "NAME": "Xem điểm",
+            "DESCRIPTION": "Xem điểm valorant point và radianite point của bạn",
+            "POINT": "Points"
+        },
+        "mission": {
+            "NAME": "Nhiệm Vụ",
+            "DESCRIPTION": "Xem nhiệm vụ ngày và tuần của bạn",
+            "TITLE": "Nhiệm Vụ",
+            "DAILY":"Hàng Ngày",
+            "WEEKLY":"Hàng Tuần",
+            "NEWPLAYER":"NEWPLAYER",
+            "NO_MISSION":"Không còn nhiệm vụ"
+        },
+        "nightmarket": {
+            "NAME": "nightmarket",
+            "DESCRIPTION": "Kiểm tra chợ đêm của bạn",
+            "RESPONSE": "Chợ Đêm của **{username}** | Thời Hạn {duration}",
+            "NIGMARKET_HAS_END": "Chợ Đêm đã kết thúc"
+        },
+        "battlepass": {
+            "NAME": "battlepass",
+            "DESCRIPTION": "Kiểm tra battlepass của mùa hiện tại",
+            "RESPONSE": "**Phần thưởng tiếp theo:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT KẾT THÚC VÀO:** {end}",
+            "TIER": "Tier",
+            "PLAYER_CARD": "Thẻ nhân vật",
+            "SPRAY": "Hình sơn",
+            "BUDDY": "Móc khoá",
+            "POINT": "Điểm",
+            "PLAYER_TITLE": "Title",
+            "SKIN": "Skin"
+        },
+        "notify_add": {
+            "NAME": "add",
+            "DESCRIPTION": "Đặt thông báo khi cửa hàng có skin cụ thể bạn chọn",
+            "DESCRIBE": {
+                "skin": "Tên của skin bạn muốn thông báo"
+            },
+            "SUCCESS": "Đặt thônng báo thành công cho {emoji} **{skin}**",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** đã tồn tại trong danh sách thông báo",
+            "NOT_FOUND": "Skin không được tìm thấy",
+            "REMOVE_NOTIFY": "Gỡ thông báo",
+            "REMOVED_NOTIFY": "**{skin}** đã được gỡ khỏi danh sách thông báo"
+        },
+        "notify_list": {
+            "NAME": "Danh sách thông báo",
+            "DESCRIPTION": "Xem những skin bạn đã đặt thông báo",
+            "TITLE":"Danh sách thông báo của bạn",
+            "DONT_HAVE_NOTIFY": "Bạn không có thông báo nào",
+            "REMOVE_NOTIFY": "Gỡ thông báo"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "Thay đổi chế độ thông báo",
+            "DESCRIBE": {
+                "mode": "Chế độ bạn muốn đổi thành"
+            },
+            "SUCCESS":"Thành công đổi chế độ sang **{mode}**",
+            "TURN_OFF": "Đã tắt chế độ thông báo"
+        },
+        "notify_test": {
+            "NAME": "Kiểm tra",
+            "DESCRIPTION": "Kiểm tra thông báo",
+            "NOTIFY_IS_WORKING": "Thông báo hoạt động",
+            "NOTIFY_TURN_OFF": "Bạn chưa bật chế độ thông báo",
+            "EMPTY_LIST":"Danh sách thông báo trống",
+            "BOT_MISSING_PERM": "**Mình không có quyền gửi thông báo vào kênh này!** \nVui lòng kiểm tra lại những quyền hạn của bot: `View channel`, `Send messages`, `Embed links` and `Use external emoji`. trong kênh này, rồi thử lại `/notify test`.",
+            "FAILED_SEND_NOTIFY": "Gửi thông báo không thành công, vui lòng thử lại"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** trong cửa hàng của bạn!\nThời hạn {duration}",
+            "RESPONSE_ALL": "Cửa hàng của **{username}** | Thời hạn {duration}"
+        },
+        "bundle": {
+            "NAME": "bundle",
+            "DESCRIPTION": "Xem bundle",
+            "DESCRIBE": {
+                "bundle": "Tên bundle bạn muốn xem"
+            },
+            "TITLE": "COLLECTION",
+            "DROPDOWN_CHOICE_TITLE": "Vui lòng chọn bundle:",
+            "NOT_FOUND_BUNDLE": "Không tìm thấy bundle"
+        },
+        "bundles": {
+            "NAME": "bundles",
+            "DESCRIPTION": "xem bundle",
+            "TITLE": "Featured Bundle: {bundle} Collection"
+        },
+        "debug": {
+            "NAME": "debug",
+            "DESCRIPTION": "Câu lệnh debug cho bot",
+            "DESCRIBE": {
+                "bug": "Lỗi bạn muốn debug",
+                "choice":{
+                    "skin_price_not_loading": "Không hiện giá",
+                    "emoji_price_not_loading": "Không hiện Emoji",
+                    "cache_price_not_loading": "Không hiện Cache"
+                }
+            },
+            "SUCCESS": "Debug thành công : **{bug}**"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "Lỗi không xác định đã xảy ra",
+        "AUTH": {
+            "INVALID_PASSWORD": "Username hoặc password của bạn không chính xác",
+            "RATELIMIT": "Vui lòng đợi vài phút rồi thử lại",
+            "COOKIES_EXPIRED": "Cookies đã hết hạn, vui lòng `/login` lại!",
+            "NO_NAME_TAG": "Người chơi chưa tạo tên hoặc nametag(Tagline).",
+            "REGION_NOT_FOUND": "Lỗi không xác định đã xảy ra, vui lòng `/login` lại",
+            "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
+            "INPUT_2FA_CODE": "Nhập code 2FA của bạn",
+            "2FA_ENABLE": "Bạn đã bật 2FA",
+            "2FA_TO_EMAIL": "Riot đã gửi code tới email của bạn",
+            "2FA_INVALID_CODE": "Mã 2FA không chính xác. Vui lòng `/login` lại"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "Bạn chưa đăng nhập!, vui lòng  `/login` để đăng nhập!",
+            "LOGIN_ERROR": "Đăng nhập không thành công",
+            "LOGOUT_ERROR": "Mình không thể đăng xuất nếu bạn chưa đăng nhập!",
+            "LOGOUT_EXCEPT": "Lỗi không xác định đã xảy ra khi đăng xuất"
+        },
+        "API" : {
+            "FAILED_ACTIVE": "Kích hoạt API không thành công",
+            "REQUEST_FAILED": "API phản hồi không thành công !"
+        },
+        "SETUP_EMOJI":{
+            "MISSING_PERM": "Mình khum có quyền tạo emoji  !",
+            "FAILED_CREATE_EMOJI": "Mình khum tạo được emoji vui lòng thử lại"
+        }
+    }
+}
