@@ -38,7 +38,9 @@
             "DAILY":"Hàng Ngày",
             "WEEKLY":"Hàng Tuần",
             "NEWPLAYER":"NEWPLAYER",
-            "NO_MISSION":"Không còn nhiệm vụ"
+            "NO_MISSION":"Không còn nhiệm vụ",
+            "DAILY_RESET":"Resets {duration}",
+            "REFILLS": "Refills {duration}"
         },
         "nightmarket": {
             "NAME": "nightmarket",
