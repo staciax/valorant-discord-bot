@@ -203,7 +203,7 @@ class Auth:
                         
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
         
-        raise RuntimeError(local_response.get('2FA_INVALID_CODE', 'Code is Invalid. Please `/login` again'))
+        return {'auth': 'failed', 'error': local_response.get('2FA_INVALID_CODE')}
 
     async def redeem_cookies(self, cookies: Dict) -> Tuple[Dict, str, str]:
         """ This function is used to redeem the cookies. """

@@ -16,6 +16,7 @@ from utils.valorant.db import DATABASE
 from utils.valorant.endpoint import API_ENDPOINT
 from utils.valorant.view import NotifyViewList, NotifyView
 from utils.valorant.cache import create_json
+from utils.valorant.resources import setup_emoji
 
 class Notify(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -118,11 +119,15 @@ class Notify(commands.Cog):
 
     @notify.command(name='add', description='Set a notification when a specific skin is available on your store')
     @app_commands.describe(skin='The name of the skin you want to notify')
+    @app_commands.guild_only()
     async def notify_add(self, interaction: Interaction, skin: str) -> None:
 
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_add', interaction.locale)
+
+        # setup emoji 
+        await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
         # check file if or not
         create_json('notifys', [])
