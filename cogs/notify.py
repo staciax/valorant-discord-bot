@@ -106,8 +106,8 @@ class Notify(commands.Cog):
     @tasks.loop(time=time(hour=0, minute=0, second=10)) #utc 00:00:15
     # @tasks.loop(seconds=10)
     async def notifys(self) -> None:
-        # __verify_time = datetime.utcnow()
-        # if __verify_time.hour == 0 and __verify_time.minute <= 10:
+        __verify_time = datetime.utcnow()
+        if __verify_time.hour == 0 and __verify_time.minute <= 10:
             await self.send_notify()
         
     @notifys.before_loop
