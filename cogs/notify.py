@@ -9,8 +9,8 @@ from difflib import get_close_matches
 from typing import Literal, Tuple
 
 # Local
-from utils.valorant.embed import Embed, notify_all_send
-from utils.valorant.useful import json_read, json_save, get_skin, get_emoji_tier_by_bot, format_relative
+from utils.valorant.embed import Embed, Generate_Embed
+from utils.valorant.useful import format_relative, GetItems, GetEmoji, JSON
 from utils.valorant.local import InteractionLanguage, ResponseLanguage
 from utils.valorant.db import DATABASE
 from utils.valorant.endpoint import API_ENDPOINT
@@ -39,7 +39,7 @@ class Notify(commands.Cog):
 
     async def send_notify(self) -> None:
         notify_users = self.db.get_user_is_notify()
-        notify_data = json_read('notifys')
+        notify_data = JSON.read('notifys')
         
         for user_id in notify_users:
             try:
@@ -72,10 +72,10 @@ class Notify(commands.Cog):
                         if noti['uuid'] in skin_notify_list:
                             uuid = noti['uuid']
                             channel = self.bot.get_channel(int(noti['channel_id']))
-                            skin = get_skin(uuid)
+                            skin = GetItems.get_skin(uuid)
                             name = skin['names'][language]
                             icon = skin['icon']
-                            emoji = get_emoji_tier_by_bot(uuid, self.bot)
+                            emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
                             notify_send:str = response.get('RESPONSE_SPECIFIED')
                             duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
@@ -87,7 +87,7 @@ class Notify(commands.Cog):
                 
                 elif data['notify_mode'] == 'All':
                     channel = self.bot.get_channel(int(data['notify_channel']))
-                    embeds = notify_all_send(endpoint.player, offer, language, response, self.bot)
+                    embeds = Generate_Embed.notify_all_send(endpoint.player, offer, language, response, self.bot)
                     await channel.send(content=f'||{author.mention}||', embeds=embeds)
             
             except (KeyError, FileNotFoundError):
@@ -140,7 +140,7 @@ class Notify(commands.Cog):
         skin_name = get_close_matches(skin, skin_list, 1) # get skin close match
 
         if skin_name:
-            notify_data = json_read('notifys') 
+            notify_data = JSON.read('notifys') 
 
             find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['names'][language] == skin_name[0]]
             skin_uuid = find_skin[0]
@@ -149,7 +149,8 @@ class Notify(commands.Cog):
             name = skin_source['names'][language]
             icon = skin_source['icon']
             uuid = skin_source['uuid']
-            emoji = get_emoji_tier_by_bot(skin_uuid, self.bot)
+
+            emoji = GetEmoji.tier_by_bot(skin_uuid, self.bot)
 
             for skin in notify_data:
                 if skin['id'] == str(interaction.user.id) and skin['uuid'] == skin_uuid:
@@ -160,17 +161,17 @@ class Notify(commands.Cog):
 
             try:
                 notify_data.append(payload)
-                json_save('notifys', notify_data)
+                JSON.save('notifys', notify_data)
             except AttributeError:
                 notify_data = [payload]
-                json_save('notifys', notify_data)
+                JSON.save('notifys', notify_data)
 
             # check if user is notify is on
-            userdata = json_read('users') 
+            userdata = JSON.read('users') 
             notify_mode = userdata.get('notify_mode')
             if notify_mode is None:
                 userdata[str(interaction.user.id)]['notify_mode'] = 'Specified'
-                json_save('users', userdata)
+                JSON.save('users', userdata)
 
             success = response.get('SUCCESS')
             embed = Embed(success.format(emoji=emoji, skin=name))
@@ -230,7 +231,7 @@ class Notify(commands.Cog):
         await interaction.response.defer()
 
         # notify list
-        notify_data = json_read('notifys')
+        notify_data = JSON.read('notifys')
         
         # get user data and offer
         endpoint, data = await self.get_endpoint_and_data(int(interaction.user.id))
@@ -249,10 +250,11 @@ class Notify(commands.Cog):
                 for noti in user_skin_list:
                     uuid = noti['uuid']
                     channel = self.bot.get_channel(int(noti['channel_id']))
-                    skin = get_skin(uuid)
+                    skin = GetItems.get_skin(uuid)
+
                     name = skin['names'][language]
                     icon = skin['icon']
-                    emoji = get_emoji_tier_by_bot(uuid, self.bot)
+                    emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
                     notify_send:str = response_send.get('RESPONSE_SPECIFIED')
                     duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
@@ -265,7 +267,7 @@ class Notify(commands.Cog):
             
             elif data['notify_mode'] == 'All':
                 channel = self.bot.get_channel(int(data['notify_channel']))
-                embeds = notify_all_send(endpoint.player, offer, language, response_send, self.bot)
+                embeds = Generate_Embed.notify_all_send(endpoint.player, offer, language, response_send, self.bot)
                 await channel.send(content=f'||{interaction.user.mention}||', embeds=embeds)
              
             else:

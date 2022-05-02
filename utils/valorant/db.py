@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 from datetime import datetime, timedelta
 from .auth import Auth
-from .useful import json_read, json_save
+from .useful import JSON
 from .cache import fetch_price
 from .local import LocalErrorResponse, ResponseLanguage
 
@@ -16,21 +16,21 @@ class DATABASE:
     
     def insert_user(self, data: Dict) -> None:
         """ Insert user """
-        json_save('users', data)
+        JSON.save('users', data)
 
     def read_db(self) -> Dict:
         '''Read database'''
-        data = json_read('users')
+        data = JSON.read('users')
         return data
 
     def read_cache(self) -> Dict:
         '''Read database'''
-        data = json_read('cache')
+        data = JSON.read('cache')
         return data
 
     def insert_cache(self, data: Dict) -> None:
         """ Insert cache """
-        json_save('cache', data)
+        JSON.save('cache', data)
 
     async def is_login(self, user_id: int, response: Dict) -> Optional[Dict]:
         """Check if user is logged in"""
@@ -61,7 +61,6 @@ class DATABASE:
         token_id = auth_data['token_id']
 
         try:
-
             entitlements_token = await auth.get_entitlements_token(access_token)
             puuid, name, tag = await auth.get_userinfo(access_token)
             region = await auth.get_region(access_token, token_id)
@@ -95,8 +94,6 @@ class DATABASE:
 
         # language
         response = LocalErrorResponse('DATABASE', locale_code)
-
-        print(response)
 
         try:
             db = self.read_db()
@@ -165,7 +162,7 @@ class DATABASE:
         self.insert_user(db)
     
     def check_notify_list(self, user_id: int) -> None:
-        database = json_read('notifys')
+        database = JSON.read('notifys')
         notify_skin = [x for x in database if x['id'] == str(user_id)]
         if len(notify_skin) == 0:
             raise RuntimeError("You're notification list is empty!")
@@ -173,7 +170,7 @@ class DATABASE:
     def get_user_is_notify(self) -> Dict:
         """Get user is notify """
         
-        database = json_read('users')
+        database = JSON.read('users')
         notifys = [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
         return notifys
 

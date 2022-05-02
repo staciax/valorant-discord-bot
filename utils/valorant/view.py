@@ -3,20 +3,26 @@ import discord
 import contextlib
 from discord.ext import commands
 from discord import Interaction, TextStyle, Embed, ui
-from typing import Awaitable, List, Dict
+from typing import Awaitable, List, Dict, Optional
 
 # Local
-from .useful import (
-    get_skin_price,
-    get_emoji_tier_by_bot,
-    get_skin,
-    json_read,
-    json_save,
-    get_item_by_type,
-    get_bundle
-)
+from .useful import GetItems, GetEmoji, JSON
 from .resources import get_item_type
 from .db import DATABASE
+
+class share_button(ui.View):
+    def __init__(self, interaction: Interaction, embeds: List[discord.Embed]):
+        self.interaction = interaction
+        self.embeds = embeds
+        super().__init__(timeout=300)
+
+    async def on_timeout(self) -> None:
+        await self.interaction.edit_original_message(view=None)
+
+    @ui.button(label='Share to friends', style=discord.ButtonStyle.primary)
+    async def button_callback(self, interaction: Interaction, button: ui.Button):
+        await interaction.channel.send(embeds=self.embeds)
+        await self.interaction.edit_original_message(content='\u200b', embed=None, view=None)
 
 class NotifyView(discord.ui.View):
     def __init__(self, user_id:int, uuid:str, name:str, response: Dict) -> None:
@@ -40,14 +46,14 @@ class NotifyView(discord.ui.View):
 
     @discord.ui.button(label='Remove Notify', emoji='✖️', style=discord.ButtonStyle.red)
     async def remove_notify(self, interaction:discord.Interaction, button:discord.Button):
-        data = json_read('notifys')
+        data = JSON.read('notifys')
         
         for i in range(len(data)):
             if data[i]['uuid'] == self.uuid and data[i]['id'] == str(self.user_id):
                 data.pop(i)
                 break
         
-        json_save('notifys', data)
+        JSON.save('notifys', data)
 
         self.remove_notify.disabled = True
         await interaction.response.edit_message(view=self)
@@ -67,13 +73,13 @@ class NotifyListButton(discord.ui.Button):
 
         await interaction.response.defer()    
         
-        data:list = json_read('notifys')
+        data:list = JSON.read('notifys')
         for i in range(len(data)):
             if data[i]['uuid'] == self.custom_id and data[i]['id'] == str(self.view.interaction.user.id):
                 data.pop(i)
                 break
         
-        json_save('notifys', data)
+        JSON.save('notifys', data)
         
         del self.view.skin_source[self.custom_id]
         self.view.update_button()
@@ -108,20 +114,20 @@ class NotifyViewList(discord.ui.View):
             self.add_item(NotifyListButton(label=index, custom_id=skin))
 
     def get_data(self) -> None:
-        database = json_read('notifys')
+        database = JSON.read('notifys')
         notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]
         skin_source:dict = {}
 
         for uuid in notify_skin:
-            skin = get_skin(uuid)
+            skin = GetItems.get_skin(uuid)
             name = skin['names'][self.default_language]
             icon = skin['icon']
 
             skin_source[uuid] = {
                 'name': name,
                 'icon':  icon,
-                'price': get_skin_price(uuid),
-                'emoji': get_emoji_tier_by_bot(uuid, self.bot)
+                'price': GetItems.get_skin_price(uuid),
+                'emoji': GetEmoji.tier_by_bot(uuid, self.bot)
             }
         self.skin_source = skin_source
 
@@ -252,11 +258,11 @@ class BaseBundle(discord.ui.View):
             if index == selected_bundle:
                 embeds.append(discord.Embed(title=bundle['names'][self.language] + f" {collection_title}", description=f"{vp_emoji} {bundle['price']}",color=0xfd4554).set_image(url=bundle['icon']))
                 
-                for items in bundle['items']:
-                    item = get_item_by_type(items['type'], items['uuid'])
+                for items in sorted(bundle['items'], key=lambda x: x['price'], reverse=True):
+                    item = GetItems.get_item_by_type(items['type'], items['uuid'])
                     item_type = get_item_type(items['type'])
 
-                    emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
+                    emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
                     icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
                     color = 0xfd4554 if item_type == 'Skins' else 0x0F1923
                 
@@ -284,11 +290,12 @@ class BaseBundle(discord.ui.View):
 
         embeds = [embed]
 
-        for items in sorted(bundle['items'], reverse=True, key=lambda c: c['price']):
+        for items in sorted(bundle['items'], reverse=True, key=lambda c: c['base_price']):
+            
 
-            item = get_item_by_type(items['type'], items['uuid'])
+            item = GetItems.get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
-            emoji = get_emoji_tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
+            emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
             icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
             color = 0xfd4554 if item_type == 'Skins' else 0x0F1923
             embed = self.base_embed(f"{emoji} {item['names'][self.language]}", f"**{vp_emoji} {items['price']}** ~~{items['base_price']}~~", icon, color)
@@ -359,10 +366,12 @@ class BaseBundle(discord.ui.View):
     async def start_furture(self) -> Awaitable[None]:
         FBundle = self.entries['FeaturedBundle']['Bundle']
 
+        get_bundle = GetItems.get_bundle(FBundle["DataAssetID"])
+
         bundle_payload = {
             "uuid": FBundle["DataAssetID"],
-            "icon": get_bundle(FBundle["DataAssetID"])['icon'],
-            "names": get_bundle(FBundle["DataAssetID"])['names'],
+            "icon": get_bundle['icon'],
+            "names": get_bundle['names'],
             "duration": FBundle["DurationRemainingInSeconds"],
             "items": []
         }
@@ -374,7 +383,7 @@ class BaseBundle(discord.ui.View):
             item_payload = {
                 "uuid": items["Item"]["ItemID"],
                 "type": items["Item"]["ItemTypeID"],
-                "item" : get_item_by_type(items["Item"]["ItemTypeID"], items["Item"]["ItemID"]),
+                "item" : GetItems.get_item_by_type(items["Item"]["ItemTypeID"], items["Item"]["ItemID"]),
                 "amount": items["Item"]["Amount"],
                 "price": items["DiscountedPrice"],
                 "base_price": items["BasePrice"],

@@ -6,8 +6,8 @@ from typing import Literal
 
 # Local
 from utils.valorant.useful import get_season_by_content
-from utils.valorant.embed import Embed, embed_store, embed_mission, embed_point, embed_nightmarket, embed_battlepass
-from utils.valorant.view import TwoFA_UI, BaseBundle
+from utils.valorant.embed import Embed, Generate_Embed 
+from utils.valorant.view import TwoFA_UI, BaseBundle, share_button
 from utils.valorant.endpoint import API_ENDPOINT
 from utils.valorant.db import DATABASE
 from utils.valorant.local import InteractionLanguage, ResponseLanguage
@@ -122,9 +122,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
         
         # check if user is logged in
-        is_private_message = False
-        if username is not None or password is not None:
-            is_private_message = True
+        is_private_message = True if username is not None or password is not None else False
         
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -146,12 +144,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_storefront()
-        embeds = embed_store(endpoint.player, data, language, response, self.bot)
+        embeds = Generate_Embed.store(endpoint.player, data, language, response, self.bot)
 
         if not is_private_message:
             return await interaction.followup.send(embeds=embeds)
-        await interaction.followup.send(content='\u200b')
-        await interaction.channel.send(embeds=embeds)
+
+        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds))
 
     @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
     @app_commands.guild_only()
@@ -171,7 +169,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_wallet()
-        embed = embed_point(endpoint.player, data, language, response, self.bot)
+        embed = Generate_Embed.point(endpoint.player, data, language, response, self.bot)
 
         await interaction.followup.send(embed=embed)
 
@@ -187,7 +185,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.fetch_contracts()
-        embed = embed_mission(endpoint.player, data, language, response)
+        embed = Generate_Embed.mission(endpoint.player, data, language, response)
 
         await interaction.response.send_message(embed=embed)
 
@@ -212,7 +210,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_storefront()
-        embeds = embed_nightmarket(endpoint.player, data, language, response)
+        embeds = Generate_Embed.nightmarket(endpoint.player, data, self.bot, language, response)
 
         await interaction.followup.send(embeds=embeds)
 
@@ -230,8 +228,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
         data = await endpoint.fetch_contracts()
         content = await endpoint.fetch_content()
         season = get_season_by_content(content)
-        embed = embed_battlepass(endpoint.player, data, season, language, response)
 
+        embed = Generate_Embed.battlepass(endpoint.player, data, season, language, response)
+        
         await interaction.response.send_message(embed=embed)
 
     # inspired by https://github.com/giorgi-o

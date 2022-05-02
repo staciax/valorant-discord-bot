@@ -5,7 +5,7 @@ import json
 from typing import Dict
 
 # Local
-from .useful import json_read, json_save
+from .useful import JSON
 
 def create_json(filename: str, formats: Dict) -> None:
     """ Create a json file """
@@ -31,7 +31,7 @@ def get_valorant_version() -> str:
 def fetch_skin() -> None:
     """ Fetch the skin from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
 
     print('Fetching weapons skin !')
@@ -47,14 +47,14 @@ def fetch_skin() -> None:
                 'tier': skin['contentTierUuid']
             }
         data['skins'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_tier() -> None:
 
     """ Fetch the skin tier from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
 
     print('Fetching tier skin !')
@@ -69,16 +69,16 @@ def fetch_tier() -> None:
                 'icon': tier['displayIcon'],
             }
         data['tiers'] = json 
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def pre_fetch_price() -> None:
     """ Pre fetch the price of all skins """
     try:
-        data = json_read('cache')
+        data = JSON.read('cache')
         pre_json = {'is_price': False}
         data['prices'] = pre_json
-        json_save('cache', data)
+        JSON.save('cache', data)
     except Exception as e:
         print(e)
         print("Can't fetch price")
@@ -86,7 +86,7 @@ def pre_fetch_price() -> None:
 def fetch_mission() -> None:
     """ Fetch the mission from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching mission !')
 
@@ -103,13 +103,13 @@ def fetch_mission() -> None:
                 'xp': uuid['xpGrant'],
             }
         data['missions'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_playercard() -> None:
     """ Fetch the player card from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching Playercards !')
     resp = session.get(f'https://valorant-api.com/v1/playercards?language=all')
@@ -127,13 +127,13 @@ def fetch_playercard() -> None:
                 }
             }
         data['playercards'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_titles() -> None:
     """ Fetch the player titles from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching Player titles !')
 
@@ -147,13 +147,13 @@ def fetch_titles() -> None:
                 'text': title['titleText']
             }
         data['titles'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_spray() -> None:
     """ Fetch the spray from valorant-api.com"""
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching Sprays !')
     resp = session.get(f'https://valorant-api.com/v1/sprays?language=all')
@@ -166,13 +166,13 @@ def fetch_spray() -> None:
                 'icon': spray['fullTransparentIcon'] or spray['displayIcon']
             }
         data['sprays'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_bundles() -> None:
     """ Fetch all bundles from valorant-api.com and https://docs.valtracker.gg/bundles"""
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching bundles !')
     resp = session.get(f'https://valorant-api.com/v1/bundles?language=all')
@@ -231,13 +231,13 @@ def fetch_bundles() -> None:
                 bundle['price'] = bundle2['price']
     
         data['bundles'] = bundles
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
                 
 def fetch_contracts() -> None:
     """ Fetch contracts from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching Contracts !')
     resp = session.get(f'https://valorant-api.com/v1/contracts?language=all')
@@ -270,13 +270,13 @@ def fetch_contracts() -> None:
                     'reward': contract['content']
                 }
         data['contracts'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 # def fetch_ranktiers(lang: str):
 #     """ Fetch rank tiers from from valorant-api.com """
 
-#     data = json_read('cache')
+#     data = JSON.read('cache')
 #     session = requests.session()
 #     print('Fetching ranktiers !')
 #     resp = session.get(f'https://valorant-api.com/v1/competitivetiers?language={lang}')
@@ -293,13 +293,13 @@ def fetch_contracts() -> None:
 #                     'rankdown':i['rankTriangleDownIcon'],
 #                 }
 #         data['ranktiers'] = json
-#         json_save('cache', data)
+#         JSON.save('cache', data)
 #     session.close()
 
 def fetch_currencies() -> None:
     """ Fetch currencies from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
     print('Fetching currencies !')
     resp = session.get(f'https://valorant-api.com/v1/currencies?language=all')
@@ -312,13 +312,13 @@ def fetch_currencies() -> None:
                 'icon': currencie['displayIcon']
             }
         data['currencies'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_buddies() -> None:
     """ Fetch all buddies from valorant-api.com """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     session = requests.session()
 
     print('Fetching buddies !')
@@ -334,13 +334,13 @@ def fetch_buddies() -> None:
                 'icon': buddyone['displayIcon']
             }
         data['buddies'] = json
-        json_save('cache', data)
+        JSON.save('cache', data)
     session.close()
 
 def fetch_price(data_price: Dict) -> None:
     """ Fetch the price of an skin """
 
-    data = json_read('cache')
+    data = JSON.read('cache')
     prices = {}
     for skin in data_price['Offers']:
         if skin["OfferID"] in data['skins']:
@@ -348,14 +348,14 @@ def fetch_price(data_price: Dict) -> None:
             prices[skin['OfferID']] = cost[0]
     # prices['is_price'] = True
     data['prices'] = prices
-    json_save('cache', data)
+    JSON.save('cache', data)
 
 # def fetch_skinchromas() -> None:
 #     """ Fetch skin chromas from valorant-api.com """
 
 #     create_json('skinchromas', {})
 
-#     data = json_read('skinchromas')
+#     data = JSON.read('skinchromas')
 #     session = requests.session()
 
 #     print('Fetching season !')
@@ -375,7 +375,7 @@ def fetch_price(data_price: Dict) -> None:
 #             }
 
 #         data['chromas'] = json
-#         json_save('skinchromas', data)
+#         JSON.save('skinchromas', data)
 
 #     session.close()
 
