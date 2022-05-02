@@ -87,7 +87,7 @@ class JSON:
         except FileNotFoundError:
             from .cache import create_json
             create_json(filename, {})
-            return JSON.json_save(filename, data)
+            return JSON.save(filename, data)
 
 # ---------- GET DATA ---------- #
 
