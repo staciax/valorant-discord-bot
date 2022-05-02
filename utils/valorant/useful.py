@@ -76,7 +76,7 @@ class JSON:
             from .cache import create_json
             if force:
                 create_json(filename, {})
-                return JSON.json_read(filename)        
+                return JSON.read(filename)        
         return data
 
     def save(filename: str, data: Dict) -> None:
