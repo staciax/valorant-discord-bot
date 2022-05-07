@@ -52,7 +52,7 @@
             "NAME": "battlepass",
             "DESCRIPTION": "View your battlepass current tier",
             "RESPONSE": "**Next Reward:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT END:** {end}",
-            "TIER": "Tier",
+            "TIER": "TIER",
             "PLAYER_CARD": "Player Card",
             "SPRAY": "Spray",
             "BUDDY": "Buddie",
@@ -95,11 +95,20 @@
             "NOTIFY_TURN_OFF": "You're not turn on notification mode",
             "EMPTY_LIST":"Notify list is empty",
             "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
-            "FAILED_SEND_NOTIFY": "Failed to send notification, please try again"
+            "FAILED_SEND_NOTIFY": "Failed to send notification, please try again",
+            "PLEASE_ALLOW_DM_MESSAGE": "Please allow DM message in your privacy settings"
         },
         "notify_send": {
             "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store!\nRemaining {duration}",
             "RESPONSE_ALL": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "notify_channel": {
+            "NAME": "channel",
+            "DESCRIPTION": "Change notification channel.",
+            "DESCRIBE": {
+                "channel": "Select the channel you want to change."
+            },
+            "SUCCESS":"Notify channel changed to: **{channel}**"
         },
         "bundle": {
             "NAME": "bundle",

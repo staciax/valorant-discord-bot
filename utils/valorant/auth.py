@@ -13,14 +13,14 @@ from .local import LocalErrorResponse
 # disable urllib3 warnings that might arise from making requests to 127.0.0.1
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def extract_tokens(data: str) -> str:
+def _extract_tokens(data: str) -> str:
     """Extract tokens from data"""
 
     pattern = re.compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
     response = pattern.findall(data['response']['parameters']['uri'])[0]
     return response
 
-def extract_tokens_from_uri(URL: str) -> Tuple[str, str]:
+def _extract_tokens_from_uri(URL: str) -> Tuple[str, str]:
     try:
         accessToken = URL.split("access_token=")[1].split("&scope")[0]
         tokenId = URL.split("id_token=")[1].split("&")[0]
@@ -79,7 +79,7 @@ class Auth:
         if data['type'] == 'response':
             expiry_token = datetime.now() + timedelta(hours=1)
 
-            response = extract_tokens(data)
+            response = _extract_tokens(data)
             access_token = response[0]
             token_id = response[1]
 
@@ -93,16 +93,14 @@ class Auth:
             if r.status == 429:
                 raise RuntimeError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
             
-            WaitFor2FA = {"auth": "2fa", "cookie": cookies}
-
             label_modal = local_response.get('INPUT_2FA_CODE')
+            WaitFor2FA = {"auth": "2fa", "cookie": cookies, 'label': label_modal}
+
             if data['multifactor']['method'] == 'email':
                 WaitFor2FA['message'] = f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
-                WaitFor2FA['label'] = label_modal
                 return WaitFor2FA
             
             WaitFor2FA['message'] = local_response.get('2FA_ENABLE', 'You have 2FA enabled!')
-            WaitFor2FA['label'] = label_modal
             return WaitFor2FA
 
         raise RuntimeError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
@@ -199,7 +197,7 @@ class Auth:
                 cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
         
             uri = data['response']['parameters']['uri']
-            access_token, token_id = extract_tokens_from_uri(uri)
+            access_token, token_id = _extract_tokens_from_uri(uri)
                         
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
         
@@ -222,8 +220,8 @@ class Auth:
         ) as r:
             data = await r.text()
 
-        # if r.status != 200:
-        #     raise RuntimeError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!'))
+        if r.status != 303:
+            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
 
         cookies = {}
         cookies['cookie'] = {}
@@ -232,7 +230,7 @@ class Auth:
 
         await session.close()
         
-        accessToken, tokenId = extract_tokens_from_uri(data)
+        accessToken, tokenId = _extract_tokens_from_uri(data)
         entitlements_token = await self.get_entitlements_token(accessToken)
                 
         return cookies, accessToken, entitlements_token
@@ -253,7 +251,7 @@ class Auth:
             user_data = {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
             return user_data
         
-        raise RuntimeError('Invalid credentials')
+        raise RuntimeError('Not supported 2FA')
 
     # next update
 

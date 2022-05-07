@@ -3,16 +3,24 @@ import contextlib
 from discord.ext import commands, tasks
 from discord import Interaction, app_commands, ui
 from typing import Literal
+from discord.utils import MISSING
 
 # Local
-from utils.valorant.useful import get_season_by_content
-from utils.valorant.embed import Embed, Generate_Embed 
-from utils.valorant.view import TwoFA_UI, BaseBundle, share_button
-from utils.valorant.endpoint import API_ENDPOINT
-from utils.valorant.db import DATABASE
-from utils.valorant.local import InteractionLanguage, ResponseLanguage
-from utils.valorant.cache import get_cache, get_valorant_version
-from utils.valorant.resources import setup_emoji
+from utils.valorant import (
+    get_season_by_content,
+    Embed,
+    Generate_Embed,
+    TwoFA_UI,
+    BaseBundle,
+    share_button,
+    InteractionLanguage,
+    ResponseLanguage,
+    get_cache,
+    get_valorant_version,
+    setup_emoji,
+    API_ENDPOINT,
+    DATABASE,
+)
 
 def owner_only() -> app_commands.check:
     async def predicate(interaction: Interaction):
@@ -53,20 +61,19 @@ class ValorantCog(commands.Cog, name='Valorant'):
         self.db: DATABASE = self.bot.db
         self.endpoint: API_ENDPOINT = self.bot.endpoint
 
-    async def get_endpoint(self, user_id: int, auth:dict = {}, locale_code: str = None) -> API_ENDPOINT:
-        if not auth:
-            data = await self.db.is_data(user_id, locale_code)
+    async def get_endpoint(self, user_id: int, locale_code: str = None, username:str= None, password: str = None) -> API_ENDPOINT:
+        if username is not None and password is not None:
+            auth = self.db.auth
+            auth.local_code = locale_code
+            data = await auth.temp_auth(username, password)
+        elif username or password:
+            raise RuntimeError(f"Please provide both username and password!")
         else:
-            data = auth
+            data = await self.db.is_data(user_id, locale_code)
         data['locale_code'] = locale_code
         endpoint = self.endpoint
         await endpoint.activate(data)
         return endpoint
-
-    async def get_temp_auth(self, username: str, password: str, locale_code: str):
-        auth = self.db.auth
-        auth.local_code = locale_code
-        return await auth.temp_auth(username, password)
 
     @app_commands.command(description='Log in with your Riot acoount')
     @app_commands.describe(username='Input username', password='Input password')
@@ -129,14 +136,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
         # setup emoji 
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
-        # endpoint
-        if username is None and password is None:  # for user if logged in
-            endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
-        elif username is not None and password is not None: # for quick check store
-            temp_auth = await self.get_temp_auth(username, password, interaction.locale)
-            endpoint = await self.get_endpoint(interaction.user.id, temp_auth, interaction.locale)
-        elif username or password: 
-            raise RuntimeError(f"Please provide both username and password!")
+        # get endpoint
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # fetch skin price
         skin_price = await endpoint.store_fetch_offers()
@@ -146,16 +147,16 @@ class ValorantCog(commands.Cog, name='Valorant'):
         data = await endpoint.store_fetch_storefront()
         embeds = Generate_Embed.store(endpoint.player, data, language, response, self.bot)
 
-        if not is_private_message:
-            return await interaction.followup.send(embeds=embeds)
-
-        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds))
+        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds) if is_private_message else MISSING)
 
     @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
     @app_commands.guild_only()
-    async def point(self, interaction: Interaction) -> None:
+    async def point(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
-        await interaction.response.defer()
+        # check if user is logged in
+        is_private_message = True if username is not None or password is not None else False
+        
+        await interaction.response.defer(ephemeral=is_private_message)
         
         # language
         language = InteractionLanguage(interaction.locale)
@@ -171,28 +172,36 @@ class ValorantCog(commands.Cog, name='Valorant'):
         data = await endpoint.store_fetch_wallet()
         embed = Generate_Embed.point(endpoint.player, data, language, response, self.bot)
 
-        await interaction.followup.send(embed=embed)
+        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
 
     @app_commands.command(description='View your daily/weekly mission progress')
-    async def mission(self, interaction: Interaction) -> None:
+    async def mission(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+
+        # check if user is logged in
+        is_private_message = True if username is not None or password is not None else False
+        
+        await interaction.response.defer(ephemeral=is_private_message)
 
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # data
         data = await endpoint.fetch_contracts()
         embed = Generate_Embed.mission(endpoint.player, data, language, response)
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
 
     @app_commands.command(description='Show skin offers on the nightmarket')
-    async def nightmarket(self, interaction: Interaction) -> None:
+    async def nightmarket(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
-        await interaction.response.defer()
+        # check if user is logged in
+        is_private_message = True if username is not None or password is not None else False
+        
+        await interaction.response.defer(ephemeral=is_private_message)
 
         # setup emoji 
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
@@ -202,7 +211,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # fetch skin price
         skin_price = await endpoint.store_fetch_offers()
@@ -212,17 +221,22 @@ class ValorantCog(commands.Cog, name='Valorant'):
         data = await endpoint.store_fetch_storefront()
         embeds = Generate_Embed.nightmarket(endpoint.player, data, self.bot, language, response)
 
-        await interaction.followup.send(embeds=embeds)
+        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds) if is_private_message else MISSING)
 
     @app_commands.command(description='View your battlepass current tier')
-    async def battlepass(self, interaction: Interaction) -> None:
+    async def battlepass(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+
+        # check if user is logged in
+        is_private_message = True if username is not None or password is not None else False
+        
+        await interaction.response.defer(ephemeral=is_private_message)
 
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # data
         data = await endpoint.fetch_contracts()
@@ -231,7 +245,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         embed = Generate_Embed.battlepass(endpoint.player, data, season, language, response)
         
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
 
     # inspired by https://github.com/giorgi-o
     @app_commands.command(description="inspect a specific bundle")
@@ -274,7 +288,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = await self.get_endpoint(interaction.user.id)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale)
 
         # data
         bundle_entries = await endpoint.store_fetch_storefront()
@@ -316,7 +330,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         
         if bug == 'Skin price not loading':
             # endpoint
-            endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
+            endpoint = await self.get_endpoint(interaction.user.id, interaction.locale)
 
             # fetch skin price
             skin_price = await endpoint.store_fetch_offers()

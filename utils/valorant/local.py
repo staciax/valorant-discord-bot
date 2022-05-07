@@ -24,20 +24,20 @@ Locale = {
 def InteractionLanguage(local_code: str) -> str:
     return Locale.get(str(local_code), 'en-US')
 
-def LocalRead(filename: str) -> Dict:
+def __LocalRead(filename: str) -> Dict:
     data = {}
     try:
         with open(f"languages/{filename}.json", "r", encoding='utf-8') as json_file:
             data = json.load(json_file)
     except FileNotFoundError:
-        return LocalRead('en-US')
+        return __LocalRead('en-US')
     return data
 
 def ResponseLanguage(command_name: str, local_code: str) -> Dict:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
-        local_dict = LocalRead(local_code)
+        local_dict = __LocalRead(local_code)
         local = local_dict['commands'][str(command_name)]
     return local
 
@@ -45,7 +45,7 @@ def LocalErrorResponse(value: str, local_code: str) -> Dict:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
-        local_dict = LocalRead(local_code)
+        local_dict = __LocalRead(local_code)
         local = local_dict['errors'][value]
     return local
     

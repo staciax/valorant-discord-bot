@@ -60,7 +60,7 @@ def get_item_type(uuid: str):
     }
     return item_type.get(uuid, None)
 
-def url_to_image(url):
+def __url_to_image(url):
     session = requests.session()
 
     r = session.get(url)
@@ -80,12 +80,12 @@ async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str, 
         emoji = discord.utils.get(bot.emojis, name=name)
         if not emoji:
             try:
-                emoji = await guild.create_custom_emoji(name=name, image=url_to_image(emoji_url))
+                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))
             except discord.Forbidden:
                 if force:
                     raise RuntimeError(response.get('MISSING_PERM'))
                 continue
             except discord.HTTPException:
                 print(response.get('FAILED_CREATE_EMOJI'))
-                continue
+                pass
                 # raise RuntimeError(f'Failed to create emoji !')

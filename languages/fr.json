@@ -95,11 +95,20 @@
             "NOTIFY_TURN_OFF": "Vous n'avez pas activé le mode de notification",
             "EMPTY_LIST":"La liste de notification est vide",
             "BOT_MISSING_PERM": "**Je n'ai pas la permission pour envoyer une notification dans ce channel !** \n Veuillez vérifier les notifications du bot `View channel`, `Send messages`, `Embed links` et `Use external emoji`. dans ce channel, puis essayez `/notify test`.",
-            "FAILED_SEND_NOTIFY": "Erreur lors de l'envoi de la notification, veuillez réessayer"
+            "FAILED_SEND_NOTIFY": "Erreur lors de l'envoi de la notification, veuillez réessayer",
+            "PLEASE_ALLOW_DM_MESSAGE": "Veuillez autoriser les messages privés dans vos paramètres de confidentialité"
         },
         "notify_send": {
             "RESPONSE_SPECIFIED": "{emoji} **{name}** est dans votre boutique du jour !\nTemps restant {duration}",
             "RESPONSE_ALL": "Boutique du jour pour **{username}** | Temps restant {duration}"
+        },
+        "notify_channel": {
+            "NAME": "channel",
+            "DESCRIPTION": "Change notification channel.",
+            "DESCRIBE": {
+                "channel": "Select the channel you want to change."
+            },
+            "SUCCESS":"Notify channel changed to: **{channel}**"
         },
         "bundle": {
             "NAME": "bundle",

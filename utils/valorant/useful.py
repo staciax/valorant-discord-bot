@@ -8,7 +8,6 @@ from typing import Dict, Tuple, List, Literal
 
 from .resources import tiers as tiers_resources, points as points_emoji, get_item_type
 
-
 # ---------- ACT SEASON ---------- #
 
 def get_season_by_content(content: Dict) -> Tuple[str, str]:
@@ -17,7 +16,7 @@ def get_season_by_content(content: Dict) -> Tuple[str, str]:
     try:
         season_data = [season for season in content["Seasons"] if season["IsActive"] and season["Type"] == "act"]
         season_id = season_data[0]['ID']
-        season_end = iso_to_time(season_data[0]['EndTime'])
+        season_end = DateUtils.iso_to_time(season_data[0]['EndTime'])
         
     except (IndexError, KeyError, TypeError):
         season_id = 'd80f3ef5-44f5-8d70-6935-f2840b2d3882'
@@ -38,23 +37,25 @@ def calculate_level_xp(level: int) -> int: # https://github.com/giorgi-o
 
 # ---------- TIME UTILS ---------- #
 
-def iso_to_time(iso: datetime) -> datetime:
-    '''Convert ISO time to datetime'''
-    timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
-    time = datetime.utcfromtimestamp(timestamp)
-    return time
+class DateUtils:
 
-def format_dt(dt: datetime, style: str=None) -> str: #style 'R' or 'd'
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+    def iso_to_time(iso: datetime) -> datetime:
+        '''Convert ISO time to datetime'''
+        timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
+        time = datetime.utcfromtimestamp(timestamp)
+        return time
 
-    if style is None:
-        return f'<t:{int(dt.timestamp())}>'
-    return f'<t:{int(dt.timestamp())}:{style}>'
+    def format_dt(dt: datetime, style: str=None) -> str: #style 'R' or 'd'
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
 
-def format_relative(dt: datetime) -> str:
-    return format_dt(dt, 'R')
+        if style is None:
+            return f'<t:{int(dt.timestamp())}>'
+        return f'<t:{int(dt.timestamp())}:{style}>'
 
+    @classmethod
+    def format_relative(cls, dt: datetime) -> str:
+        return cls.format_dt(dt, 'R')
 
 # ---------- JSON LOADER ---------- #
 

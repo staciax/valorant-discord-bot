@@ -9,14 +9,22 @@ from difflib import get_close_matches
 from typing import Literal, Tuple
 
 # Local
-from utils.valorant.embed import Embed, Generate_Embed
-from utils.valorant.useful import format_relative, GetItems, GetEmoji, JSON
-from utils.valorant.local import InteractionLanguage, ResponseLanguage
-from utils.valorant.db import DATABASE
-from utils.valorant.endpoint import API_ENDPOINT
-from utils.valorant.view import NotifyViewList, NotifyView
-from utils.valorant.cache import create_json
-from utils.valorant.resources import setup_emoji
+from utils.valorant import (
+    Embed,
+    Generate_Embed,
+    GetItems,
+    GetEmoji,
+    JSON,
+    DateUtils, 
+    InteractionLanguage,
+    ResponseLanguage, 
+    DATABASE,
+    API_ENDPOINT, 
+    NotifyViewList,
+    NotifyView,
+    create_json, 
+    setup_emoji,
+)
 
 class Notify(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -46,13 +54,18 @@ class Notify(commands.Cog):
                 # get guild language
                 # guild_locale = [guild.preferred_locale for guild in self.bot.guilds if channel in guild.channels]
                 # if not guild_locale: guild_locale = ['en-US']
-
+                
+                # endpoint
                 endpoint, data = await self.get_endpoint_and_data(int(user_id))
+                
+                # offer
                 offer = await endpoint.store_fetch_storefront()
                 skin_offer_list = offer["SkinsPanelLayout"]["SingleItemOffers"]
                 duration = offer["SkinsPanelLayout"]["SingleItemOffersRemainingDurationInSeconds"]
-
+                
+                # auhor
                 author = self.bot.get_user(int(user_id)) or await self.bot.fetch_user(int(user_id))
+                channel_send = author if data['dm_message'] else self.bot.get_channel(int(data['notify_channel']))
                 
                 # language response
                 try:
@@ -71,24 +84,22 @@ class Notify(commands.Cog):
                     for noti in user_skin_list:
                         if noti['uuid'] in skin_notify_list:
                             uuid = noti['uuid']
-                            channel = self.bot.get_channel(int(noti['channel_id']))
                             skin = GetItems.get_skin(uuid)
                             name = skin['names'][language]
                             icon = skin['icon']
                             emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
                             notify_send:str = response.get('RESPONSE_SPECIFIED')
-                            duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
+                            duration = DateUtils.format_relative(datetime.utcnow() + timedelta(seconds=duration))
 
                             embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xfd4554)
                             embed.set_thumbnail(url=icon)
-                            view = NotifyView(user_id, uuid, name)
-                            view.message = await channel.send(content=f'||{author.mention}||', embed=embed, view=view)
+                            view = NotifyView(user_id, uuid, name, ResponseLanguage('notify_add', locale_code))
+                            view.message = await channel_send.send(content=f'||{author.mention}||', embed=embed, view=view)
                 
                 elif data['notify_mode'] == 'All':
-                    channel = self.bot.get_channel(int(data['notify_channel']))
                     embeds = Generate_Embed.notify_all_send(endpoint.player, offer, language, response, self.bot)
-                    await channel.send(content=f'||{author.mention}||', embeds=embeds)
+                    await channel_send.send(content=f'||{author.mention}||', embeds=embeds)
             
             except (KeyError, FileNotFoundError):
                 print(f'{user_id} is not in notify list')
@@ -122,12 +133,14 @@ class Notify(commands.Cog):
     @app_commands.guild_only()
     async def notify_add(self, interaction: Interaction, skin: str) -> None:
 
+        await interaction.response.defer()
+
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_add', interaction.locale)
 
-        # setup emoji 
-        await setup_emoji(self.bot, interaction.guild, interaction.locale)
+        # # setup emoji 
+        # await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
         # check file if or not
         create_json('notifys', [])
@@ -140,7 +153,7 @@ class Notify(commands.Cog):
         skin_name = get_close_matches(skin, skin_list, 1) # get skin close match
 
         if skin_name:
-            notify_data = JSON.read('notifys') 
+            notify_data = JSON.read('notifys')
 
             find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['names'][language] == skin_name[0]]
             skin_uuid = find_skin[0]
@@ -157,7 +170,7 @@ class Notify(commands.Cog):
                     skin_already = response.get('SKIN_ALREADY_IN_LIST')
                     raise RuntimeError(skin_already.format(emoji=emoji, skin=name))
 
-            payload = {"id": str(interaction.user.id), "uuid": skin_uuid, "channel_id": interaction.channel.id}
+            payload = dict(id=str(interaction.user.id), uuid=skin_uuid)
 
             try:
                 notify_data.append(payload)
@@ -171,6 +184,7 @@ class Notify(commands.Cog):
             notify_mode = userdata.get('notify_mode')
             if notify_mode is None:
                 userdata[str(interaction.user.id)]['notify_mode'] = 'Specified'
+                userdata[str(interaction.user.id)]['DM_Message'] = True
                 JSON.save('users', userdata)
 
             success = response.get('SUCCESS')
@@ -178,7 +192,7 @@ class Notify(commands.Cog):
             embed.set_thumbnail(url=icon)
 
             view = NotifyView(interaction.user.id, uuid, name, response)
-            await interaction.response.send_message(embed=embed, view=view)
+            await interaction.followup.send(embed=embed, view=view)
             return
 
         raise RuntimeError("Not found skin")
@@ -194,9 +208,9 @@ class Notify(commands.Cog):
         view = NotifyViewList(interaction, response)
         await view.start()
 
-    @notify.command(name='mode', description='Change notification mode')
+    @notify.command(name='mode', description='Change notification mode/channel.')
     @app_commands.describe(mode='Select the mode you want to change.')
-    async def notify_mode(self, interaction: Interaction, mode: Literal['Specified Skin','All Skin', 'Off']) -> None:
+    async def notify_mode(self, interaction: Interaction,  mode: Literal['Specified Skin','All Skin', 'Off']) -> None:
         
         # language
         language = InteractionLanguage(interaction.locale)
@@ -204,7 +218,7 @@ class Notify(commands.Cog):
  
         await self.db.is_login(interaction.user.id, interaction.locale) # check if user is logged in
         self.db.check_notify_list(interaction.user.id) # check total notify list
-        self.db.change_notify_mode(interaction.user.id, mode, interaction.channel_id) # change notify mode
+        self.db.change_notify_mode(interaction.user.id, mode) # change notify mode
 
         success = response.get("SUCCESS")
         turn_off = response.get("TURN_OFF")
@@ -217,18 +231,36 @@ class Notify(commands.Cog):
         elif mode == 'Off':
             embed.description = turn_off
         
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
     
+    @notify.command(name='channel', description='Change notification channel.')
+    @app_commands.describe(channel='Select the channel you want to change.')
+    async def notify_channel(self, interaction: Interaction, channel: Literal['DM Message', 'Channel']) -> None:
+        
+        # language
+        language = InteractionLanguage(interaction.locale)
+        response = ResponseLanguage('notify_channel', interaction.locale)
+ 
+        await self.db.is_login(interaction.user.id, interaction.locale) # check if user is logged in
+        self.db.check_notify_list(interaction.user.id) # check total notify list
+        self.db.change_notify_channel(interaction.user.id, channel, interaction.channel_id) # change notify channel
+        
+        channel = '**DM Message**' if channel == 'DM Message' else f'{interaction.channel.mention}'
+
+        embed = discord.Embed(description=response.get('SUCCESS').format(channel=channel), color=0x77dd77)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
     @notify.command(name='test', description='Testing notification')
     async def notify_test(self, interaction: Interaction) -> None:
+
+        await interaction.response.defer(ephemeral=True)
 
         # language
         language = InteractionLanguage(interaction.locale)
         response_test = ResponseLanguage('notify_test', interaction.locale)
         response_send = ResponseLanguage('notify_send', interaction.locale)
         response_add = ResponseLanguage('notify_add', interaction.locale)
-
-        await interaction.response.defer()
 
         # notify list
         notify_data = JSON.read('notifys')
@@ -244,12 +276,13 @@ class Notify(commands.Cog):
         if len(user_skin_list) == 0:
             empty_list = response_test.get('EMPTY_LIST')
             raise RuntimeError(empty_list)
+
+        channel_send = interaction.user if data['dm_message'] else self.bot.get_channel(int(data['notify_channel']))
         
         try:
             if data['notify_mode'] == 'Specified':
                 for noti in user_skin_list:
                     uuid = noti['uuid']
-                    channel = self.bot.get_channel(int(noti['channel_id']))
                     skin = GetItems.get_skin(uuid)
 
                     name = skin['names'][language]
@@ -257,35 +290,33 @@ class Notify(commands.Cog):
                     emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
                     notify_send:str = response_send.get('RESPONSE_SPECIFIED')
-                    duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
+                    duration = DateUtils.format_relative(datetime.utcnow() + timedelta(seconds=duration))
 
                     embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xfd4554)
                     embed.set_thumbnail(url=icon)
                     view = NotifyView(interaction.user.id, uuid, name, response_add)
-                    view.message = await channel.send(content=f'||{interaction.user.mention}||', embed=embed, view=view)
+                    view.message = await channel_send.send(embed=embed, view=view)
                     break
             
             elif data['notify_mode'] == 'All':
-                channel = self.bot.get_channel(int(data['notify_channel']))
                 embeds = Generate_Embed.notify_all_send(endpoint.player, offer, language, response_send, self.bot)
-                await channel.send(content=f'||{interaction.user.mention}||', embeds=embeds)
+                await channel_send.send(embeds=embeds)
              
             else:
-                notify_turn_off = response_test.get('NOTIFY_TURN_OFF')
-                raise RuntimeError(notify_turn_off)
+                raise RuntimeError(response_test.get('NOTIFY_TURN_OFF'))
+        
         except Forbidden:
-            bot_missing_perm = response_test.get('BOT_MISSING_PERM')
-            raise RuntimeError(bot_missing_perm)
+            if channel_send == interaction.user:
+                raise RuntimeError(response_test.get('PLEASE_ALLOW_DM_MESSAGE'))
+            else:
+                raise RuntimeError(response_test.get('BOT_MISSING_PERM'))
         except HTTPException:
-            failed_to_send = response_test.get('FAILED_SEND_NOTIFY')
-            raise RuntimeError(failed_to_send)
+            raise RuntimeError(response_test.get('FAILED_SEND_NOTIFY'))
         except Exception as e:
             print(e)
-            failed_to_send = response_test.get('FAILED_SEND_NOTIFY')
-            raise RuntimeError(f"{failed_to_send} - {e}")
+            raise RuntimeError(f"{response_test.get('FAILED_SEND_NOTIFY')} - {e}")
         else:
-            notify_is_working = response_test.get('NOTIFY_IS_WORKING')
-            await interaction.followup.send(embed=Embed(notify_is_working, color=0x77dd77))
-
+            await interaction.followup.send(embed=Embed(response_test.get('NOTIFY_IS_WORKING'), color=0x77dd77), ephemeral=True)
+    
 async def setup(bot) -> None:
     await bot.add_cog(Notify(bot))

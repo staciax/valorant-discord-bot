@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from .auth import Auth
 from .useful import JSON
 from .cache import fetch_price
-from .local import LocalErrorResponse, ResponseLanguage
+from .local import LocalErrorResponse
 
 def timestamp_utc() -> datetime:
     return datetime.timestamp(datetime.utcnow())
@@ -83,6 +83,7 @@ class DATABASE:
             db[str(user_id)] = data
 
             self.insert_user(db)
+            
         except Exception as e:
             print(e)
             raise RuntimeError(response.get('LOGIN_ERROR'))
@@ -122,13 +123,14 @@ class DATABASE:
         expiry_token = auth['expiry_token']
         cookie = auth['cookie']
         notify_channel = auth.get('notify_channel', None)
+        dm_message = auth.get('DM_Message', None)
 
         if timestamp_utc() > expiry_token:
             access_token, entitlements_token = await self.refresh_token(user_id, auth)
 
         headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
 
-        data = dict(puuid=puuid, region=region, headers=headers, player_name=username, notify_mode=notify_mode, cookie=cookie, notify_channel=notify_channel)
+        data = dict(puuid=puuid, region=region, headers=headers, player_name=username, notify_mode=notify_mode, cookie=cookie, notify_channel=notify_channel, dm_message=dm_message)
         return data
         
     async def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
@@ -149,17 +151,31 @@ class DATABASE:
 
         return access_token, entitlements_token
 
-    def change_notify_mode(self, user_id: int, mode: str = None, channel_id:int = None) -> None:
+    def change_notify_mode(self, user_id: int, mode: str = None) -> None:
         """ Change notify mode """
 
         db = self.read_db()
         
         overite_mode = {'All Skin':'All', 'Specified Skin': 'Specified', 'Off': None}     
         db[str(user_id)]['notify_mode'] = overite_mode[mode]
-        if mode == 'All Skin':
-            db[str(user_id)]['notify_channel'] = channel_id   
         
         self.insert_user(db)
+
+    def change_notify_channel(self, user_id: int, channel:str, channel_id: int = None) -> None:
+        """ Change notify mode """
+
+        db = self.read_db()
+
+        if channel == 'DM Message':
+            db[str(user_id)]['DM_Message'] = True
+            db[str(user_id)].pop('notify_channel', None)
+        elif channel == 'Channel':
+            db[str(user_id)]['DM_Message'] = False
+            db[str(user_id)]['notify_channel'] = channel_id
+        
+        self.insert_user(db)
+    
+
     
     def check_notify_list(self, user_id: int) -> None:
         database = JSON.read('notifys')

@@ -52,7 +52,7 @@
             "NAME": "battlepass",
             "DESCRIPTION": "Kiểm tra battlepass của mùa hiện tại",
             "RESPONSE": "**Phần thưởng tiếp theo:** {next}\n**Type:** {type}\n**XP:** {xp}\n**ACT KẾT THÚC VÀO:** {end}",
-            "TIER": "Tier",
+            "TIER": "TIER",
             "PLAYER_CARD": "Thẻ nhân vật",
             "SPRAY": "Hình sơn",
             "BUDDY": "Móc khoá",
@@ -95,11 +95,20 @@
             "NOTIFY_TURN_OFF": "Bạn chưa bật chế độ thông báo",
             "EMPTY_LIST":"Danh sách thông báo trống",
             "BOT_MISSING_PERM": "**Mình không có quyền gửi thông báo vào kênh này!** \nVui lòng kiểm tra lại những quyền hạn của bot: `View channel`, `Send messages`, `Embed links` and `Use external emoji`. trong kênh này, rồi thử lại `/notify test`.",
-            "FAILED_SEND_NOTIFY": "Gửi thông báo không thành công, vui lòng thử lại"
+            "FAILED_SEND_NOTIFY": "Gửi thông báo không thành công, vui lòng thử lại",
+            "PLEASE_ALLOW_DM_MESSAGE":"Vui lòng cho phép DM tin nhắn trong cài đặt bảo mật của bạn"
         },
         "notify_send": {
             "RESPONSE_SPECIFIED": "{emoji} **{name}** trong cửa hàng của bạn!\nThời hạn {duration}",
             "RESPONSE_ALL": "Cửa hàng của **{username}** | Thời hạn {duration}"
+        },
+        "notify_channel": {
+            "NAME": "channel",
+            "DESCRIPTION": "Change notification channel.",
+            "DESCRIBE": {
+                "channel": "Select the channel you want to change."
+            },
+            "SUCCESS":"Notify channel changed to: **{channel}**"
         },
         "bundle": {
             "NAME": "bundle",

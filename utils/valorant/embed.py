@@ -4,11 +4,10 @@ from datetime import datetime, timedelta
 from typing import Union, Any, List, Dict
 import contextlib
 from .useful import (
-    iso_to_time,
-    format_relative,
-    calculate_level_xp,
+    DateUtils,
     GetEmoji,
-    GetFormat
+    GetFormat,
+    calculate_level_xp,
 )
 from .resources import points
 from .useful import JSON
@@ -17,9 +16,7 @@ class Embed(discord.Embed): # Custom Embed
     def __init__(self, description:str = None, color: Union[discord.Color, int] = 0xfd4554, **kwargs: Any) -> None:
         super().__init__(description=description, color=color, **kwargs)
 
-
 class Generate_Embed:
-
 
     def __giorgio_embed(skin: Dict, bot: commands.Bot) -> discord.Embed:
         """EMBED DESIGN Giorgio"""
@@ -37,13 +34,13 @@ class Generate_Embed:
     def store(cls, player: str, offer: Dict, language: str, response: Dict, bot: commands.Bot) -> List[discord.Embed]:
         """Embed Store"""
 
-        msg_response = response.get('RESPONSE')
+        store_esponse = response.get('RESPONSE')
 
         data = GetFormat.offer_format(offer, language)
 
         duration = data['duration']
 
-        description = msg_response.format(username=player, duration=format_relative(datetime.utcnow() + timedelta(seconds=duration)))
+        description = store_esponse.format(username=player, duration= DateUtils.format_relative(datetime.utcnow() + timedelta(seconds=duration)))
         
         embed = Embed(description)
         embeds = [embed]
@@ -81,14 +78,14 @@ class Generate_Embed:
 
         weekly_end_time = ''
         with contextlib.suppress(Exception):
-            weekly_end_time = f"{refill_in.format(duration=format_relative(iso_to_time(weekly_end)))}"
+            weekly_end_time = f"{refill_in.format(duration=DateUtils.format_relative(DateUtils.iso_to_time(weekly_end)))}"
 
         embed = Embed(title=f"**{title_mission}**")
         embed.set_footer(text=player)
         if len(daily) != 0:
             embed.add_field(
                 name=f"**{title_daily}**",
-                value=f"{daily}\n{reset_in.format(duration=format_relative(iso_to_time(daily_end)))}",
+                value=f"{daily}\n{reset_in.format(duration=DateUtils.format_relative(DateUtils.iso_to_time(daily_end)))}",
                 inline=False
             )
         if len(weekly) != 0:
@@ -163,7 +160,7 @@ class Generate_Embed:
         skins = night_mk['nightmarket']
         duration = night_mk['duration']
 
-        description = msg_response.format(username=player, duration=format_relative(datetime.utcnow() + timedelta(seconds=duration)))
+        description = msg_response.format(username=player, duration=DateUtils.format_relative(datetime.utcnow() + timedelta(seconds=duration)))
 
         embed = Embed(description)
 
@@ -193,7 +190,7 @@ class Generate_Embed:
         item_type = item['type']
         original_type = item['original_type']
 
-        description = MSG_RESPONSE.format(next=f'`{reward}`', type=f'`{item_type}`', xp=f'`{xp:,}/{calculate_level_xp(tier + 1):,}`', end=format_relative(season_end))
+        description = MSG_RESPONSE.format(next=f'`{reward}`', type=f'`{item_type}`', xp=f'`{xp:,}/{calculate_level_xp(tier + 1):,}`', end=DateUtils.format_relative(season_end))
 
         embed =  Embed(description, title=f"BATTLEPASS")
         
@@ -227,7 +224,7 @@ class Generate_Embed:
 
         duration = data['duration']
 
-        description = description_format.format(username=player, duration=format_relative(datetime.utcnow() + timedelta(seconds=duration)))
+        description = description_format.format(username=player, duration=DateUtils.format_relative(datetime.utcnow() + timedelta(seconds=duration)))
         embed = Embed(description)
         embeds = [embed]
         [embeds.append(cls.__giorgio_embed(data[skin], bot)) for skin in data if not skin == 'duration']

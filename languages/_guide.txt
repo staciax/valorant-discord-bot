@@ -1,7 +1,8 @@
 'en-US' american_english / # default
 'en-US' british_english / # default
 'th' thai / # default
-'fr' French /  translate by ness#0452
+'fr' French /  translate by ness#0452,
+'vi' vvietnamese / translate by TMADZ#0712
 
 Look up the language code for your language in https://discord.com/developers/docs/reference#locales
 

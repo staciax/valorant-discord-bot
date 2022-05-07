@@ -57,6 +57,7 @@ python bot.py
 | `/notify add`  | Set a notification when a specific skin is available on your store |
 | `/notify list`  | View skins you have set a notification for |
 | `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
+| `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
 | `/notify test`  | Testing notification |
 | `/nightmarket`  | Shows your nightmarket |
 | `/battlepass`  | View your battlepass' current tier |

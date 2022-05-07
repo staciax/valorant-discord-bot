@@ -2,8 +2,8 @@
 import discord
 import contextlib
 from discord.ext import commands
-from discord import Interaction, TextStyle, Embed, ui
-from typing import Awaitable, List, Dict, Optional
+from discord import Interaction, TextStyle, ui
+from typing import Awaitable, List, Dict
 
 # Local
 from .useful import GetItems, GetEmoji, JSON
@@ -61,7 +61,7 @@ class NotifyView(discord.ui.View):
         removed_notify = self.response.get('REMOVED_NOTIFY')
         await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)
 
-class NotifyListButton(discord.ui.Button):
+class _NotifyListButton(discord.ui.Button):
     def __init__(self, label, custom_id) -> None:
         super().__init__(
             label=label,
@@ -111,7 +111,7 @@ class NotifyViewList(discord.ui.View):
     def create_button(self) -> None:
         data = self.skin_source
         for index, skin in enumerate(data, start=1):
-            self.add_item(NotifyListButton(label=index, custom_id=skin))
+            self.add_item(_NotifyListButton(label=index, custom_id=skin))
 
     def get_data(self) -> None:
         database = JSON.read('notifys')
@@ -192,9 +192,10 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             cookie = self.cookie
             user_id = self.interaction.user.id
             auth = self.db.auth
+            auth.locale_code = self.interaction.locale
 
             async def send_embed(content: str) -> Awaitable[None]:
-                embed = Embed(description = content, color=0xfd4554)
+                embed = discord.Embed(description = content, color=0xfd4554)
                 if interaction.response.is_done():
                     return await interaction.followup.send(embed=embed, ephemeral=True)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -203,7 +204,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
                 return await send_embed(f"`{code}` is not a number")
 
             auth = await auth.give2facode(code, cookie)
-
+    
             if auth['auth'] == 'response':
                 
                 login = await self.db.login(user_id, auth, self.interaction.locale)
@@ -215,9 +216,9 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             elif auth['auth'] == 'failed':
                 return await send_embed(login['error'])
     
-    async def on_error(self, error: Exception, interaction: Interaction) -> None:
+    async def on_error(self, interaction: Interaction, error: Exception) -> None:
         print(error)
-        embed = Embed(description = 'Oops! Something went wrong.', color=0xfd4554)
+        embed = discord.Embed(description = 'Oops! Something went wrong.', color=0xfd4554)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # inspired by https://github.com/giorgi-o
