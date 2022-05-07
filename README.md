@@ -42,8 +42,10 @@ OWNER_ID='INPUT YOUR DISCORD ID'
 ```
 python bot.py
 ```
-* Slash Command in the global happens instantly `(takes 1 hour to process.)` | force global `-sync global`
-* if you want use in server now `-sync guild` to setup the commands.
+* Slash Command is automatic global commands `(takes 1 hour to process.)`
+* If you want to use commands in server right now `-sync guild` to sync the commands in your server.
+* if you want remove commands in your server `-unsync guild` to remove server commands.
+* You can remove global command `-unsync global` to remove global commands.
 
 ## Usage
 
