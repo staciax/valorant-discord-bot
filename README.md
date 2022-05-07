@@ -54,15 +54,15 @@ python bot.py
 | `/login`  | Log in with your Riot acoount |
 | `/logout`  | Logout your Riot acoount |
 | `/misson`  | View your daily/weekly mission progress |
-| `/notify add`  | Set a notification when a specific skin is available on your store |
-| `/notify list`  | View skins you have set a notification for |
-| `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
-| `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
-| `/notify test`  | Testing notification |
 | `/nightmarket`  | Shows your nightmarket |
 | `/battlepass`  | View your battlepass' current tier |
 | `/bundle`  | inspect a specific bundle `credit by Giorgio` |
 | `/bundles`  | Show the current featured bundles `credit by Giorgio` |
+| `/notify add`  | Set a notification when a specific skin is available on your store |
+| `/notify list`  | View skins you have set a notification for |
+| `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
+| `/notify test`  | Testing notification |
+| `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
 | `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
 ## Translations (credit by [giorgio](https://github.com/giorgi-o))
