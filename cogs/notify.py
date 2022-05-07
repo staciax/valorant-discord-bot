@@ -24,6 +24,7 @@ from utils.valorant import (
     NotifyView,
     create_json, 
     setup_emoji,
+    LocalErrorResponse
 )
 
 class Notify(commands.Cog):
@@ -215,8 +216,9 @@ class Notify(commands.Cog):
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_mode', interaction.locale)
+        db_response = LocalErrorResponse('DATABASE', interaction.locale)
  
-        await self.db.is_login(interaction.user.id, interaction.locale) # check if user is logged in
+        await self.db.is_login(interaction.user.id, db_response) # check if user is logged in
         self.db.check_notify_list(interaction.user.id) # check total notify list
         self.db.change_notify_mode(interaction.user.id, mode) # change notify mode
 
@@ -240,8 +242,9 @@ class Notify(commands.Cog):
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_channel', interaction.locale)
+        db_response = LocalErrorResponse('DATABASE', interaction.locale)
  
-        await self.db.is_login(interaction.user.id, interaction.locale) # check if user is logged in
+        await self.db.is_login(interaction.user.id, db_response) # check if user is logged in
         self.db.check_notify_list(interaction.user.id) # check total notify list
         self.db.change_notify_channel(interaction.user.id, channel, interaction.channel_id) # change notify channel
         
