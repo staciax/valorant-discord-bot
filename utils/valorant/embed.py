@@ -145,7 +145,9 @@ class Generate_Embed:
         
         uuid, name, icon, price, dpice = skins['uuid'], skins['name'], skins['icon'], skins['price'], skins['disprice']
 
-        embed = Embed(f"{GetEmoji.tier(uuid)} **{name}**\n{points['vp']} {dpice} ~~{price}~~", color=0x0F1923)
+        vp_emoji = GetEmoji.point_by_bot('ValorantPointIcon', bot)
+
+        embed = Embed(f"{GetEmoji.tier(uuid)} **{name}**\n{vp_emoji} {dpice} ~~{price}~~", color=0x0F1923)
         embed.set_thumbnail(url=icon)
         return embed
 

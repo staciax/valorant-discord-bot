@@ -20,7 +20,7 @@ def _extract_tokens(data: str) -> str:
     response = pattern.findall(data['response']['parameters']['uri'])[0]
     return response
 
-def _extract_tokens_from_uri(URL: str) -> Tuple[str, str]:
+def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, str]]:
     try:
         accessToken = URL.split("access_token=")[1].split("&scope")[0]
         tokenId = URL.split("id_token=")[1].split("&")[0]
@@ -105,7 +105,7 @@ class Auth:
 
         raise RuntimeError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
 
-    async def get_entitlements_token(self, access_token: str) -> None:
+    async def get_entitlements_token(self, access_token: str) -> str:
         """ This function is used to get the entitlements token. """
         
         # language
@@ -126,7 +126,7 @@ class Auth:
         else:
             return entitlements_token
 
-    async def get_userinfo(self, access_token: str) -> None:
+    async def get_userinfo(self, access_token: str) -> Tuple[str, str, str]:
         """ This function is used to get the user info. """
 
         # language
@@ -175,7 +175,7 @@ class Auth:
         else:
             return region 
 
-    async def give2facode(self, twoFAcode: str, cookies: Dict):
+    async def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict:
         """ This function is used to give the 2FA code. """
 
         # language
@@ -220,8 +220,8 @@ class Auth:
         ) as r:
             data = await r.text()
 
-        if r.status != 303:
-            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
+        # if r.status != 303:
+        #     raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
 
         cookies = {}
         cookies['cookie'] = {}
@@ -235,7 +235,7 @@ class Auth:
                 
         return cookies, accessToken, entitlements_token
 
-    async def temp_auth(self, username: str, password: str):
+    async def temp_auth(self, username: str, password: str) -> Optional[Dict]:
         
         authenticate = await self.authenticate(username, password)
         if authenticate['auth'] == 'response':
