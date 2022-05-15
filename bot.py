@@ -92,6 +92,8 @@ async def sync(ctx: commands.Context, sync_type: str):
         await ctx.send("Bot don't have permission to sync. : https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png")
     except discord.HTTPException:
         await ctx.send('Failed to sync.', delete_after=30)
+    except commands.errors.MissingRequiredArgument:
+        await ctx.send('you need to specify a sync type.')
 
 @bot.command()
 # @commands.is_owner()
@@ -120,6 +122,8 @@ async def unsync(ctx: commands.Context, sync_type: str):
         await ctx.send("Bot don't have permission to unsync. : https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png")
     except discord.HTTPException:
         await ctx.send('Failed to unsync.', delete_after=30)
+    except commands.errors.MissingRequiredArgument:
+        await ctx.send('you need to specify a sync type.')
 
 @bot.tree.error
 async def tree_error_handler(interaction: Interaction, error: AppCommandError) -> None:
