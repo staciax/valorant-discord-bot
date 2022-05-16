@@ -1,4 +1,47 @@
-# Valorant Discord Bot
+<h1 align="center">
+  <br>
+  <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot"></a>
+  <br>
+  Valorant Discord Bot
+  <br>
+</h1>
+
+<h4 align="center">Store, Nightmarket, Battlepass, Mission, Bundle, Notify</h4>
+
+<p align="center">
+  <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot">
+     <img src="https://img.shields.io/github/v/release/staciax/ValorantStoreChecker-discord-bot" alt="release">
+  </a>
+  <a href="https://github.com/Rapptz/discord.py/">
+     <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+  </a>
+    <a title="Crowdin" target="_blank" href="https://crowdin.com/project/discord-bot-valorant"><img src="https://badges.crowdin.net/discord-bot-valorant/localized.svg">
+ </a>
+ <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/LICENSE">
+     <img src="https://img.shields.io/github/license/staciax/ValorantStoreChecker-discord-bot" alt="License">
+
+</p>
+
+<p align="center">
+  <a href="#about">About</a>
+  •
+  <a href="#installations">Installations</a>
+  •
+  <a href="#screenshot">Screenshot</a>
+  •
+  <a href="#usage">Usage</a>
+  •
+  <a href="#translations">Translations</a>
+  •
+  <a href="#special-thanks">Special Thanks</a>
+  •
+  <a href="#support-me">Support</a>
+</p>
+
+<!-- Inspired by Red Discord Bot -->
+<!-- https://github.com/Cog-Creators/Red-DiscordBot -->
+
+# About
 Discord bot that shows your infomation and more without open the VALORANT by using the [In-game API.](https://github.com/HeyM1ke/ValorantClientAPI)
 written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) library <br>
 
@@ -67,8 +110,8 @@ python bot.py
 | `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
 | `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
-## Translations (credit by [giorgio](https://github.com/giorgi-o))
-
+<!-- ## Translations (credit by [giorgio](https://github.com/giorgi-o) -->
+## Translations
 If you want to use your language and would like help translate the bot, please do!
 
 1. [Fork the repo](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
@@ -79,7 +122,9 @@ If you want to use your language and would like help translate the bot, please d
 
 Alternatively, you can just send me the JSON on discord and I'll upload it for you.
 
-## Special thanks
+- Credit by [giorgio](https://github.com/giorgi-o)
+
+## Special Thanks
 
 ### [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
 for providing a great API about Valorant!
