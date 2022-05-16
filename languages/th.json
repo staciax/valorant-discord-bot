@@ -5,7 +5,7 @@
             "NAME": "login",
             "DESCRIPTION": "เข้าสู่ระบบด้วยบัญชี Riot",
             "DESCRIBE": {
-                "username": "กรุณาใส่ username !",
+                "username": "กรุณาใส่ username!",
                 "password": "กรุณาใส่ password!"
             },
             "SUCCESS": "เข้าสู่ระบบสำเร็จ",

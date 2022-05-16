@@ -5,8 +5,8 @@
             "NAME": "login",
             "DESCRIPTION": "Log in with your Riot acoount", 
             "DESCRIBE": {
-                "username": "กรุณาใส่ username!",
-                "password": "กรุณาใส่ password!"
+                "username": "Input username!",
+                "password": "Input username!"
             },
             "SUCCESS": "Successfully logged in",
             "FAILED": "Failed to log in please try again"
@@ -28,7 +28,7 @@
         },
         "point": {
             "NAME": "point",
-            "DESCRIPTION": "View your daily/weekly mission progress",
+            "DESCRIPTION": "View your remaining Valorant and Radiant Points (VP/RP)",
             "POINT": "Points"
         },
         "mission": {
