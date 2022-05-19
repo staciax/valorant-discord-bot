@@ -6,7 +6,7 @@
             "DESCRIPTION": "Log in with your Riot acoount", 
             "DESCRIBE": {
                 "username": "Input username!",
-                "password": "Input username!"
+                "password": "Input password!"
             },
             "SUCCESS": "Successfully logged in",
             "FAILED": "Failed to log in please try again"
@@ -22,7 +22,7 @@
             "DESCRIPTION": "Shows your daily store in your accounts",
             "DESCRIBE": {
                 "username": "Input username! (temporary login)",
-                "password": "Input username! (temporary login)"
+                "password": "Input password! (temporary login)"
             },
             "RESPONSE": "Daily store for **{username}** | Remaining {duration}"
         },

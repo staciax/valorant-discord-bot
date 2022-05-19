@@ -372,5 +372,5 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         await interaction.response.send_message(embed=embed, view=view)
 
-async def setup(bot) -> None:
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(ValorantCog(bot))
