@@ -34,11 +34,11 @@ emoji_icon_assests = {
 }
 
 tiers = {
-    '0cebb8be-46d7-c12a-d306-e9907bfc5a25': {'name':'Deluxe', 'emoji':'<:Deluxe:950372823048814632>', 'color': 0x009587},
-    'e046854e-406c-37f4-6607-19a9ba8426fc': {'name':'Exclusive', 'emoji':'<:Exclusive:950372911036915762>', 'color': 0xf1b82d},
-    '60bca009-4182-7998-dee7-b8a2558dc369': {'name':'Premium', 'emoji':'<:Premium:950376774620049489>', 'color': 0xd1548d},
-    '12683d76-48d7-84a3-4e09-6985794f0445': {'name':'Select', 'emoji':'<:Select:950376833982021662>', 'color': 0x5a9fe2},
-    '411e4a55-4e59-7757-41f0-86a53f101bb5': {'name':'Ultra', 'emoji':'<:Ultra:950376896745586719>', 'color': 0xefeb65}
+    '0cebb8be-46d7-c12a-d306-e9907bfc5a25': {'name':'DeluxeTier', 'emoji':'<:Deluxe:950372823048814632>', 'color': 0x009587},
+    'e046854e-406c-37f4-6607-19a9ba8426fc': {'name':'ExclusiveTier', 'emoji':'<:Exclusive:950372911036915762>', 'color': 0xf1b82d},
+    '60bca009-4182-7998-dee7-b8a2558dc369': {'name':'PremiumTier', 'emoji':'<:Premium:950376774620049489>', 'color': 0xd1548d},
+    '12683d76-48d7-84a3-4e09-6985794f0445': {'name':'SelectTier', 'emoji':'<:Select:950376833982021662>', 'color': 0x5a9fe2},
+    '411e4a55-4e59-7757-41f0-86a53f101bb5': {'name':'UltraTier', 'emoji':'<:Ultra:950376896745586719>', 'color': 0xefeb65}
 }
 
 points = {
