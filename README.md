@@ -47,7 +47,7 @@
 # About
 Discord bot that shows your infomation and more without open the VALORANT by using the [In-game API.](https://github.com/HeyM1ke/ValorantClientAPI)
 written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) library <br>
-
+For support using Valorant Bot, please join the [support server](https://discord.gg/RaCzsPnfNM)
 ## Screenshot
 
 * Embed Design by [Giorgio](https://github.com/giorgi-o)
