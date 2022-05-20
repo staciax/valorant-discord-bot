@@ -1,0 +1,171 @@
+{   
+    "translation_by": "KANATA IS GOD#6356",
+    "commands": {
+        "login": {
+            "NAME": "ログイン",
+            "DESCRIPTION": "お使いのRiotアカウントでログインしてください！", 
+            "DESCRIBE": {
+                "username": "ユーザー名を入力してください！",
+                "password": "パスワードを入力してください！"
+            },
+            "SUCCESS": "ログインが完了しました！",
+            "FAILED": "ログインに失敗しました、もう一度お試しください。"
+        },
+        "logout": {
+            "NAME": "ログアウト",
+            "DESCRIPTION": "ログアウトします。",
+            "SUCCESS": "ログアウトが完了しました！",
+            "FAILED": "ログアウトに失敗しました！もう一度お試しください。"
+        },
+        "store": {
+            "NAME": "ストア",
+            "DESCRIPTION": "ストアを表示します。",
+            "DESCRIBE": {
+                "username": "ユーザー名を入力してください！ (一時的なログイン)",
+                "password": "パスワードを入力してください！ (一時的なログイン)"
+            },
+            "RESPONSE": "**{username}** のストア | 更新 {duration}"
+        },
+        "point": {
+            "NAME": "ポイント",
+            "DESCRIPTION": "所有しているVALORANTポイントを表示します。",
+            "POINT": "ポイント"
+        },
+        "mission": {
+            "NAME": "ミッション",
+            "DESCRIPTION": "ミッションを確認できます。",
+            "TITLE": "ミッション",
+            "DAILY":"デイリー",
+            "WEEKLY":"ウィークリー",
+            "NEWPLAYER":"New Player",
+            "NO_MISSION":"ミッションはありません！お疲れ様です！",
+            "DAILY_RESET":"更新 {duration}",
+            "REFILLS": "更新 {duration}"
+        },
+        "nightmarket": {
+            "NAME": "ナイトマーケット",
+            "DESCRIPTION": "ナイトマーケットオファーを表示します。",
+            "RESPONSE": "**{username}** のナイトマーケット| 残り {duration}",
+            "NIGMARKET_HAS_END": "ナイトマーケットは開催されていません。"
+        },
+        "battlepass": {
+            "NAME": "バトルパス",
+            "DESCRIPTION": "現在のバトルパス進行状況を表示します。",
+            "RESPONSE": "**次の報酬:** {next}\n**タイプ:** {type}\n**XP:** {xp}\n**ACT終了:** {end}",
+            "TIER": "ティア",
+            "PLAYER_CARD": "プレイヤーカード",
+            "SPRAY": "スプレー",
+            "BUDDY": "バディー",
+            "POINT": "ポイント",
+            "PLAYER_TITLE": "タイトル",
+            "SKIN": "スキン"
+        },
+        "notify_add": {
+            "NAME": "通知の追加",
+            "DESCRIPTION": "追加したスキンがストアに出たら通知します。",
+            "DESCRIBE": {
+                "skin": "通知してほしいスキンの名前"
+            },
+            "SUCCESS": "以下のスキンをリストに追加しました {emoji} **{skin}**",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** はすでに通知リストに存在します！",
+            "NOT_FOUND": "スキンが見つかりません。",
+            "REMOVE_NOTIFY": "通知を削除",
+            "REMOVED_NOTIFY": "**{skin}** は削除済みです。"
+        },
+        "notify_list": {
+            "NAME": "通知リスト",
+            "DESCRIPTION": "現在設定されているスキンを表示します。",
+            "TITLE":"通知リスト",
+            "DONT_HAVE_NOTIFY": "通知が設定されていません。",
+            "REMOVE_NOTIFY": "ボタンをクリックすると通知が削除されます。"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "通知モードを変更します。",
+            "DESCRIBE": {
+                "mode": "変更したいモード"
+            },
+            "SUCCESS":"通知モードの変更が完了しました！ **{mode}**",
+            "TURN_OFF": "Turn off notification mode"
+        },
+        "notify_test": {
+            "NAME": "test",
+            "DESCRIPTION": "通知をテストします。",
+            "NOTIFY_IS_WORKING": "通知は動作しています！",
+            "NOTIFY_TURN_OFF": "通知モードがオンになっていません。",
+            "EMPTY_LIST":"通知リストが空です。",
+            "BOT_MISSING_PERM": "**このチャンネルで通知を送る権限がありません！** \nBOTの権限設定を確認してください。 `View channel`, `Send messages`, `Embed links`, `Use external emoji`. を設定して試してみてください。 `/notify test`.",
+            "FAILED_SEND_NOTIFY": "通知の送信に失敗しました、もう一度やり直してください。",
+            "PLEASE_ALLOW_DM_MESSAGE": "プライバシー設定でダイレクトメッセージを許可してください。"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** があなたのストアにあります！ \n更新 {duration}",
+            "RESPONSE_ALL": "**{username}** のストア | 更新 {duration}"
+        },
+        "notify_channel": {
+            "NAME": "通知チャンネル",
+            "DESCRIPTION": "通知するチャンネルを変更します。",
+            "DESCRIBE": {
+                "channel": "通知するチャンネルを選択"
+            },
+            "SUCCESS":"チャンネルを変更しました。 **{channel}**"
+        },
+        "bundle": {
+            "NAME": "バンドル",
+            "DESCRIPTION": "バンドルの内容を表示します。",
+            "DESCRIBE": {
+                "bundle": "見たいバンドルの名前を入力してください！"
+            },
+            "TITLE": "バンドル",
+            "DROPDOWN_CHOICE_TITLE": "バンドルを選択:",
+            "NOT_FOUND_BUNDLE": "バンドルが見つかりません。"
+        },
+        "bundles": {
+            "NAME": "バンドル",
+            "DESCRIPTION": "現在のバンドルを表示します。",
+            "TITLE": "注目のバンドル {bundle} コレクション"
+        },
+        "debug": {
+            "NAME": "デバッグ",
+            "DESCRIPTION": "The command debug for the bot",
+            "DESCRIBE": {
+                "bug": "The bug you want to fix.",
+                "choice":{
+                    "skin_price_not_loading": "Skin price not loading",
+                    "emoji_price_not_loading": "Emoji not loading",
+                    "cache_price_not_loading": "Cache not loading"
+                }
+            },
+            "SUCCESS": "Successfully debuged: **{bug}**"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "不明なエラーです。",
+        "AUTH": {
+            "INVALID_PASSWORD": "ユーザー名、パスワードが間違っています。",
+            "RATELIMIT": "数分待ってから、もう一度試してください。",
+            "COOKIES_EXPIRED": "Cookieの有効期限が切れています、もう一度ログインしてください。",
+            "NO_NAME_TAG": "このユーザーはまだVALORANTアカウントを作成していません。",
+            "REGION_NOT_FOUND": "不明なエラーが発生しました、もう一度お試しください。",
+            "LOGIN_COOKIE_FAILED": "Cookieを使ったログインに失敗しました。",
+            "INPUT_2FA_CODE": "認証コードを入力してください。",
+            "2FA_ENABLE": "2FAは有効になっています！",
+            "2FA_TO_EMAIL": "認証コードを送信しました。",
+            "2FA_INVALID_CODE": "コードが間違っています、もう一度お試しください。"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "あなたはログインしていません！今すぐ/loginでログインしてください！",
+            "LOGIN_ERROR": "ログインに失敗しました、もう一度お試しください。",
+            "LOGOUT_ERROR": "あなたはログインしていません。",
+            "LOGOUT_EXCEPT": "ログアウト中にエラーが発生しました。。"
+        },
+        "API" : {
+            "FAILED_ACTIVE": "Failed to activate API",
+            "REQUEST_FAILED": "API Response Failed !"
+        },
+        "SETUP_EMOJI":{
+            "MISSING_PERM": "絵文字を作成する権限がありません！",
+            "FAILED_CREATE_EMOJI": "絵文字の作成に失敗しました。もう一度お試しください。"
+        }
+    }
+}
