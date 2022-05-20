@@ -220,8 +220,11 @@ class Auth:
         ) as r:
             data = await r.text()
 
-        # if r.status != 303:
-        #     raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
+        if r.status != 303:
+            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
+        
+        if r.headers['Location'].startswith('/login'):
+            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
 
         cookies = {}
         cookies['cookie'] = {}

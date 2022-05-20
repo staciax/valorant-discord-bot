@@ -49,7 +49,7 @@
             "NIGMARKET_HAS_END": "Le **NightMarket** est terminé"
         },
         "battlepass": {
-            "NAME": "nightmarket",
+            "NAME": "battlepass",
             "DESCRIPTION": "Regardez votre niveau actuel du BattlePass",
             "RESPONSE": "**Prochaine récompense:** {next}\n**Type:** {type}\n**XP:** {xp}\n**Fin de l'acte:** {end}",
             "TIER": "Niveau",

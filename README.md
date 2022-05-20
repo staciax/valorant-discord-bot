@@ -9,6 +9,9 @@
 <h4 align="center">Store, Nightmarket, Battlepass, Mission, Bundle, Notify</h4>
 
 <p align="center">
+  <a href="https://discord.gg/RaCzsPnfNM">
+      <img src="https://discordapp.com/api/guilds/887274968012955679/widget.png" alt="Support Server">
+    </a>
   <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot">
      <img src="https://img.shields.io/github/v/release/staciax/ValorantStoreChecker-discord-bot" alt="release">
   </a>
@@ -51,7 +54,14 @@ written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) 
 
 ![image](https://i.imgur.com/uF9THEa.png)
 ![image](https://i.imgur.com/ijjvQV3.png)
-![image](https://i.imgur.com/GhzLBSr.png)
+<details>
+<summary>See more screenshots</summary>
+<img src="https://i.imgur.com/GhzLBSr.png" alt="battlepass">
+<img src="https://i.imgur.com/f0gXUoo.png" alt="nightmarket">
+<img src="https://i.imgur.com/Q7q6tUU.png" alt="missions">
+<img src="https://i.imgur.com/5jEZt3Z.png" alt="points">
+</details>
+
 
 ## Installations
 
@@ -114,29 +124,35 @@ python bot.py
 ## Translations
 If you want to use your language and would like help translate the bot, please do!
 
+- Option 1
+
+1. You can translate my crowdin project [here.](https://crowdin.com/project/discord-bot-valorant)
+
+- Option 2 (inspiration by [giorgio](https://github.com/giorgi-o))
+
 1. [Fork the repo](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. Look up the language code for your language [here](https://discord.com/developers/docs/reference#locales)
 3. In the `languages` folder of your forked repo, copy `en-US.json` and rename it to your language code
 4. Open that file and do the thing
 5. Open a pull request
 
-Alternatively, you can just send me the JSON on discord and I'll upload it for you.
-
-- Credit by [giorgio](https://github.com/giorgi-o)
+ - Alternatively, you can just send me the JSON on discord and I'll upload it for you.
 
 ## Special Thanks
 
-### [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
+- [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
 for providing a great API about Valorant!
 
-### [Valorant-API.com](https://valorant-api.com/)
+- [Valorant-API.com](https://valorant-api.com/)
 for every skin names and images!
 
-### [Giorgio](https://github.com/giorgi-o)
+- [Giorgio](https://github.com/giorgi-o)
 for always helping me and more! <3
 
-### [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
+- [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
 developer community for valorant api
+
+- [Contributors](https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors) <3 <3
 
 ### Support Me
 
