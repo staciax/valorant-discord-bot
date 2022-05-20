@@ -33,7 +33,7 @@ class ValorantBot(commands.Bot):
                 self.owner_id = int(owner_id)
             except ValueError:
                 pass
-        self.bot_version = '3.0.5'
+        self.bot_version = '3.0.6'
         
     async def load_cogs(self) -> None:
         for ext in initial_extensions:
