@@ -226,17 +226,19 @@ class Auth:
         if r.headers['Location'].startswith('/login'):
             raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
 
-        cookies = {}
-        cookies['cookie'] = {}
+        old_cookie = cookies.copy()
+
+        new_cookies = {}
+        new_cookies['cookie'] = old_cookie
         for cookie in r.cookies.items():
-            cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
+            new_cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
 
         await session.close()
         
         accessToken, tokenId = _extract_tokens_from_uri(data)
         entitlements_token = await self.get_entitlements_token(accessToken)
                 
-        return cookies, accessToken, entitlements_token
+        return new_cookies, accessToken, entitlements_token
 
     async def temp_auth(self, username: str, password: str) -> Optional[Dict]:
         
