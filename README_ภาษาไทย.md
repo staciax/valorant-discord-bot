@@ -1,16 +1,74 @@
-# Valorant - ดิสคอร์ดบอท
+<h1 align="center">
+  <br>
+  <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot"></a>
+  <br>
+  Valorant Discord Bot
+  <br>
+</h1>
+
+<h4 align="center">Store, Nightmarket, Battlepass, Mission, Bundle, Notify</h4>
+
+<p align="center">
+  <a href="https://discord.gg/RaCzsPnfNM">
+      <img src="https://discordapp.com/api/guilds/887274968012955679/widget.png" alt="Support Server">
+    </a>
+  <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot">
+     <img src="https://img.shields.io/github/v/release/staciax/ValorantStoreChecker-discord-bot" alt="release">
+  </a>
+  <a href="https://github.com/Rapptz/discord.py/">
+     <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+  </a>
+    <a title="Crowdin" target="_blank" href="https://crowdin.com/project/discord-bot-valorant"><img src="https://badges.crowdin.net/discord-bot-valorant/localized.svg">
+ </a>
+ <a href="https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/LICENSE">
+     <img src="https://img.shields.io/github/license/staciax/ValorantStoreChecker-discord-bot" alt="License">
+
+</p>
+
+<p align="center">
+  <a href="#about">เกี่ยวกับ</a>
+  •
+  <a href="#installations">วิธีติดตั่ง</a>
+  •
+  <a href="#screenshot">ภาพประกอบ</a>
+  •
+  <a href="#usage">คำสั่งและวิธีใช้งาน</a>
+  •
+  <a href="#translations">แปลภาษา</a>
+  •
+  <a href="#special-thanks">ขอบคุณ</a>
+  •
+  <a href="#support-me">สนับสนุนได้ที่</a>
+</p>
+
+<!-- Inspired by Red Discord Bot -->
+<!-- https://github.com/Cog-Creators/Red-DiscordBot -->
+
+# เกี่ยวกับ
 ดิสคอร์ดบอทที่โชว์ข้อมูลภายในเกมโดยไม่ต้องเข้าเกม โดยใช้ [In-game API](https://github.com/HeyM1ke/ValorantClientAPI)
 เขียนโดย Python และ ไลบรารี่ [Discord.py](https://github.com/Rapptz/discord.py) <br>
+ต้องการความช่วยเหลือสามารถเข้ามาใน [เซิฟเวอร์ดิสคอร์ด](https://discord.gg/RaCzsPnfNM)
 
-## ภาพหน้าจอ
+## Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+- [วีดีโอสอน](https://youtu.be/5ZFsEcDT8e4)
 
-* Embed ดีไซน์โดย [Giorgio](https://github.com/giorgi-o)
+## ภาพประกอบ
+
+* Embed Design by [Giorgio](https://github.com/giorgi-o)
 
 ![image](https://i.imgur.com/uF9THEa.png)
 ![image](https://i.imgur.com/ijjvQV3.png)
-![image](https://i.imgur.com/GhzLBSr.png)
+<details>
+<summary>ภาพประกอบเพิ่มเติม</summary>
+<img src="https://i.imgur.com/GhzLBSr.png" alt="battlepass">
+<img src="https://i.imgur.com/f0gXUoo.png" alt="nightmarket">
+<img src="https://i.imgur.com/Q7q6tUU.png" alt="missions">
+<img src="https://i.imgur.com/5jEZt3Z.png" alt="points">
+</details>
 
-## Installations
+
+## วิธีติดตั่ง
 
 * ดาวน์โหลด [Python 3.8+](https://www.python.org/downloads/)
 
@@ -31,7 +89,7 @@ pip install requests
 pip install python-dotenv
 ```
 
-* เก็บ Token และ Owner ID ในไฟล์ [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env) และ กดบันทึกไฟล์ให้เรียบร้อย
+* เก็บ Token และ Owner ID ในไฟล์  [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env) และ กดบันทึกไฟล์ให้เรียบร้อย
 ```
 TOKEN='ใส่โทเคนของบอท'
 OWNER_ID='ใส่เลขไอดีของเรา'
@@ -65,6 +123,7 @@ python bot.py
 | `/notify channel`  | เปลี่ยนแชแนลส่งแจ้งเตือน DM หรือ แชแนล(ในเซิฟเวอร์) |
 | `/debug`  | คำสั่งแก้บัคต่างๆ เช่น `อีโมจิ`, `ราคาสกิน`,`แคช` ไม่โหลด |
 
+<!-- ## Translations (credit by [giorgio](https://github.com/giorgi-o) -->
 ## แปลภาษา (บอทรองรับภษาไทยแล้ว)
 
 ถ้าต้องการให้บอทรองรับภาษาอื่นทำตามขั้นตอนนี้
@@ -77,24 +136,28 @@ python bot.py
 
 หรือคุณสามารถส่ง JSON ผ่าน discord มาให้ผมได้นะครับ
 
-### สนับสนุน
+หรือสามารถแปลได้ใน [Crowdin](https://crowdin.com/project/discord-bot-valorant)
+
+## Special Thanks
+
+- [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
+for providing a great API about Valorant!
+
+- [Valorant-API.com](https://valorant-api.com/)
+for every skin names and images!
+
+- [Giorgio](https://github.com/giorgi-o)
+for always helping me and more! <3
+
+- [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
+developer community for valorant api
+
+- [Contributors](https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors) <3 <3
+
+### สนับสนุนได้ที่
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/staciax)
 
 <a href="https://tipme.in.th/renlyx">
 <img link="https://ko-fi.com/staciax" src="https://static.tipme.in.th/img/logo.f8267020b29b.svg" width="170" />
 </a>
-
-## Special thanks
-
-### [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
-for providing a great API about Valorant!
-
-### [Valorant-API.com](https://valorant-api.com/)
-for every skin names and images!
-
-### [Giorgio](https://github.com/giorgi-o)
-for always helping me and more! <3
-
-### [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
-developer community for valorant api

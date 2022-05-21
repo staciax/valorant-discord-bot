@@ -51,7 +51,7 @@ For support using Valorant Bot, please join the [support server](https://discord
 
 ## Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-- [Youtube Tutorial](https://www.youtube.com/c/RenlyxDev/videos)
+- [Youtube Tutorial](https://youtu.be/5ZFsEcDT8e4)
 
 ## Screenshot
 
