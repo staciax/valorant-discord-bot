@@ -77,7 +77,8 @@ class DATABASE:
                 username=player_name,
                 region=region,
                 expiry_token=expiry_token,
-                notify_mode=None
+                notify_mode=None,
+                DM_Message=True
             )
 
             db[str(user_id)] = data

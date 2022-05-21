@@ -219,7 +219,10 @@ class Notify(commands.Cog):
         db_response = LocalErrorResponse('DATABASE', interaction.locale)
  
         await self.db.is_login(interaction.user.id, db_response) # check if user is logged in
-        self.db.check_notify_list(interaction.user.id) # check total notify list
+
+        if mode == 'Specified Skin': # Check notify list if use mode specified skin
+            self.db.check_notify_list(interaction.user.id) # check total notify list
+
         self.db.change_notify_mode(interaction.user.id, mode) # change notify mode
 
         success = response.get("SUCCESS")
