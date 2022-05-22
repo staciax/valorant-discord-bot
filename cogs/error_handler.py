@@ -23,7 +23,6 @@ class ErrorHandler(commands.Cog):
 
         if isinstance(error, CommandInvokeError):
             error = error.original
-            traceback.print_exception(type(error), error, error.__traceback__)
         elif isinstance(error, Union[CommandNotFound, MissingPermissions, BotMissingPermissions]):
             error = error
         else:

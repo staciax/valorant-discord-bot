@@ -66,7 +66,7 @@ class Auth:
         for cookie in r.cookies.items():
             cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
 
-        data = {"type": "auth", "username": username, "password": password}
+        data = {"type": "auth", "username": username, "password": password, "remember": True}
 
         async with session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers) as r:
             data = await r.json()
@@ -184,7 +184,7 @@ class Auth:
         session = aiohttp.ClientSession()
         
         headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
-        data = {"type": "multifactor", "code": twoFAcode, "rememberDevice": False}
+        data = {"type": "multifactor", "code": twoFAcode, "rememberDevice": True}
 
         async with session.put('https://auth.riotgames.com/api/v1/authorization', headers=headers, json=data, cookies=cookies['cookie']) as r:
             data = await r.json()

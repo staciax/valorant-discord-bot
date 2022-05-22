@@ -136,6 +136,8 @@ class Notify(commands.Cog):
 
         await interaction.response.defer()
 
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_add', interaction.locale)
@@ -181,8 +183,8 @@ class Notify(commands.Cog):
                 JSON.save('notifys', notify_data)
 
             # check if user is notify is on
-            userdata = JSON.read('users') 
-            notify_mode = userdata.get('notify_mode')
+            userdata = JSON.read('users')
+            notify_mode = userdata.get('notify_mode', None)
             if notify_mode is None:
                 userdata[str(interaction.user.id)]['notify_mode'] = 'Specified'
                 userdata[str(interaction.user.id)]['DM_Message'] = True
@@ -205,7 +207,7 @@ class Notify(commands.Cog):
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_list', interaction.locale)
 
-        await self.db.is_data(interaction.user.id) # check if user is in db
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
         view = NotifyViewList(interaction, response)
         await view.start()
 
@@ -216,9 +218,8 @@ class Notify(commands.Cog):
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_mode', interaction.locale)
-        db_response = LocalErrorResponse('DATABASE', interaction.locale)
- 
-        await self.db.is_login(interaction.user.id, db_response) # check if user is logged in
+        
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
 
         if mode == 'Specified Skin': # Check notify list if use mode specified skin
             self.db.check_notify_list(interaction.user.id) # check total notify list
@@ -245,9 +246,9 @@ class Notify(commands.Cog):
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_channel', interaction.locale)
-        db_response = LocalErrorResponse('DATABASE', interaction.locale)
- 
-        await self.db.is_login(interaction.user.id, db_response) # check if user is logged in
+        
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+        
         self.db.check_notify_list(interaction.user.id) # check total notify list
         self.db.change_notify_channel(interaction.user.id, channel, interaction.channel_id) # change notify channel
         
