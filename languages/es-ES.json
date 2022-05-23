@@ -1,9 +1,9 @@
 {
-    "thanks_for_translate_in_crowdin": "1.Julian Rodriguez (Disorder)\n2.",
+    "thanks_for_translate_in_crowdin": "1.Disorder \n2.",
     "commands": {
         "login": {
             "NAME": "Inicio de sesión",
-            "DESCRIPTION": "Inicia sesión con tu cuenta de Río",
+            "DESCRIPTION": "Inicia sesión con tu cuenta de Riot",
             "DESCRIBE": {
                 "username": "¡Introduce un nombre de usuario!",
                 "password": "¡Introduce una contraseña!"

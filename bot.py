@@ -25,15 +25,11 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 class ValorantBot(commands.Bot):
+
+    bot_app_info: discord.AppInfo
+
     def __init__(self) -> None:
         super().__init__(command_prefix='-', case_insensitive=True, intents=intents)
-        owner_id = os.getenv('OWNER_ID')
-        if owner_id is not None:
-            try:
-                self.owner_id = int(owner_id)
-            except ValueError:
-                pass
-            
         self.bot_version = '3.0.6 v2'
         
     async def load_cogs(self) -> None:
@@ -45,10 +41,22 @@ class ValorantBot(commands.Bot):
             open('data/cache.json')
         except FileNotFoundError:
             get_cache()
+    
+    @property
+    def owner(self) -> discord.User:
+        return self.bot_app_info.owner
               
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
         
+        owner_id = os.getenv('OWNER_ID')
+        if owner_id is not None:
+            try:
+                self.owner_id = int(owner_id)
+            except ValueError:
+                self.bot_app_info = await self.application_info()
+                self.owner_id = self.bot_app_info.owner.id
+            
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT(self.session)
         
