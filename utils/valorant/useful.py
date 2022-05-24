@@ -223,7 +223,7 @@ class GetEmoji:
             return cls.tier(skin_uuid)
         return emoji
 
-    def point_by_bot(point: Literal['ValorantPointIcon', 'RadianitePointIcon'], bot: commands.Bot) -> discord.Emoji:
+    def point_by_bot(point: str, bot: commands.Bot) -> discord.Emoji:
         emoji = discord.utils.get(bot.emojis, name=point)
         if emoji is None:
             return points_emoji.get(point)

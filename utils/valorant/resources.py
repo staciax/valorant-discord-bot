@@ -42,8 +42,8 @@ tiers = {
 }
 
 points = {
-    'ValorantPoint':f'<:ValorantPoint:950365917613817856>',
-    'RadianitePoint':f'<:RadianitePoint:950365909636235324>'
+    'ValorantPointIcon':f'<:ValorantPoint:950365917613817856>',
+    'RadianitePointIcon':f'<:RadianitePoint:950365909636235324>'
 }
 
 def get_item_type(uuid: str):
