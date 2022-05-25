@@ -30,7 +30,7 @@ class ValorantBot(commands.Bot):
 
     def __init__(self) -> None:
         super().__init__(command_prefix='-', case_insensitive=True, intents=intents)
-        self.bot_version = '3.0.6 v2'
+        self.bot_version = '3.0.8'
         
     async def load_cogs(self) -> None:
         for ext in initial_extensions:

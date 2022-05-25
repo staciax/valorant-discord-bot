@@ -382,7 +382,7 @@ def fetch_price(data_price: Dict) -> None:
 def get_cache() -> None:
     """ Get all cache from valorant-api.com """
     
-    create_json('cache', {"ValorantVersion": get_valorant_version()})
+    create_json('cache', {"valorant_version": get_valorant_version()})
 
     fetch_skin()
     fetch_tier()

@@ -4,7 +4,8 @@ from io import BytesIO
 from discord.ext import commands
 from .local import LocalErrorResponse
 
-# ---------- URL AND REGION FORMAT ---------- # https://github.com/colinhartigan/
+# ------------------- #
+# credit https://github.com/colinhartigan/
 
 base_endpoint = "https://pd.{shard}.a.pvp.net"
 base_endpoint_glz = "https://glz-{region}-1.{shard}.a.pvp.net"
@@ -18,6 +19,10 @@ region_shard_override = {
 shard_region_override = {
     "pbe": "na"
 }
+
+# ------------------- #
+
+
 
 # ---------- EMOJI ---------- #
 

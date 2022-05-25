@@ -292,8 +292,7 @@ class BaseBundle(discord.ui.View):
         embeds = [embed]
 
         for items in sorted(bundle['items'], reverse=True, key=lambda c: c['base_price']):
-            
-
+              
             item = GetItems.get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
             emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''

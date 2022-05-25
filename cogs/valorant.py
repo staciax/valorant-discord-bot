@@ -19,7 +19,7 @@ from utils.valorant import (
     get_valorant_version,
     setup_emoji,
     API_ENDPOINT,
-    DATABASE,
+    DATABASE
 )
 
 def owner_only() -> app_commands.check:
@@ -41,7 +41,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         with contextlib.suppress(Exception):
             cache = self.db.read_cache()
             valorant_version = get_valorant_version()
-            if valorant_version != cache['ValorantVersion'] or force:
+            if valorant_version != cache['valorant_version'] or force:
                 get_cache()
                 cache = self.db.read_cache()
                 cache['valorant_version'] = valorant_version
@@ -352,23 +352,31 @@ class ValorantCog(commands.Cog, name='Valorant'):
         
         owner_id = 240059262297047041
         owner_url = f'https://discord.com/users/{owner_id}'
-        github_project = 'https://github.com/staciax/ValorantStoreChecker-discord-bot'
+        github_project = 'https://github.com/staciax/Valorant-DiscordBot'
         support_url = 'https://discord.gg/FJSXPqQZgz'
         
         embed = discord.Embed(color=0xffffff)
         embed.set_author(name='ᴠᴀʟᴏʀᴀɴᴛ ʙᴏᴛ ᴘʀᴏᴊᴇᴄᴛ', url=github_project)
         embed.set_thumbnail(url='https://i.imgur.com/ZtuNW0Z.png')
         embed.add_field(
-            name='ᴀʙᴏᴜᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ:',
-            value=f"ᴏᴡɴᴇʀ: [ꜱᴛᴀᴄɪᴀ.#7475]({owner_url}, '┐(・。・┐) ♪')",
+            name='ᴅᴇᴠᴇʟᴏᴘᴇʀ:',
+            value=f"[ꜱᴛᴀᴄɪᴀ.#7475]({owner_url})",
+            inline=False
+        )
+        embed.add_field(
+            name='ᴄᴏɴᴛʀɪʙᴜᴛᴏʀꜱ:',
+            value=f"[kiznick](https://github.com/kiznick)\n"
+                "[KANATAISGOD](https://github.com/KANATAISGOD)\n"
+                "[TMADZ2007](https://github.com/KANATAISGOD')\n"
+                "[sevzin](https://github.com/sevzin)\n"
+                "[miigoxyz](https://github.com/miigoxyz)\n"
+                "[Connor](https://github.com/ConnorDoesDev)\n",
             inline=False
         )
         view = ui.View()
-        view.add_item(ui.Button(label='ᴅᴇᴠ ᴅɪꜱᴄᴏʀᴅ', url=owner_url, row=0))
         view.add_item(ui.Button(label='ɢɪᴛʜᴜʙ', url=github_project, row=0))
-        view.add_item(ui.Button(label='ꜱᴜᴘᴘᴏʀᴛ ꜱᴇʀᴠᴇʀ', url=support_url,  row=1))
-        view.add_item(ui.Button(label='ᴅᴏɴᴀᴛᴇ', url='https://tipme.in.th/renlyx', row=1))
-        view.add_item(ui.Button(label='ᴋᴏ-ꜰɪ', url='https://ko-fi.com/staciax', row=1))
+        view.add_item(ui.Button(label='ᴋᴏ-ꜰɪ', url='https://ko-fi.com/staciax', row=0))
+        view.add_item(ui.Button(label='ꜱᴜᴘᴘᴏʀᴛ ꜱᴇʀᴠᴇʀ', url=support_url, row=0))
 
         await interaction.response.send_message(embed=embed, view=view)
 

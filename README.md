@@ -145,19 +145,29 @@ If you want to use your language and would like help translate the bot, please d
 
 ## Special Thanks
 
-- [Valorant Client API](https://github.com/RumbleMike/ValorantClientAPI) by [RumbleMike](https://github.com/RumbleMike)
+This project wouldn't have happened without.
+
+- [HeyM1ke/ValorantClientAPI](https://github.com/RumbleMike/ValorantClientAPI)
 for providing a great API about Valorant!
+
+- [colinhartigan/valclient.py](https://github.com/colinhartigan/valclient.py)
+for beautiful client endpoint
+
+- [techchrism/valorant-api-docs](https://github.com/techchrism/valorant-api-docs/)
+for API docs documentation 
 
 - [Valorant-API.com](https://valorant-api.com/)
 for every skin names and images!
 
-- [Giorgio](https://github.com/giorgi-o)
-for always helping me and more! <3
+- [github/giorgi-o](https://github.com/giorgi-o)
+for always helping me and more!. ValoBot in JS [SkinPeek](https://github.com/giorgi-o/SkinPeek/) 
 
-- [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm) by [MikeValorantLeaks](https://github.com/RumbleMike)
+- [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm)
 developer community for valorant api
 
 - [Contributors](https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors) <3 <3
+
+- Thank you very much <3
 
 ### Support Me
 
