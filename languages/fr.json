@@ -66,7 +66,7 @@
             "DESCRIBE": {
                 "skin": "Le nom du skin dont vous souhaitez être notifié"
             },
-            "SUCCESS": "Vous avez bien activé une notification pour {emoji} **{name}**",
+            "SUCCESS": "Vous avez bien activé une notification pour {emoji} **{skin}**",
             "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** est déjà dans votre liste de notification !",
             "NOT_FOUND": "Le skin n'a pas été trouvé",
             "REMOVE_NOTIFY": "Supprimer la notification",
