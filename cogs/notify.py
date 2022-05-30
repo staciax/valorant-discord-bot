@@ -23,8 +23,7 @@ from utils.valorant import (
     NotifyViewList,
     NotifyView,
     create_json, 
-    setup_emoji,
-    LocalErrorResponse
+    setup_emoji
 )
 
 class Notify(commands.Cog):
@@ -41,7 +40,7 @@ class Notify(commands.Cog):
         self.endpoint: API_ENDPOINT = self.bot.endpoint
 
     async def get_endpoint_and_data(self, user_id: int) -> Tuple[API_ENDPOINT, dict]:
-        data = await self.db.is_data(user_id)
+        data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
         await endpoint.activate(data)
         return endpoint, data
@@ -203,6 +202,8 @@ class Notify(commands.Cog):
     @notify.command(name='list', description='View skins you have set a for notification.')
     async def notify_list(self, interaction: Interaction) -> None:
         
+        await interaction.response.defer(ephemeral=True)
+        
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_list', interaction.locale)
@@ -215,6 +216,8 @@ class Notify(commands.Cog):
     @app_commands.describe(mode='Select the mode you want to change.')
     async def notify_mode(self, interaction: Interaction,  mode: Literal['Specified Skin','All Skin', 'Off']) -> None:
         
+        await interaction.response.defer(ephemeral=True)
+
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_mode', interaction.locale)
@@ -237,12 +240,14 @@ class Notify(commands.Cog):
         elif mode == 'Off':
             embed.description = turn_off
         
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=True)
     
     @notify.command(name='channel', description='Change notification channel.')
     @app_commands.describe(channel='Select the channel you want to change.')
     async def notify_channel(self, interaction: Interaction, channel: Literal['DM Message', 'Channel']) -> None:
         
+        await interaction.response.defer(ephemeral=True)
+
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_channel', interaction.locale)
@@ -256,7 +261,7 @@ class Notify(commands.Cog):
 
         embed = discord.Embed(description=response.get('SUCCESS').format(channel=channel), color=0x77dd77)
 
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
     @notify.command(name='test', description='Testing notification')
     async def notify_test(self, interaction: Interaction) -> None:
