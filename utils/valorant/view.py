@@ -17,6 +17,7 @@ class share_button(ui.View):
         super().__init__(timeout=300)
 
     async def on_timeout(self) -> None:
+        """ Called when the view times out """
         await self.interaction.edit_original_message(view=None)
 
     @ui.button(label='Share to friends', style=discord.ButtonStyle.primary)
@@ -40,6 +41,8 @@ class NotifyView(discord.ui.View):
         return False
 
     async def on_timeout(self) -> None:
+        """ Called when the view times out """
+        
         with contextlib.suppress(Exception):
             self.remve_notify.disabled = True
             await self.message.edit_original_message(view=self)
@@ -95,10 +98,11 @@ class NotifyViewList(discord.ui.View):
         super().__init__(timeout=600)
     
     async def on_timeout(self) -> None:
+        """ Called when the view times out. """
         embed = discord.Embed(color=0x2F3136, description='🕙 Timeout')
         await self.interaction.edit_original_message(embed=embed, view=None) 
     
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:        
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:   
         if interaction.user == self.interaction.user:
             return True
         await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
@@ -114,6 +118,8 @@ class NotifyViewList(discord.ui.View):
             self.add_item(_NotifyListButton(label=index, custom_id=skin))
 
     def get_data(self) -> None:
+        """ Gets the data from the cache. """
+
         database = JSON.read('notifys')
         notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]
         skin_source:dict = {}
@@ -131,7 +137,9 @@ class NotifyViewList(discord.ui.View):
             }
         self.skin_source = skin_source
 
-    def main_embed(self) -> discord.Embed:        
+    def main_embed(self) -> discord.Embed:       
+        """ Main embed for the view """
+
         skin_list: dict = self.skin_source
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
@@ -162,10 +170,11 @@ class NotifyViewList(discord.ui.View):
         return embed
     
     async def start(self) -> Awaitable[None]:
+        """ Starts the view. """
         self.get_data()
         self.create_button()
         embed = self.main_embed()
-        await self.interaction.response.send_message(embed=embed, view=self)
+        await self.interaction.followup.send(embed=embed, view=self)
 
 class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     '''Modal for riot login with 2 factor authentication'''
@@ -186,6 +195,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     )
 
     async def on_submit(self, interaction: Interaction) -> None:
+        """ Called when the user submits the modal. """
 
         code = self.two2fa.value
         if code:
@@ -217,7 +227,8 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
                 return await send_embed(login['error'])
     
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
-        print(error)
+        """ Called when the user submits the modal with an error. """
+        print("TwoFA_UI:", error)
         embed = discord.Embed(description = 'Oops! Something went wrong.', color=0xfd4554)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -242,11 +253,14 @@ class BaseBundle(discord.ui.View):
             self.add_item(self.next_button)
 
     def base_embed(self, title:str, description:str, icon:str, color: int=0x0F1923) -> discord.Embed:
+        """ Base embed for the view """
+
         embed = discord.Embed(title=title, description=description, color=color)
         embed.set_thumbnail(url=icon)
         return embed
 
     def build_embeds(self, selected_bundle: int = 1) -> None:
+        """ Builds the bundle embeds """
 
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
     
@@ -280,6 +294,8 @@ class BaseBundle(discord.ui.View):
         self.embeds = embeds_list
 
     def build_Featured_Bundle(self, bundle: List[Dict]) -> List[discord.Embed]:
+        """ Builds the featured bundle embeds """
+        
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
         name = bundle['names'][self.language]
@@ -311,6 +327,7 @@ class BaseBundle(discord.ui.View):
         return embed_list
 
     def build_select(self) -> None:
+        """ Builds the select bundle """
         for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):
             self.select_bundle.add_option(label=bundle['names']['en-US'], value=index)
 
@@ -347,6 +364,8 @@ class BaseBundle(discord.ui.View):
         return False
         
     async def start(self) -> Awaitable[None]:
+        """ Starts the bundle view """
+
         if len(self.entries) == 1:
             self.build_embeds()
             self.fill_items()
@@ -364,8 +383,9 @@ class BaseBundle(discord.ui.View):
         raise RuntimeError(not_found_bundle)
 
     async def start_furture(self) -> Awaitable[None]:
+        """ Starts the featured bundle view """
+        
         FBundle = self.entries['FeaturedBundle']['Bundle']
-
         get_bundle = GetItems.get_bundle(FBundle["DataAssetID"])
 
         bundle_payload = {

@@ -46,6 +46,8 @@ class DateUtils:
         return time
 
     def format_dt(dt: datetime, style: str=None) -> str: #style 'R' or 'd'
+        """datatime to time format"""
+        
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
 
@@ -55,11 +57,13 @@ class DateUtils:
 
     @classmethod
     def format_relative(cls, dt: datetime) -> str:
+        """ datatime to relative time format """
         return cls.format_dt(dt, 'R')
 
 # ---------- JSON LOADER ---------- #
 
 def data_folder():
+    """ Get the data folder """
     # create data folder
     current_directory = os.getcwd()
     final_directory = os.path.join(current_directory, r'data')
@@ -96,6 +100,8 @@ class GetItems:
 
     @classmethod
     def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict:
+        """ Get item by type """
+
         item_type = get_item_type(Itemtype)
         if item_type == 'Agents': ...
         elif item_type == 'Contracts': return cls.get_contract(uuid)
@@ -173,6 +179,7 @@ class GetItems:
 
     def get_skin_lvl_or_name(name: str, uuid: str) -> Dict:
         """Get Skin uuid by name"""
+        
         data = JSON.read('cache')
         skin = None
         with contextlib.suppress(Exception):
@@ -183,6 +190,8 @@ class GetItems:
         return skin
 
     def get_tier_name(skin_uuid: str) -> str:
+        """ Get tier name by skin uuid """
+        
         try:
             data = JSON.read('cache')
             uuid = data['skins'][skin_uuid]['tier']
@@ -192,6 +201,8 @@ class GetItems:
         return name
 
     def get_contract(uuid: str) -> Dict:
+        """ Get contract by uuid """
+        
         data = JSON.read('cache')
         contract = None
         with contextlib.suppress(Exception):
@@ -199,6 +210,8 @@ class GetItems:
         return contract
 
     def get_bundle(uuid: str) -> Dict:
+        """ Get bundle by uuid """
+        
         data = JSON.read('cache')
         bundle = None
         with contextlib.suppress(Exception):
@@ -210,6 +223,8 @@ class GetItems:
 class GetEmoji:
 
     def tier(skin_uuid: str) -> discord.Emoji:
+        """ Get tier emoji """
+        
         data = JSON.read('cache')
         uuid = data['skins'][skin_uuid]['tier']
         uuid = data['tiers'][uuid]['uuid']
@@ -218,12 +233,16 @@ class GetEmoji:
 
     @classmethod
     def tier_by_bot(cls, skin_uuid: str, bot: commands.Bot) -> discord.Emoji:
+        """ Get tier emoji from bot """
+        
         emoji = discord.utils.get(bot.emojis, name= GetItems.get_tier_name(skin_uuid) + 'Tier')
         if emoji is None:
             return cls.tier(skin_uuid)
         return emoji
 
     def point_by_bot(point: str, bot: commands.Bot) -> discord.Emoji:
+        """ Get point emoji from bot"""
+
         emoji = discord.utils.get(bot.emojis, name=point)
         if emoji is None:
             return points_emoji.get(point)
@@ -314,6 +333,7 @@ class GetFormat:
 
     def nightmarket_format(offer: Dict, language: str, response: Dict) -> Dict:
         '''Get Nightmarket offers'''
+        
         try:
             night_offer = offer['BonusStore']['BonusStoreOffers']     
         except KeyError:
@@ -429,6 +449,7 @@ class GetFormat:
 
     @classmethod
     def battlepass_format(cls, data: Dict, season: str, language: str, response: Dict) -> Dict:
+        """ Get battlepass format """
         
         data = data['Contracts']
         contracts = JSON.read('cache')

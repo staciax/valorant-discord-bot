@@ -23,6 +23,7 @@ from utils.valorant import (
 )
 
 def owner_only() -> app_commands.check:
+    """ Checks if the user is the owner of the bot. """
     async def predicate(interaction: Interaction):
         return await interaction.client.is_owner(interaction.user)
     return app_commands.check(predicate)
@@ -38,6 +39,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         self.reload_cache.cancel()
 
     def funtion_reload_cache(self, force=False):
+        """ Reload the cache """
         with contextlib.suppress(Exception):
             cache = self.db.read_cache()
             valorant_version = get_valorant_version()
@@ -50,18 +52,22 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
     @tasks.loop(minutes=30)
     async def reload_cache(self) -> None:
+        """ Reload the cache every 30 minutes """
         self.funtion_reload_cache()
 
     @reload_cache.before_loop
     async def before_reload_cache(self) -> None:
+        """ Wait for the bot to be ready before reloading the cache """
         await self.bot.wait_until_ready()
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
+        """ When the bot is ready """
         self.db: DATABASE = self.bot.db
         self.endpoint: API_ENDPOINT = self.bot.endpoint
 
     async def get_endpoint(self, user_id: int, locale_code: str = None, username:str= None, password: str = None) -> API_ENDPOINT:
+        """ Get the endpoint for the user """
         if username is not None and password is not None:
             auth = self.db.auth
             auth.local_code = locale_code
@@ -108,6 +114,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='Logout and Delete your account from database')
     async def logout(self, interaction: Interaction) -> None:
         
+        await interaction.response.defer(ephemeral=True)
+
         # language
         language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage(interaction.command.name, interaction.locale)
@@ -116,7 +124,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         if logout := self.db.logout(user_id, interaction.locale):
             if logout:
                 embed = Embed(response.get('SUCCESS'))
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                return await interaction.followup.send(embed=embed, ephemeral=True)
             raise RuntimeError(response.get('FAILED'))
 
     @app_commands.command(description="Shows your daily store in your accounts")

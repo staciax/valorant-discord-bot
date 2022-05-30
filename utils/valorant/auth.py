@@ -252,7 +252,7 @@ class Auth:
             region = await self.get_region(access_token, token_id)
             player_name = f'{name}#{tag}' if tag is not None and tag is not None else 'no_username'
 
-            headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
+            headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
             user_data = {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
             return user_data
         
@@ -268,7 +268,7 @@ class Auth:
 
     #     session = aiohttp.ClientSession()
 
-    #     headers = {'cookie': cookies}
+    #     headers = {'Content-Type': 'application/json', 'cookie': cookies}
 
     #     async with session.get(
     #         "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",

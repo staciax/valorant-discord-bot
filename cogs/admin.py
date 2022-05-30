@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+app_cmd_scope_image = 'https://cdn.discordapp.com/attachments/934041100048535563/979410875226128404/applications.commands.png'
+
 class Admin(commands.Cog):
     """Error handler"""
 
@@ -29,7 +31,7 @@ class Admin(commands.Cog):
                 await self.bot.tree.sync()
                 await ctx.reply(f"Synced global !")
         except discord.Forbidden:
-            await ctx.send("Bot don't have permission to sync. : https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png")
+            await ctx.send(f"Bot don't have permission `applications.commands` to sync. : {app_cmd_scope_image}", delete_after=30)
         except discord.HTTPException:
             await ctx.send('Failed to sync.', delete_after=30)
 
@@ -60,7 +62,7 @@ class Admin(commands.Cog):
                 await self.bot.tree.sync()
                 await ctx.reply(f"Un-Synced global !")
         except discord.Forbidden:
-            await ctx.send("Bot don't have permission to unsync. : https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png")
+            await ctx.send(f"Bot don't have permission to unsync. : {app_cmd_scope_image}", delete_after=30)
         except discord.HTTPException:
             await ctx.send('Failed to unsync.', delete_after=30)
 

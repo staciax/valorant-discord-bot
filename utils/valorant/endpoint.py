@@ -67,6 +67,7 @@ class API_ENDPOINT:
         # self.__build_headers()
         
     async def fetch(self, endpoint: str='/', url: str='pd', errors: Dict={}) -> Dict:
+        """ fetch data from the api """
 
         self.locale_response()
         endpoint_url = getattr(self, url)
@@ -89,7 +90,8 @@ class API_ENDPOINT:
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
     async def put(self, endpoint: str="/", url: str='pd', body: Dict={}, errors: Dict={}) -> Dict:
-    
+        """ put data to the api """
+        
         self.locale_response()
 
         body = body if type(body) is list else json.dumps(body)
@@ -275,11 +277,15 @@ class API_ENDPOINT:
         self.glz = base_endpoint_glz.format(region=self.region, shard=self.shard)
 
     async def __build_headers(self, headers: Dict) -> Dict:
+        """ build headers """
+
         headers['X-Riot-ClientPlatform'] = self.client_platform
         headers['X-Riot-ClientVersion'] = await self._get_client_version()
         return headers
             
     def __format_region(self) -> None:
+        """ Format region to match from user input """
+        
         self.shard = self.region
         if self.region in region_shard_override.keys():
             self.shard = region_shard_override[self.region]
@@ -287,12 +293,14 @@ class API_ENDPOINT:
             self.region = shard_region_override[self.shard]
 
     async def _get_client_version(self) -> str:
+        """ Get the client version """
         r = await self.session.get('https://valorant-api.com/v1/version')
         data = await r.json()
         data = data['data']
         return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}" # return formatted version string
 
     async def _get_valorant_version(self):
+        """ Get the valorant version """
         r = await self.session.get('https://valorant-api.com/v1/version')
         if r.status != 200:
             return None
