@@ -313,7 +313,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
     async def cookies(self, interaction: Interaction, cookie: str) -> None:
         """ Login to your account with a cookie """
         
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         # language
         response = ResponseLanguage(interaction.command.name, interaction.locale)
