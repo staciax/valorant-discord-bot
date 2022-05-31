@@ -137,6 +137,15 @@
                 }
             },
             "SUCCESS": "Debug com sucesso: **{bug}**"
+        },
+        "cookies": {
+            "NAME": "cookies",
+            "DESCRIPTION": "Login to your account with a cookie",
+            "DESCRIBE": {
+                "cookie": "Your cookie"
+            },
+            "SUCCESS": "Successfully logged in",
+            "FAILED": "Invalid cookie"
         }
     },
     "errors": {
