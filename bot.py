@@ -24,14 +24,40 @@ initial_extensions = [
 intents = discord.Intents.default()
 intents.message_content = True
 
-class ValorantBot(commands.Bot):
+BOT_PREFIX = '-'
 
+class ValorantBot(commands.Bot):
+    debug: bool
     bot_app_info: discord.AppInfo
 
     def __init__(self) -> None:
-        super().__init__(command_prefix='-', case_insensitive=True, intents=intents)
-        self.bot_version = '3.0.8'
+        super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
+        self.bot_version = '3.1.0-pre'
+
+    @property
+    def owner(self) -> discord.User:
+        return self.bot_app_info.owner
+
+    async def on_ready(self) -> None:     
+        await self.tree.sync()
+        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
+        print(f"Version: {self.bot_version}")
+              
+    async def setup_hook(self) -> None:
+        self.session = aiohttp.ClientSession()
+    
+        try:
+            self.owner_id = int(os.getenv('OWNER_ID'))
+        except ValueError:
+            self.bot_app_info = await self.application_info()
+            self.owner_id = self.bot_app_info.owner.id
+            
+        self.db = DATABASE()
+        self.endpoint = API_ENDPOINT(self.session)
         
+        self.setup_cache()
+        await self.load_cogs()
+    
     async def load_cogs(self) -> None:
         for ext in initial_extensions:
             await self.load_extension(ext)
@@ -41,42 +67,17 @@ class ValorantBot(commands.Bot):
             open('data/cache.json')
         except FileNotFoundError:
             get_cache()
-    
-    @property
-    def owner(self) -> discord.User:
-        return self.bot_app_info.owner
-              
-    async def setup_hook(self) -> None:
-        self.session = aiohttp.ClientSession()
-        
-        owner_id = os.getenv('OWNER_ID')
-        if owner_id is not None:
-            try:
-                self.owner_id = int(owner_id)
-            except ValueError:
-                self.bot_app_info = await self.application_info()
-                self.owner_id = self.bot_app_info.owner.id
-            
-        self.db = DATABASE()
-        self.endpoint = API_ENDPOINT(self.session)
-        
-        self.setup_cache()
-        await self.load_cogs()
-        
+
     async def close(self) -> None:
         await self.session.close()
             
-    async def on_ready(self) -> None:     
-        await self.tree.sync()
-        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
-        print(f"Version: {self.bot_version}")
-    
-    async def start(self) -> None:
+    async def start(self, debug:bool = False) -> None:
+        self.debug = debug
         return await super().start(os.getenv('TOKEN'), reconnect=True)
 
 def run_bot():
     bot = ValorantBot()
-    asyncio.run(bot.start())
+    asyncio.run(bot.start(debug=False))
 
 if __name__ == '__main__':
     run_bot()

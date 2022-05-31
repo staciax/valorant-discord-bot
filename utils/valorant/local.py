@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 # credit by /giorgi-o/
 
 import json
 import contextlib
-from typing import Dict
+from typing import Dict, Any, Optional
 
 Locale = {
     'en-US': 'en-US', # american_english
@@ -23,7 +25,7 @@ Locale = {
     'vi'   : 'vi-VN', # vietnamese
 }
 
-def InteractionLanguage(local_code: str) -> str:
+def InteractionLanguage(local_code: str) -> Dict[str, Any]:
     return Locale.get(str(local_code), 'en-US')
 
 def __LocalRead(filename: str) -> Dict:
@@ -35,7 +37,7 @@ def __LocalRead(filename: str) -> Dict:
         return __LocalRead('en-US')
     return data
 
-def ResponseLanguage(command_name: str, local_code: str) -> Dict:
+def ResponseLanguage(command_name: str, local_code: str) -> Dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
@@ -43,7 +45,7 @@ def ResponseLanguage(command_name: str, local_code: str) -> Dict:
         local = local_dict['commands'][str(command_name)]
     return local
 
-def LocalErrorResponse(value: str, local_code: str) -> Dict:
+def LocalErrorResponse(value: str, local_code: str) -> Dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):

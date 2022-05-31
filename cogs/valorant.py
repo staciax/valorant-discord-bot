@@ -1,38 +1,32 @@
+from __future__ import annotations
+
 import discord
 import contextlib
+from discord import Interaction, app_commands
 from discord.ext import commands, tasks
-from discord import Interaction, app_commands, ui
-from typing import Literal
 from discord.utils import MISSING
+from discord.app_commands.checks import dynamic_cooldown
+from typing import Literal, TYPE_CHECKING
 
 # Local
-from utils.valorant import (
-    get_season_by_content,
-    Embed,
-    Generate_Embed,
-    TwoFA_UI,
-    BaseBundle,
-    share_button,
-    InteractionLanguage,
-    ResponseLanguage,
-    get_cache,
-    get_valorant_version,
-    setup_emoji,
-    API_ENDPOINT,
-    DATABASE
-)
+from utils.checks import owner_only, cooldown_5s
+from utils.valorant import view as View
+from utils.valorant import useful
+from utils.valorant.embed import Embed, GetEmbed
+from utils.valorant import cache as Cache
+from utils.valorant.local import InteractionLanguage, ResponseLanguage
+from utils.valorant.resources import setup_emoji
 
-def owner_only() -> app_commands.check:
-    """ Checks if the user is the owner of the bot. """
-    async def predicate(interaction: Interaction):
-        return await interaction.client.is_owner(interaction.user)
-    return app_commands.check(predicate)
+if TYPE_CHECKING:
+    from bot import ValorantBot
+    from utils.valorant.db import DATABASE
+    from utils.valorant.endpoint import API_ENDPOINT
 
 class ValorantCog(commands.Cog, name='Valorant'):
     """Valorant API Commands"""
 
-    def __init__(self, bot: commands.Bot) -> None:
-        self.bot = bot
+    def __init__(self, bot: ValorantBot) -> None:
+        self.bot: ValorantBot = bot
         self.reload_cache.start()
 
     def cog_unload(self) -> None:
@@ -42,9 +36,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
         """ Reload the cache """
         with contextlib.suppress(Exception):
             cache = self.db.read_cache()
-            valorant_version = get_valorant_version()
+            valorant_version = Cache.get_valorant_version()
             if valorant_version != cache['valorant_version'] or force:
-                get_cache()
+                Cache.get_cache()
                 cache = self.db.read_cache()
                 cache['valorant_version'] = valorant_version
                 self.db.insert_cache(cache)
@@ -83,6 +77,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
     @app_commands.command(description='Log in with your Riot acoount')
     @app_commands.describe(username='Input username', password='Input password')
+    # @dynamic_cooldown(cooldown_5s)
     async def login(self, interaction: Interaction, username: str, password: str) -> None:
 
         # language
@@ -108,10 +103,11 @@ class ValorantCog(commands.Cog, name='Valorant'):
             cookies = authenticate['cookie']
             message = authenticate['message']
             label = authenticate['label']
-            modal = TwoFA_UI(interaction, self.db, cookies, message, label, response)
+            modal = View.TwoFA_UI(interaction, self.db, cookies, message, label, response)
             await interaction.response.send_modal(modal)
 
     @app_commands.command(description='Logout and Delete your account from database')
+    # @dynamic_cooldown(cooldown_5s)
     async def logout(self, interaction: Interaction) -> None:
         
         await interaction.response.defer(ephemeral=True)
@@ -130,6 +126,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description="Shows your daily store in your accounts")
     @app_commands.describe(username='Input username (without login)', password='password (without login)')
     @app_commands.guild_only()
+    # @dynamic_cooldown(cooldown_5s)
     async def store(self, interaction: Interaction, username: str = None, password: str = None) -> None:
         
         # language
@@ -153,12 +150,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_storefront()
-        embeds = Generate_Embed.store(endpoint.player, data, language, response, self.bot)
-
-        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds) if is_private_message else MISSING)
+        embeds = GetEmbed.store(endpoint.player, data, language, response, self.bot)
+        await interaction.followup.send(embeds=embeds, view=View.share_button(interaction, embeds) if is_private_message else MISSING)
 
     @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
     @app_commands.guild_only()
+    # @dynamic_cooldown(cooldown_5s)
     async def point(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
         # check if user is logged in
@@ -178,11 +175,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_wallet()
-        embed = Generate_Embed.point(endpoint.player, data, language, response, self.bot)
+        embed = GetEmbed.point(endpoint.player, data, language, response, self.bot)
 
-        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
+        await interaction.followup.send(embed=embed, view=View.share_button(interaction, [embed]) if is_private_message else MISSING)
 
     @app_commands.command(description='View your daily/weekly mission progress')
+    # @dynamic_cooldown(cooldown_5s)
     async def mission(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
         # check if user is logged in
@@ -199,11 +197,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.fetch_contracts()
-        embed = Generate_Embed.mission(endpoint.player, data, language, response)
+        embed = GetEmbed.mission(endpoint.player, data, language, response)
 
-        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
+        await interaction.followup.send(embed=embed, view=View.share_button(interaction, [embed]) if is_private_message else MISSING)
 
     @app_commands.command(description='Show skin offers on the nightmarket')
+    # @dynamic_cooldown(cooldown_5s)
     async def nightmarket(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
         # check if user is logged in
@@ -227,11 +226,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         # data
         data = await endpoint.store_fetch_storefront()
-        embeds = Generate_Embed.nightmarket(endpoint.player, data, self.bot, language, response)
+        embeds = GetEmbed.nightmarket(endpoint.player, data, self.bot, language, response)
 
-        await interaction.followup.send(embeds=embeds, view=share_button(interaction, embeds) if is_private_message else MISSING)
+        await interaction.followup.send(embeds=embeds, view=View.share_button(interaction, embeds) if is_private_message else MISSING)
 
     @app_commands.command(description='View your battlepass current tier')
+    # @dynamic_cooldown(cooldown_5s)
     async def battlepass(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
         # check if user is logged in
@@ -249,16 +249,17 @@ class ValorantCog(commands.Cog, name='Valorant'):
         # data
         data = await endpoint.fetch_contracts()
         content = await endpoint.fetch_content()
-        season = get_season_by_content(content)
+        season = useful.get_season_by_content(content)
 
-        embed = Generate_Embed.battlepass(endpoint.player, data, season, language, response)
+        embed = GetEmbed.battlepass(endpoint.player, data, season, language, response)
         
-        await interaction.followup.send(embed=embed, view=share_button(interaction, [embed]) if is_private_message else MISSING)
+        await interaction.followup.send(embed=embed, view=View.share_button(interaction, [embed]) if is_private_message else MISSING)
 
     # inspired by https://github.com/giorgi-o
     @app_commands.command(description="inspect a specific bundle")
     @app_commands.describe(bundle="The name of the bundle you want to inspect!")
     @app_commands.guild_only()
+    # @dynamic_cooldown(cooldown_5s)
     async def bundle(self, interaction: Interaction, bundle: str) -> None:
         
         await interaction.response.defer()
@@ -282,11 +283,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
         find_bundle = find_bundle_en_US if len(find_bundle_en_US) > 0 else find_bundle_locale
 
         # bundle view
-        view = BaseBundle(interaction, find_bundle, response, language)
+        view = View.BaseBundle(interaction, find_bundle, response, language)
         await view.start()
     
     # inspired by https://github.com/giorgi-o
     @app_commands.command(description="Show the current featured bundles")
+    # @dynamic_cooldown(cooldown_5s)
     async def bundles(self, interaction: Interaction) -> None:
 
         await interaction.response.defer()
@@ -302,8 +304,28 @@ class ValorantCog(commands.Cog, name='Valorant'):
         bundle_entries = await endpoint.store_fetch_storefront()
 
         # bundle view
-        view = BaseBundle(interaction, bundle_entries, response, language)
+        view = View.BaseBundle(interaction, bundle_entries, response, language)
         await view.start_furture()
+
+    #credit https://github.com/giorgi-o
+    #https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies
+    @app_commands.command()
+    async def cookies(self, interaction: Interaction, cookie: str) -> None:
+        """ Login to your account with a cookie """
+        
+        await interaction.response.defer()
+
+        # language
+        response = ResponseLanguage(interaction.command.name, interaction.locale)
+
+        login = await self.db.cookie_login(interaction.user.id, cookie, interaction.locale)
+
+        if login['auth']:
+            embed = Embed(f"{response.get('SUCCESS')} **{login['player']}!**")
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+
+        raise RuntimeError(response.get('FAILED'))
 
     # ---------- ROAD MAP ---------- #
 
@@ -323,7 +345,6 @@ class ValorantCog(commands.Cog, name='Valorant'):
     
     # ---------- DEBUGs ---------- #
 
-    # hybird command
     @app_commands.command(description='The command debug for the bot')
     @app_commands.describe(bug="The bug you want to fix")
     @app_commands.guild_only()
@@ -353,40 +374,5 @@ class ValorantCog(commands.Cog, name='Valorant'):
         success = response.get('SUCCESS')
         await interaction.followup.send(embed=Embed(success.format(bug=bug)))
             
-    # ---------- CREDITs ---------- #
-
-    @app_commands.command(description='Shows basic information about the bot.')
-    async def about(self, interaction: Interaction) -> None:
-        
-        owner_id = 240059262297047041
-        owner_url = f'https://discord.com/users/{owner_id}'
-        github_project = 'https://github.com/staciax/Valorant-DiscordBot'
-        support_url = 'https://discord.gg/FJSXPqQZgz'
-        
-        embed = discord.Embed(color=0xffffff)
-        embed.set_author(name='ᴠᴀʟᴏʀᴀɴᴛ ʙᴏᴛ ᴘʀᴏᴊᴇᴄᴛ', url=github_project)
-        embed.set_thumbnail(url='https://i.imgur.com/ZtuNW0Z.png')
-        embed.add_field(
-            name='ᴅᴇᴠᴇʟᴏᴘᴇʀ:',
-            value=f"[ꜱᴛᴀᴄɪᴀ.#7475]({owner_url})",
-            inline=False
-        )
-        embed.add_field(
-            name='ᴄᴏɴᴛʀɪʙᴜᴛᴏʀꜱ:',
-            value=f"[kiznick](https://github.com/kiznick)\n"
-                "[KANATAISGOD](https://github.com/KANATAISGOD)\n"
-                "[TMADZ2007](https://github.com/KANATAISGOD')\n"
-                "[sevzin](https://github.com/sevzin)\n"
-                "[miigoxyz](https://github.com/miigoxyz)\n"
-                "[Connor](https://github.com/ConnorDoesDev)\n",
-            inline=False
-        )
-        view = ui.View()
-        view.add_item(ui.Button(label='ɢɪᴛʜᴜʙ', url=github_project, row=0))
-        view.add_item(ui.Button(label='ᴋᴏ-ꜰɪ', url='https://ko-fi.com/staciax', row=0))
-        view.add_item(ui.Button(label='ꜱᴜᴘᴘᴏʀᴛ ꜱᴇʀᴠᴇʀ', url=support_url, row=0))
-
-        await interaction.response.send_message(embed=embed, view=view)
-
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: ValorantBot) -> None:
     await bot.add_cog(ValorantCog(bot))

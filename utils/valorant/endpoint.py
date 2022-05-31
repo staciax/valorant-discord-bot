@@ -1,7 +1,11 @@
-# Standard # inspired by https://github.com/colinhartigan/
+# inspired by https://github.com/colinhartigan/
+
+from __future__ import annotations
+
+# Standard 
+import json
 import aiohttp
 import urllib3
-import json
 from typing import Dict
 
 # Local

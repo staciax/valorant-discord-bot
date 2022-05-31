@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 # Standard
 import requests
 import os
 import json
-from typing import Dict
+from typing import Dict, Optional
 
 # Local
 from .useful import JSON
@@ -17,7 +19,7 @@ def create_json(filename: str, formats: Dict) -> None:
         with open(file_path, "w") as fp:
             json.dump(formats, fp, indent=2)
 
-def get_valorant_version() -> str:
+def get_valorant_version() -> Optional[str]:
     """ Get the valorant version from valorant-api.com """
 
     session = requests.session()

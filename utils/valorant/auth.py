@@ -1,14 +1,15 @@
+from __future__ import annotations
+
 # Standard
 import urllib3
 import re
 from datetime import datetime, timedelta
-from typing import Dict, Optional, Tuple
-
+from typing import Dict, Optional, Tuple, Any
 # Third
 import aiohttp
 
 # Local
-from .local import LocalErrorResponse
+from .local import LocalErrorResponse, ResponseLanguage
 
 # disable urllib3 warnings that might arise from making requests to 127.0.0.1
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -20,13 +21,13 @@ def _extract_tokens(data: str) -> str:
     response = pattern.findall(data['response']['parameters']['uri'])[0]
     return response
 
-def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, str]]:
+def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, Any]]:
     try:
         accessToken = URL.split("access_token=")[1].split("&scope")[0]
         tokenId = URL.split("id_token=")[1].split("&")[0]
         return accessToken, tokenId
     except IndexError:
-        raise RuntimeError('An unknown error occurred, plz `/login` again')
+        raise RuntimeError('Cookies Invalid')
 
 class Auth:
     def __init__(self) -> None:
@@ -40,7 +41,7 @@ class Auth:
         self.response = LocalErrorResponse('AUTH', self.locale_code)
         return self.response
 
-    async def authenticate(self, username: str, password: str) -> Optional[Dict]:
+    async def authenticate(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         """ This function is used to authenticate the user. """
         
         # language
@@ -73,7 +74,7 @@ class Auth:
             for cookie in r.cookies.items():
                 cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
 
-        print('Response Status:', r.status)
+        # print('Response Status:', r.status)
         await session.close()
 
         if data['type'] == 'response':
@@ -105,7 +106,7 @@ class Auth:
 
         raise RuntimeError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
 
-    async def get_entitlements_token(self, access_token: str) -> str:
+    async def get_entitlements_token(self, access_token: str) -> Optional[str]:
         """ This function is used to get the entitlements token. """
         
         # language
@@ -175,7 +176,7 @@ class Auth:
         else:
             return region 
 
-    async def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict:
+    async def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict[str, Any]:
         """ This function is used to give the 2FA code. """
 
         # language
@@ -203,7 +204,7 @@ class Auth:
         
         return {'auth': 'failed', 'error': local_response.get('2FA_INVALID_CODE')}
 
-    async def redeem_cookies(self, cookies: Dict) -> Tuple[Dict, str, str]:
+    async def redeem_cookies(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
         """ This function is used to redeem the cookies. """
 
         # language
@@ -240,7 +241,7 @@ class Auth:
                 
         return new_cookies, accessToken, entitlements_token
 
-    async def temp_auth(self, username: str, password: str) -> Optional[Dict]:
+    async def temp_auth(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         
         authenticate = await self.authenticate(username, password)
         if authenticate['auth'] == 'response':
@@ -260,37 +261,40 @@ class Auth:
 
     # next update
 
-    # async def login_with_cookie(self, cookies: Dict) -> Dict:
-    #     """ This function is used to login with cookie. """
+    async def login_with_cookie(self, cookies: Dict) -> Dict[str, Any]:
+        """ This function is used to login with cookie. """
 
-    #     # language
-    #     local_response = self.local_response()
-
-    #     session = aiohttp.ClientSession()
-
-    #     headers = {'Content-Type': 'application/json', 'cookie': cookies}
-
-    #     async with session.get(
-    #         "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
-    #         headers=headers,
-    #         allow_redirects=False
-    #     ) as r:
-    #         data = await r.text()
-
-    #     if r.status != 200:
-    #         raise RuntimeError(local_response.get('LOGIN_COOKIE_FAILED', 'Login with cookies failed.'))
-
-    #     await session.close()
+        # language
+        local_response = ResponseLanguage('cookies', self.locale_code)
+        import requests
         
-    #     cookies = {}
-    #     for cookie in r.cookies.items():
-    #         cookies['cookie'][cookie[0]] = cookie[1]
-    #     accessToken, tokenID = extract_tokens_from_uri(data)
-    #     entitlements_token = await self.get_entitlements_token(accessToken)
+        session = requests.session()
+        headers = {
+            'cookie': cookies
+        }
+        r = session.get(
+            "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
+            headers=headers,
+            allow_redirects=False
+        )
+        if r.status_code != 303:
+            raise RuntimeError(local_response.get('FAILED'))
 
-    #     data = {'cookies': cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
+        session.close()
+        
+        # NEW COOKIE
+        cookies = {}
+        cookies['cookie'] = r.cookies.get_dict()
+        accessToken, tokenID = _extract_tokens_from_uri(r.text)
+        entitlements_token = await self.get_entitlements_token(accessToken)
 
-    #     return data
+        data = {
+            'cookies': cookies,
+            'AccessToken': accessToken,
+            'token_id': tokenID,
+            'emt': entitlements_token
+        }
+        return data
 
-    async def refresh_token(self, cookies: Dict):
+    async def refresh_token(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
         return await self.redeem_cookies(cookies)

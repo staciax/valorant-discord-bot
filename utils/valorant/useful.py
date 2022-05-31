@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import discord
 import json
 import os
 import contextlib
-from discord.ext import commands
 from datetime import datetime, timezone
-from typing import Dict, Tuple, List, Literal
+from typing import Dict, Tuple, List, Literal, Any, Optional, TYPE_CHECKING
 
 from .resources import tiers as tiers_resources, points as points_emoji, get_item_type
+
+if TYPE_CHECKING:
+    from bot import ValorantBot
+
 
 # ---------- ACT SEASON ---------- #
 
@@ -16,7 +21,7 @@ def get_season_by_content(content: Dict) -> Tuple[str, str]:
     try:
         season_data = [season for season in content["Seasons"] if season["IsActive"] and season["Type"] == "act"]
         season_id = season_data[0]['ID']
-        season_end = DateUtils.iso_to_time(season_data[0]['EndTime'])
+        season_end = iso_to_time(season_data[0]['EndTime'])
         
     except (IndexError, KeyError, TypeError):
         season_id = 'd80f3ef5-44f5-8d70-6935-f2840b2d3882'
@@ -37,28 +42,25 @@ def calculate_level_xp(level: int) -> int: # https://github.com/giorgi-o
 
 # ---------- TIME UTILS ---------- #
 
-class DateUtils:
+def iso_to_time(iso: datetime) -> datetime:
+    '''Convert ISO time to datetime'''
+    timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
+    time = datetime.utcfromtimestamp(timestamp)
+    return time
 
-    def iso_to_time(iso: datetime) -> datetime:
-        '''Convert ISO time to datetime'''
-        timestamp = datetime.strptime(iso, "%Y-%m-%dT%H:%M:%S%z").timestamp()
-        time = datetime.utcfromtimestamp(timestamp)
-        return time
+def format_dt(dt: datetime, style: str=None) -> str: #style 'R' or 'd'
+    """datatime to time format"""
+    
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
 
-    def format_dt(dt: datetime, style: str=None) -> str: #style 'R' or 'd'
-        """datatime to time format"""
-        
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+    if style is None:
+        return f'<t:{int(dt.timestamp())}>'
+    return f'<t:{int(dt.timestamp())}:{style}>'
 
-        if style is None:
-            return f'<t:{int(dt.timestamp())}>'
-        return f'<t:{int(dt.timestamp())}:{style}>'
-
-    @classmethod
-    def format_relative(cls, dt: datetime) -> str:
-        """ datatime to relative time format """
-        return cls.format_dt(dt, 'R')
+def format_relative(dt: datetime) -> str:
+    """ datatime to relative time format """
+    return format_dt(dt, 'R')
 
 # ---------- JSON LOADER ---------- #
 
@@ -72,7 +74,7 @@ def data_folder():
 
 class JSON:
 
-    def read(filename: str, force=True) -> Dict:
+    def read(filename: str, force: bool=True) -> Dict:
         """Read json file"""
         try:
             with open("data/" + filename + ".json", "r", encoding='utf-8') as json_file:
@@ -99,7 +101,7 @@ class JSON:
 class GetItems:
 
     @classmethod
-    def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict:
+    def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict[str, Any]:
         """ Get item by type """
 
         item_type = get_item_type(Itemtype)
@@ -141,7 +143,7 @@ class GetItems:
         tier = skindata['tiers'][tier_uuid]["icon"]
         return tier
 
-    def get_spray(uuid: str) -> Dict:
+    def get_spray(uuid: str) -> Dict[str, Any]:
         """Get Spray"""
 
         data = JSON.read('cache')
@@ -150,7 +152,7 @@ class GetItems:
             spray = data["sprays"][uuid]  
         return spray
 
-    def get_title(uuid: str) -> Dict:
+    def get_title(uuid: str) -> Dict[str, Any]:
         """Get Title"""
 
         data = JSON.read('cache')
@@ -159,7 +161,7 @@ class GetItems:
             title = data["titles"][uuid]     
         return title
 
-    def get_playercard(uuid: str) -> Dict:
+    def get_playercard(uuid: str) -> Dict[str, Any]:
         """Get Playercard"""
 
         data = JSON.read('cache')
@@ -177,7 +179,7 @@ class GetItems:
             title = data["buddies"][uuid]     
         return title
 
-    def get_skin_lvl_or_name(name: str, uuid: str) -> Dict:
+    def get_skin_lvl_or_name(name: str, uuid: str) -> Dict[str, Any]:
         """Get Skin uuid by name"""
         
         data = JSON.read('cache')
@@ -189,7 +191,7 @@ class GetItems:
                 skin = [data["skins"][x] for x in data["skins"] if data["skins"][x]['name'] in name][0]
         return skin
 
-    def get_tier_name(skin_uuid: str) -> str:
+    def get_tier_name(skin_uuid: str) -> Optional[str]:
         """ Get tier name by skin uuid """
         
         try:
@@ -200,7 +202,7 @@ class GetItems:
             raise RuntimeError('Some skin data is missing, plz use `/fix cache`')
         return name
 
-    def get_contract(uuid: str) -> Dict:
+    def get_contract(uuid: str) -> Dict[str, Any]:
         """ Get contract by uuid """
         
         data = JSON.read('cache')
@@ -209,7 +211,7 @@ class GetItems:
             contract = data["contracts"][uuid]
         return contract
 
-    def get_bundle(uuid: str) -> Dict:
+    def get_bundle(uuid: str) -> Dict[str, Any]:
         """ Get bundle by uuid """
         
         data = JSON.read('cache')
@@ -232,7 +234,7 @@ class GetEmoji:
         return emoji
 
     @classmethod
-    def tier_by_bot(cls, skin_uuid: str, bot: commands.Bot) -> discord.Emoji:
+    def tier_by_bot(cls, skin_uuid: str, bot: ValorantBot) -> discord.Emoji:
         """ Get tier emoji from bot """
         
         emoji = discord.utils.get(bot.emojis, name= GetItems.get_tier_name(skin_uuid) + 'Tier')
@@ -240,7 +242,7 @@ class GetEmoji:
             return cls.tier(skin_uuid)
         return emoji
 
-    def point_by_bot(point: str, bot: commands.Bot) -> discord.Emoji:
+    def point_by_bot(point: str, bot: ValorantBot) -> discord.Emoji:
         """ Get point emoji from bot"""
 
         emoji = discord.utils.get(bot.emojis, name=point)
@@ -290,7 +292,7 @@ class GetFormat:
 
     # ---------- UTILS FOR MISSION EMBED ---------- #
 
-    def mission_format(data: Dict, language: str) -> Dict[str, str]:
+    def mission_format(data: Dict, language: str) -> Dict[str, Any]:
         '''Get mission format'''
 
         mission = data["Missions"]
@@ -331,7 +333,7 @@ class GetFormat:
 
     # ---------- UTILS FOR NIGHTMARKET EMBED ---------- #
 
-    def nightmarket_format(offer: Dict, language: str, response: Dict) -> Dict:
+    def nightmarket_format(offer: Dict, language: str, response: Dict) -> Dict[str, Any]:
         '''Get Nightmarket offers'''
         
         try:
@@ -369,7 +371,7 @@ class GetFormat:
 
     # ---------- UTILS FOR BATTLEPASS EMBED ---------- #
 
-    def __get_item_battlepass(type: str, uuid: str, language: str, response: Dict) -> Dict:
+    def __get_item_battlepass(type: str, uuid: str, language: str, response: Dict) -> Dict[str, Any]:
         """Get item battlepass by type and uuid"""
         
         if type == 'Currency':
@@ -415,7 +417,7 @@ class GetFormat:
         
         return {"success": False, "error": f"Failed to get : {type}"}
 
-    def __get_contract_tier_reward(tier: int, reward: List[Dict]) -> Dict:
+    def __get_contract_tier_reward(tier: int, reward: List[Dict]) -> Dict[str, Any]:
         '''Get tier reward'''
 
         data = {}
@@ -432,7 +434,7 @@ class GetFormat:
 
         return current_reward
 
-    def __get_contracts_by_season_id(contracts: Dict, data_contracts: Dict, season_id: str, language:str) -> Dict:
+    def __get_contracts_by_season_id(contracts: Dict, data_contracts: Dict, season_id: str, language:str) -> Dict[str, Any]:
         '''Get battlepass info'''
 
         contracts_uuid = [x for x in data_contracts['contracts'] if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id]
@@ -448,7 +450,7 @@ class GetFormat:
         return {"success": False, "error": "Failed to get battlepass info"}
 
     @classmethod
-    def battlepass_format(cls, data: Dict, season: str, language: str, response: Dict) -> Dict:
+    def battlepass_format(cls, data: Dict, season: str, language: str, response: Dict) -> Dict[str, Any]:
         """ Get battlepass format """
         
         data = data['Contracts']

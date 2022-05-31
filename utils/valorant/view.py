@@ -1,18 +1,22 @@
+from __future__ import annotations
+
 # Standard
 import discord
 import contextlib
-from discord.ext import commands
-from discord import Interaction, TextStyle, ui
-from typing import Awaitable, List, Dict
+from discord import Interaction, TextStyle, ui, ButtonStyle
+from typing import Awaitable, List, Dict, TYPE_CHECKING
 
 # Local
 from .useful import GetItems, GetEmoji, JSON
 from .resources import get_item_type
-from .db import DATABASE
+
+if TYPE_CHECKING:
+    from bot import ValorantBot
+    from .db import DATABASE
 
 class share_button(ui.View):
     def __init__(self, interaction: Interaction, embeds: List[discord.Embed]):
-        self.interaction = interaction
+        self.interaction: Interaction = interaction
         self.embeds = embeds
         super().__init__(timeout=300)
 
@@ -20,7 +24,7 @@ class share_button(ui.View):
         """ Called when the view times out """
         await self.interaction.edit_original_message(view=None)
 
-    @ui.button(label='Share to friends', style=discord.ButtonStyle.primary)
+    @ui.button(label='Share to friends', style=ButtonStyle.primary)
     async def button_callback(self, interaction: Interaction, button: ui.Button):
         await interaction.channel.send(embeds=self.embeds)
         await self.interaction.edit_original_message(content='\u200b', embed=None, view=None)
@@ -34,7 +38,7 @@ class NotifyView(discord.ui.View):
         super().__init__(timeout=600)
         self.remove_notify.label = response.get('REMOVE_NOTIFY')
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id == int(self.user_id):
             return True
         await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
@@ -47,8 +51,8 @@ class NotifyView(discord.ui.View):
             self.remve_notify.disabled = True
             await self.message.edit_original_message(view=self)
 
-    @discord.ui.button(label='Remove Notify', emoji='✖️', style=discord.ButtonStyle.red)
-    async def remove_notify(self, interaction:discord.Interaction, button:discord.Button):
+    @discord.ui.button(label='Remove Notify', emoji='✖️', style=ButtonStyle.red)
+    async def remove_notify(self, interaction: Interaction, button: ui.Button):
         data = JSON.read('notifys')
         
         for i in range(len(data)):
@@ -64,15 +68,15 @@ class NotifyView(discord.ui.View):
         removed_notify = self.response.get('REMOVED_NOTIFY')
         await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)
 
-class _NotifyListButton(discord.ui.Button):
+class _NotifyListButton(ui.Button):
     def __init__(self, label, custom_id) -> None:
         super().__init__(
             label=label,
-            style=discord.enums.ButtonStyle.red,
+            style=ButtonStyle.red,
             custom_id=str(custom_id)
         )
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: Interaction):
 
         await interaction.response.defer()    
         
@@ -89,11 +93,11 @@ class _NotifyListButton(discord.ui.Button):
         embed = self.view.main_embed()
         await self.view.interaction.edit_original_message(embed=embed, view=self.view)
 
-class NotifyViewList(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, response: Dict) -> None:
-        self.interaction = interaction
+class NotifyViewList(ui.View):
+    def __init__(self, interaction: Interaction, response: Dict) -> None:
+        self.interaction: Interaction = interaction
         self.response = response
-        self.bot: commands.Bot = getattr(interaction, "client", interaction._state._get_client())
+        self.bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
         self.default_language = 'en-US'
         super().__init__(timeout=600)
     
@@ -102,7 +106,7 @@ class NotifyViewList(discord.ui.View):
         embed = discord.Embed(color=0x2F3136, description='🕙 Timeout')
         await self.interaction.edit_original_message(embed=embed, view=None) 
     
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:   
+    async def interaction_check(self, interaction: Interaction) -> bool:   
         if interaction.user == self.interaction.user:
             return True
         await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
@@ -181,7 +185,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     
     def __init__(self, interaction: Interaction, db: DATABASE, cookie: dict, message: str, label:str, response: Dict) -> None:
         super().__init__(timeout=600)
-        self.interaction = interaction
+        self.interaction: Interaction = interaction
         self.db = db
         self.cookie = cookie
         self.response = response
@@ -233,13 +237,13 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # inspired by https://github.com/giorgi-o
-class BaseBundle(discord.ui.View):
-    def __init__(self, interaction: discord.Interaction, entries: Dict, response: Dict, language: str) -> None:
-        self.interaction = interaction
+class BaseBundle(ui.View):
+    def __init__(self, interaction: Interaction, entries: Dict, response: Dict, language: str) -> None:
+        self.interaction: Interaction = interaction
         self.entries = entries
         self.response = response
         self.language = language
-        self.bot: commands.Bot = getattr(interaction, "client", interaction._state._get_client())
+        self.bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
         self.current_page: int = 0
         self.embeds: List[List[discord.Embed]] = []
         self.page_format = {}
@@ -357,7 +361,7 @@ class BaseBundle(discord.ui.View):
         self.next_button.disabled = self.current_page == len(self.embeds) - 1
         self.back_button.disabled = self.current_page == 0
 
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+    async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user == self.interaction.user:
             return True
         await interaction.response.send_message('This menus cannot be controlled by you, sorry!', ephemeral=True)

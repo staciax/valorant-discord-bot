@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import discord
 import requests
 from io import BytesIO
-from discord.ext import commands
 from .local import LocalErrorResponse
+
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from bot import ValorantBot
 
 # ------------------- #
 # credit https://github.com/colinhartigan/
@@ -23,10 +29,7 @@ shard_region_override = {
 # ------------------- #
 
 
-
-# ---------- EMOJI ---------- #
-
-# local emoji id
+# EMOJI
 
 emoji_icon_assests = {
     'DeluxeTier': 'https://media.valorant-api.com/contenttiers/0cebb8be-46d7-c12a-d306-e9907bfc5a25/displayicon.png',
@@ -51,7 +54,7 @@ points = {
     'RadianitePointIcon':f'<:RadianitePoint:950365909636235324>'
 }
 
-def get_item_type(uuid: str):
+def get_item_type(uuid: str) -> Optional[str]:
     """Get item type"""
     item_type = {
         '01bb38e1-da47-4e6a-9b3d-945fe4655707': 'Agents',
@@ -65,7 +68,7 @@ def get_item_type(uuid: str):
     }
     return item_type.get(uuid, None)
 
-def __url_to_image(url):
+def __url_to_image(url) -> Optional[bytes]:
     session = requests.session()
 
     r = session.get(url)
@@ -74,14 +77,12 @@ def __url_to_image(url):
     if r.status_code in range(200, 299):
         return image_value
 
-async def setup_emoji(bot: commands.Bot, guild: discord.Guild, local_code: str, force=False):
+async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, force:bool =False) -> None:
 
     response = LocalErrorResponse('SETUP_EMOJI', local_code)
 
     """Setup emoji"""
-    for find_emoji in emoji_icon_assests.items():
-        name = find_emoji[0]
-        emoji_url = find_emoji[1]
+    for name, emoji_url in emoji_icon_assests.items():
         emoji = discord.utils.get(bot.emojis, name=name)
         if not emoji:
             try:

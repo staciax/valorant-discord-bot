@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Dict
 from datetime import datetime, timedelta
 from .auth import Auth
@@ -12,6 +14,7 @@ class DATABASE:
     _version = 1
 
     def __init__(self) -> None:
+        """Initialize database"""
         self.auth = Auth()
     
     def insert_user(self, data: Dict) -> None:
@@ -53,7 +56,7 @@ class DATABASE:
         response = LocalErrorResponse('DATABASE', locale_code)
 
         db = self.read_db()
-        auth = self.auth
+        auth = Auth()
 
         auth_data = data['data']
         cookie = auth_data['cookie']['cookie']
@@ -137,7 +140,7 @@ class DATABASE:
     async def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
         """ Refresh token """
 
-        auth = self.auth
+        auth = Auth()
 
         cookies, access_token, entitlements_token = await auth.redeem_cookies(data['cookie'])
 
@@ -199,3 +202,45 @@ class DATABASE:
         check_price = price.get('is_price', None)
         if check_price is False or force:
             fetch_price(skin_price)
+
+    async def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict]:
+        
+        db = self.read_db()
+        auth = Auth()
+        auth.locale_code = locale_code
+
+        data = await auth.login_with_cookie(cookie)
+
+        cookie = data['cookies']
+        access_token = data['AccessToken']
+        token_id = data['token_id']
+        entitlements_token = data['emt']
+        
+        puuid, name, tag = await auth.get_userinfo(access_token)
+        region = await auth.get_region(access_token, token_id)
+        player_name = f'{name}#{tag}' if tag is not None and tag is not None else 'no_username'
+
+        expiry_token = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
+
+        try:
+            data = dict(
+                cookie=cookie,
+                access_token=access_token,
+                token_id=token_id,
+                emt=entitlements_token,
+                puuid=puuid,
+                username=player_name,
+                region=region,
+                expiry_token=expiry_token,
+                notify_mode=None,
+                DM_Message=True
+            )
+
+            db[str(user_id)] = data
+            self.insert_user(db)
+
+        except Exception as e:
+            print(e)
+            return {'auth': False}
+        else:
+            return {'auth': True, 'player': player_name}
