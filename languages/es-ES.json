@@ -24,7 +24,7 @@
                 "username": "¡Introduce un nombre de usuario! (Inicio de sesión temporal)",
                 "password": "¡Introduce un nombre de usuario! (Inicio de sesión temporal)\n"
             },
-            "RESPONSE": "Tienda diaria para **{username}** | {duration} restante"
+            "RESPONSE": "Tienda diaria para **{username}** \n{duration} restante"
         },
         "point": {
             "NAME": "punto",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "paquetes",
             "DESCRIPTION": "Ver el progreso de tu paquete",
-            "TITLE": "Paquete destacado: {bundle} Colección"
+            "TITLE": "Paquete destacado: {bundle} Colección",
+            "DURATION": "Restante {duration}",
+            "DROPDOWN_CHOICE_TITLE": "Seleccione un paquete:"
         },
         "debug": {
             "NAME": "depurar",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "Introduce el codigo A2F",
             "2FA_ENABLE": "¡Tienes 2FA activado!",
             "2FA_TO_EMAIL": "Riot ha enviado un código a",
-            "2FA_INVALID_CODE": "El código no es válido. Por favor `/login` de nuevo"
+            "2FA_INVALID_CODE": "El código no es válido. Por favor `/login` de nuevo",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "No soportado 2FA, Por favor usa `/login` y usa otro comando sin nombre de usuario, contraseña."
         },
         "DATABASE": {
             "NOT_LOGIN": "¡No estás registrado!, ¡por favor `/login` para registrarte!",

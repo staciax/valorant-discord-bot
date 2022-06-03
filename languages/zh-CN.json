@@ -24,7 +24,7 @@
                 "username": "请输入账号名！(暂时登录)",
                 "password": "请输入登录密码！(暂时登录)"
             },
-            "RESPONSE": "**{username}** 的每日商店| 剩余 {duration}"
+            "RESPONSE": "**{username}** 的每日商店 \n剩余 {duration}"
         },
         "point": {
             "NAME": "点数",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "皮肤系列",
             "DESCRIPTION": "查看目前主打商品的皮肤系列",
-            "TITLE": "主打商品: {bundle} 系列"
+            "TITLE": "主打商品: {bundle} 系列",
+            "DURATION": "剩余时间: {duration}",
+            "DROPDOWN_CHOICE_TITLE": "选择一个皮肤系列："
         },
         "debug": {
             "NAME": "调试",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "请输入两步验证代码！",
             "2FA_ENABLE": "您的账号启用了两步验证！",
             "2FA_TO_EMAIL": "Riot发送了一个代码",
-            "2FA_INVALID_CODE": "代码无效。请再次使用`/login`"
+            "2FA_INVALID_CODE": "代码无效。请再次使用`/login`",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "不支持 2FA，请使用 `/login` 并使用其他命令不包含用户名和密码。"
         },
         "DATABASE": {
             "NOT_LOGIN": "您还没有登录！请使用`/login`登录！",

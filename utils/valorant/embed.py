@@ -13,6 +13,9 @@ from .useful import (
     JSON
 )
 
+from ..locale_v2 import ValorantTranslator
+VLR_locale = ValorantTranslator()
+
 if TYPE_CHECKING:
     from bot import ValorantBot
 
@@ -35,12 +38,12 @@ class GetEmbed:
         return embed
 
     @classmethod
-    def store(cls, player: str, offer: Dict, language: str, response: Dict, bot: ValorantBot) -> List[discord.Embed]:
+    def store(cls, player: str, offer: Dict, response: Dict, bot: ValorantBot) -> List[discord.Embed]:
         """Embed Store"""
 
         store_esponse = response.get('RESPONSE')
 
-        data = GetFormat.offer_format(offer, language)
+        data = GetFormat.offer_format(offer)
 
         duration = data['duration']
 
@@ -54,7 +57,7 @@ class GetEmbed:
 
     # ---------- MISSION EMBED ---------- #
 
-    def mission(player:str, mission: Dict, language: str, response: Dict) -> discord.Embed:
+    def mission(player:str, mission: Dict, response: Dict) -> discord.Embed:
         """Embed Mission"""
 
         # language
@@ -66,9 +69,8 @@ class GetEmbed:
         reset_in = response.get('DAILY_RESET')
         refill_in = response.get('REFILLS')
 
-
         # mission format
-        data = GetFormat.mission_format(mission, language)
+        data = GetFormat.mission_format(mission)
 
         daily_format = data['daily']
         daily_end = data['daily_end']
@@ -112,7 +114,7 @@ class GetEmbed:
 
     # ---------- POINT EMBED ---------- #
 
-    def point(player:str, wallet: Dict, language: str, response: Dict, bot: ValorantBot) -> discord.Embed:
+    def point(player:str, wallet: Dict, response: Dict, bot: ValorantBot) -> discord.Embed:
         """Embed Point"""
 
         # language
@@ -127,8 +129,8 @@ class GetEmbed:
         valorant_point = wallet['Balances'][vp_uuid]
         radiant_point = wallet['Balances'][rad_uuid]
 
-        rad = point[rad_uuid]['names'][language]
-        vp = point[vp_uuid]['names'][language]
+        rad = point[rad_uuid]['names'][str(VLR_locale)]
+        vp = point[vp_uuid]['names'][str(VLR_locale)]
         if vp == 'VP': vp = 'Valorant Points'
 
         embed = Embed(title=f"{title_point}:")
@@ -156,13 +158,13 @@ class GetEmbed:
         return embed
 
     @classmethod
-    def nightmarket(cls, player:str, offer: Dict, bot: ValorantBot, language: str, response: Dict) -> discord.Embed:
+    def nightmarket(cls, player:str, offer: Dict, bot: ValorantBot, response: Dict) -> discord.Embed:
         """Embed Nightmarket"""
 
         # language
         msg_response = response.get('RESPONSE')
         
-        night_mk = GetFormat.nightmarket_format(offer, language, response)
+        night_mk = GetFormat.nightmarket_format(offer, response)
         skins = night_mk['nightmarket']
         duration = night_mk['duration']
 
@@ -177,14 +179,14 @@ class GetEmbed:
 
     # ---------- BATTLEPASS EMBED ---------- #
 
-    def battlepass(player:str, data: Dict, season: Dict, language: str, response: Dict) -> discord.Embed:
+    def battlepass(player:str, data: Dict, season: Dict, response: Dict) -> discord.Embed:
         """Embed Battlepass"""
 
         # language
         MSG_RESPONSE = response.get('RESPONSE')
         MSG_TIER = response.get('TIER')
 
-        BTP = GetFormat.battlepass_format(data, season, language, response)
+        BTP = GetFormat.battlepass_format(data, season, response)
         
         item = BTP['data']
         reward = item['reward']
@@ -210,7 +212,7 @@ class GetEmbed:
             embed.color = 0xf1b82d
 
         if tier == 55:
-            embed.description = f'{reward}'
+            embed.description = str(reward)
 
         embed.set_footer(text=f"{MSG_TIER} {tier} | {act}\n{player}")
 
@@ -222,11 +224,11 @@ class GetEmbed:
         ...
 
     @classmethod
-    def notify_all_send(cls, player:str, offer: Dict, language:str, response: Dict, bot: ValorantBot) -> discord.Embed:
+    def notify_all_send(cls, player:str, offer: Dict, response: Dict, bot: ValorantBot) -> discord.Embed:
         
         description_format = response.get('RESPONSE_ALL')
 
-        data = GetFormat.offer_format(offer, language)
+        data = GetFormat.offer_format(offer)
 
         duration = data['duration']
 

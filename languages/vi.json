@@ -24,7 +24,7 @@
                 "username": "Nhập username! (Đăng Nhập Tạm Thời)",
                 "password": "Nhập password! (Đăng Nhập Tạm Thời)"
             },
-            "RESPONSE": "Store của **{username}** | Thời hạn {duration}"
+            "RESPONSE": "Store của **{username}** \nThời hạn {duration}"
         },
         "point": {
             "NAME": "Xem điểm",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "bundles",
             "DESCRIPTION": "xem bundle",
-            "TITLE": "Featured Bundle: {bundle} Collection"
+            "TITLE": "Featured Bundle: {bundle} Collection",
+            "DURATION": "Duration: {duration}",
+            "DROPDOWN_CHOICE_TITLE": "Vui lòng chọn bundle:"
         },
         "debug": {
             "NAME": "debug",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "Nhập code 2FA của bạn",
             "2FA_ENABLE": "Bạn đã bật 2FA",
             "2FA_TO_EMAIL": "Riot đã gửi code tới email của bạn",
-            "2FA_INVALID_CODE": "Mã 2FA không chính xác. Vui lòng `/login` lại"
+            "2FA_INVALID_CODE": "Mã 2FA không chính xác. Vui lòng `/login` lại",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "Không hỗ trợ 2FA, vui lòng sử dụng `/login` và sử dụng lệnh khác không có tên người dùng, mật khẩu."
         },
         "DATABASE": {
             "NOT_LOGIN": "Bạn chưa đăng nhập!, vui lòng  `/login` để đăng nhập!",

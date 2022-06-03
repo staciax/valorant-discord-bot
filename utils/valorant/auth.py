@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 # Standard
 import urllib3
@@ -10,6 +10,11 @@ import aiohttp
 
 # Local
 from .local import LocalErrorResponse, ResponseLanguage
+from ..errors import AuthenticationError
+
+from ..locale_v2 import ValorantTranslator
+
+vlr_locale = ValorantTranslator()
 
 # disable urllib3 warnings that might arise from making requests to 127.0.0.1
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -27,7 +32,7 @@ def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, Any]]:
         tokenId = URL.split("id_token=")[1].split("&")[0]
         return accessToken, tokenId
     except IndexError:
-        raise RuntimeError('Cookies Invalid')
+        raise AuthenticationError('Cookies Invalid')
 
 class Auth:
     def __init__(self) -> None:
@@ -92,7 +97,7 @@ class Auth:
         elif data['type'] == 'multifactor':
 
             if r.status == 429:
-                raise RuntimeError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
+                raise AuthenticationError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
             
             label_modal = local_response.get('INPUT_2FA_CODE')
             WaitFor2FA = {"auth": "2fa", "cookie": cookies, 'label': label_modal}
@@ -104,7 +109,7 @@ class Auth:
             WaitFor2FA['message'] = local_response.get('2FA_ENABLE', 'You have 2FA enabled!')
             return WaitFor2FA
 
-        raise RuntimeError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
+        raise AuthenticationError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
 
     async def get_entitlements_token(self, access_token: str) -> Optional[str]:
         """ This function is used to get the entitlements token. """
@@ -123,7 +128,7 @@ class Auth:
         try:
             entitlements_token = data['entitlements_token']
         except KeyError:
-            raise RuntimeError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!'))
+            raise AuthenticationError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!'))
         else:
             return entitlements_token
 
@@ -149,7 +154,7 @@ class Auth:
             name = data['acct']['game_name']
             tag = data['acct']['tag_line']
         except KeyError:
-            raise RuntimeError(local_response.get('NO_NAME_TAG', 'This user hasn\'t created a name or tagline yet.'))
+            raise AuthenticationError(local_response.get('NO_NAME_TAG', 'This user hasn\'t created a name or tagline yet.'))
         else:
             return puuid, name, tag
         
@@ -172,7 +177,7 @@ class Auth:
         try:
             region = data['affinities']['live']
         except KeyError:
-            raise RuntimeError(local_response.get('REGION_NOT_FOUND', 'An unknown error occurred, plz `/login` again'))
+            raise AuthenticationError(local_response.get('REGION_NOT_FOUND', 'An unknown error occurred, plz `/login` again'))
         else:
             return region 
 
@@ -222,10 +227,10 @@ class Auth:
             data = await r.text()
 
         if r.status != 303:
-            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
+            raise AuthenticationError(local_response.get('COOKIES_EXPIRED'))
         
         if r.headers['Location'].startswith('/login'):
-            raise RuntimeError(local_response.get('COOKIES_EXPIRED'))
+            raise AuthenticationError(local_response.get('COOKIES_EXPIRED'))
 
         old_cookie = cookies.copy()
 
@@ -257,7 +262,7 @@ class Auth:
             user_data = {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
             return user_data
         
-        raise RuntimeError('Not supported 2FA')
+        raise AuthenticationError(self.local_response().get('TEMP_LOGIN_NOT_SUPPORT_2FA'))
 
     # next update
 
@@ -278,7 +283,7 @@ class Auth:
             allow_redirects=False
         )
         if r.status_code != 303:
-            raise RuntimeError(local_response.get('FAILED'))
+            raise AuthenticationError(local_response.get('FAILED'))
 
         session.close()
         

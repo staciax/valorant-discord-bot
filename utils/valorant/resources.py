@@ -4,6 +4,7 @@ import discord
 import requests
 from io import BytesIO
 from .local import LocalErrorResponse
+from ..errors  import ValorantBotError
 
 from typing import TYPE_CHECKING, Optional
 
@@ -89,7 +90,7 @@ async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, f
                 emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))
             except discord.Forbidden:
                 if force:
-                    raise RuntimeError(response.get('MISSING_PERM'))
+                    raise ValorantBotError(response.get('MISSING_PERM'))
                 continue
             except discord.HTTPException:
                 print(response.get('FAILED_CREATE_EMOJI'))

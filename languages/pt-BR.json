@@ -24,7 +24,7 @@
                 "username": "Insira o nome de usuário! (login temporário)",
                 "password": "Insira a senha! (login temporário)"
             },
-            "RESPONSE": "Loja diária de **{username}** | Expira {duration}"
+            "RESPONSE": "Loja diária de **{username}** \nExpira {duration}"
         },
         "point": {
             "NAME": "pontos",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "bundles",
             "DESCRIPTION": "Ver o bundle em destaque atual",
-            "TITLE": "Bundle em Destaque: Coleção {bundle}"
+            "TITLE": "Bundle em Destaque: Coleção {bundle}",
+            "DURATION": "Expira em {duration}",
+            "DROPDOWN_CHOICE_TITLE": "Selecione um bundle:"
         },
         "debug": {
             "NAME": "debug",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "Insira o código de autenticação de 2 fatores",
             "2FA_ENABLE": "Você tem autenticação de 2 fatores ligada!",
             "2FA_TO_EMAIL": "Riot enviou o código para",
-            "2FA_INVALID_CODE": "Código inválido. Por favor `/login` novamente"
+            "2FA_INVALID_CODE": "Código inválido. Por favor `/login` novamente",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "Não suportado 2FA, Por favor use `/login` e use outro comando sem nome de usuário, senha."
         },
         "DATABASE": {
             "NOT_LOGIN": "Você não está registrado, por favor `/login` para registrar!",

@@ -116,6 +116,7 @@ python bot.py
 | `/battlepass`  | ดูความคืบหน้าของ battlepass |
 | `/bundle`  | ดูคอลเลคชั่นตามที่ระบุ `เครดิต Giorgio` |
 | `/bundles`  | ดูคอลเลคชั่นพิเศษ `เครดิต Giorgio` |
+| `/cookies`  | เข้าสู่ระบบด้วยคุกกี้ สำหรับบัญชีที่เชื่อม facebook/google [วิธีหาคุกกี้](https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies) `เครดิต Giorgio` |
 | `/notify add`  | ตั้งค่าการแจ้งเตือนเมื่อมีสกินเข้ามาในร้านค้าของคุณ |
 | `/notify list`  | ดูสกินที่คุณตั้งค่าไว้สำหรับการแจ้งเตือน |
 | `/notify mode`  | เปลี่ยนโหมดแจ้งเตือน |

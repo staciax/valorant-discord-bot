@@ -1,17 +1,11 @@
-
 """
-WAIT FOR DISCORD.PY SUPPORTING SLASH LOCALIZATION
+DEMO TRANSLATION
 """
-
 from __future__ import annotations
 
 import os
-import contextlib
 from typing import Optional, Dict, Union, List, Tuple, Any, Callable
-from discord.app_commands import Command, ContextMenu, Group
 from contextvars import ContextVar
-
-_current_locale = ContextVar("_current_locale", default="en-US")
 
 discord_locale = [
     'da', # Danish
@@ -65,8 +59,49 @@ valorant_locale_overwrite = {
     'vi'   : 'vi-VN', # vietnamese
 }
 
-def set_interaction_locale(locale: Optional[str]) -> None:
-    ...
+_current_locale = ContextVar("_current_locale", default="en-US")
+_valorant_current_locale = ContextVar("_valorant_current_locale", default="en-US")
 
-def reload_interaction_locales() -> None:
-    ...
+def get_interaction_locale() -> str:
+    """ Get the bot locale """
+    return str(_current_locale.get())
+
+def set_interaction_locale(locale: Optional[str]) -> None:
+    """ Set the locale for bot """
+    _current_locale.set(locale)
+
+def get_valorant_locale() -> str:
+    """ Get the locale for valorant api """
+    valorant_locale = valorant_locale_overwrite.get(str(_valorant_current_locale.get()), "en-US")
+    return valorant_locale
+
+def set_valorant_locale(locale: Optional[str]) -> None:
+    """ Set the locale for valorant api """
+
+    language_files = os.listdir('languages')
+    locale_json = str(locale) + '.json'
+    if locale_json not in language_files:
+        _valorant_current_locale.set("en-US")
+    _valorant_current_locale.set(locale)
+
+class ValorantTranslator():
+    """Translete valorant item name"""
+
+    def __str__(self) -> str:
+        locale = get_valorant_locale()
+        return locale
+
+    def lower(self) -> str:
+        locale = get_valorant_locale()
+        return locale.lower()
+
+class Translator():
+    """Translete valorant item name"""
+
+    def __str__(self) -> str:
+        locale = get_interaction_locale()
+        return locale
+
+    def lower(self) -> str:
+        locale = get_interaction_locale()
+        return locale.lower()

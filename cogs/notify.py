@@ -17,7 +17,7 @@ from difflib import get_close_matches
 from typing import Literal, Tuple, TYPE_CHECKING
 
 from utils.valorant import view as View
-from utils.valorant.local import InteractionLanguage, ResponseLanguage
+from utils.valorant.local import ResponseLanguage
 from utils.valorant.embed import Embed, GetEmbed
 from utils.valorant.cache import create_json
 from utils.valorant.useful import (
@@ -26,13 +26,21 @@ from utils.valorant.useful import (
     JSON,
     format_relative
 )
-
+from utils.errors import (
+    NotOwner,
+    BadArgument,
+    ValorantBotError
+)
+from utils.valorant.db import DATABASE
+from utils.valorant.endpoint import API_ENDPOINT
 from utils.checks import owner_only, cooldown_5s
+
+from utils.locale_v2 import ValorantTranslator
+
+VLR_locale = ValorantTranslator()
 
 if TYPE_CHECKING:
     from bot import ValorantBot
-    from utils.valorant.db import DATABASE
-    from utils.valorant.endpoint import API_ENDPOINT
 
 class Notify(commands.Cog):
     def __init__(self, bot: ValorantBot) -> None:
@@ -43,11 +51,11 @@ class Notify(commands.Cog):
         self.notifys.cancel()
 
     @commands.Cog.listener()
-    async def on_ready(self) -> None:
-        self.db: DATABASE = self.bot.db
-        self.endpoint: API_ENDPOINT = self.bot.endpoint
+    async def on_ready(self) -> None:        
+        self.db = DATABASE()
+        self.endpoint = API_ENDPOINT()
 
-    async def get_endpoint_and_data(self, user_id: int) -> Tuple[API_ENDPOINT, dict]:
+    async def get_endpoint_and_data(self, user_id: int) -> Tuple:
         data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
         await endpoint.activate(data)
@@ -59,9 +67,6 @@ class Notify(commands.Cog):
         
         for user_id in notify_users:
             try:
-                # get guild language
-                # guild_locale = [guild.preferred_locale for guild in self.bot.guilds if channel in guild.channels]
-                # if not guild_locale: guild_locale = ['en-US']
                 
                 # endpoint
                 endpoint, data = await self.get_endpoint_and_data(int(user_id))
@@ -75,14 +80,13 @@ class Notify(commands.Cog):
                 author = self.bot.get_user(int(user_id)) or await self.bot.fetch_user(int(user_id))
                 channel_send = author if data['dm_message'] else self.bot.get_channel(int(data['notify_channel']))
                 
-                # language response
-                try:
-                    locale_code = data['locale_code']
-                except KeyError:
-                    locale_code = 'en-US'
-                
-                language = InteractionLanguage(locale_code)
-                response = ResponseLanguage('notify_send', locale_code)
+                # get guild language
+                guild_locale = 'en-US'
+                get_guild_locale = [guild.preferred_locale for guild in self.bot.guilds if channel_send in guild.channels]
+                if len(get_guild_locale) > 0:
+                    guild_locale = guild_locale[0]
+                                
+                response = ResponseLanguage('notify_send', guild_locale)
 
                 user_skin_list = [skin for skin in notify_data if skin['id'] == str(user_id)]
                 user_skin_list_uuid = [skin['uuid'] for skin in notify_data if skin['id'] == str(user_id)]
@@ -93,7 +97,7 @@ class Notify(commands.Cog):
                         if noti['uuid'] in skin_notify_list:
                             uuid = noti['uuid']
                             skin = GetItems.get_skin(uuid)
-                            name = skin['names'][language]
+                            name = skin['names'][guild_locale]
                             icon = skin['icon']
                             emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
@@ -102,11 +106,11 @@ class Notify(commands.Cog):
 
                             embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xfd4554)
                             embed.set_thumbnail(url=icon)
-                            view = View.NotifyView(user_id, uuid, name, ResponseLanguage('notify_add', locale_code))
+                            view = View.NotifyView(user_id, uuid, name, ResponseLanguage('notify_add', guild_locale))
                             view.message = await channel_send.send(content=f'||{author.mention}||', embed=embed, view=view)
                 
                 elif data['notify_mode'] == 'All':
-                    embeds = GetEmbed.notify_all_send(endpoint.player, offer, language, response, self.bot)
+                    embeds = GetEmbed.notify_all_send(endpoint.player, offer, response, self.bot)
                     await channel_send.send(content=f'||{author.mention}||', embeds=embeds)
             
             except (KeyError, FileNotFoundError):
@@ -147,7 +151,7 @@ class Notify(commands.Cog):
         await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
 
         # language
-        language = InteractionLanguage(interaction.locale)
+
         response = ResponseLanguage('notify_add', interaction.locale)
 
         # # setup emoji 
@@ -160,17 +164,17 @@ class Notify(commands.Cog):
         skindata = self.db.read_cache()
 
         # find skin
-        skin_list = [skindata['skins'][x]['names'][language] for x in skindata['skins']] # get skin list
+        skin_list = [skindata['skins'][x]['names'][str(VLR_locale)] for x in skindata['skins']] # get skin list
         skin_name = get_close_matches(skin, skin_list, 1) # get skin close match
 
         if skin_name:
             notify_data = JSON.read('notifys')
 
-            find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['names'][language] == skin_name[0]]
+            find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['names'][str(VLR_locale)] == skin_name[0]]
             skin_uuid = find_skin[0]
             skin_source = skindata['skins'][skin_uuid]
 
-            name = skin_source['names'][language]
+            name = skin_source['names'][str(VLR_locale)]
             icon = skin_source['icon']
             uuid = skin_source['uuid']
 
@@ -179,7 +183,7 @@ class Notify(commands.Cog):
             for skin in notify_data:
                 if skin['id'] == str(interaction.user.id) and skin['uuid'] == skin_uuid:
                     skin_already = response.get('SKIN_ALREADY_IN_LIST')
-                    raise RuntimeError(skin_already.format(emoji=emoji, skin=name))
+                    raise ValorantBotError(skin_already.format(emoji=emoji, skin=name))
 
             payload = dict(id=str(interaction.user.id), uuid=skin_uuid)
 
@@ -206,7 +210,7 @@ class Notify(commands.Cog):
             await interaction.followup.send(embed=embed, view=view)
             return
 
-        raise RuntimeError("Not found skin")
+        raise ValorantBotError(response.get('NOT_FOUND'))
     
     @notify.command(name='list', description='View skins you have set a for notification.')
     # @dynamic_cooldown(cooldown_5s)
@@ -214,8 +218,6 @@ class Notify(commands.Cog):
         
         await interaction.response.defer(ephemeral=True)
         
-        # language
-        language = InteractionLanguage(interaction.locale)
         response = ResponseLanguage('notify_list', interaction.locale)
 
         await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
@@ -280,7 +282,6 @@ class Notify(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         # language
-        language = InteractionLanguage(interaction.locale)
         response_test = ResponseLanguage('notify_test', interaction.locale)
         response_send = ResponseLanguage('notify_send', interaction.locale)
         response_add = ResponseLanguage('notify_add', interaction.locale)
@@ -298,7 +299,7 @@ class Notify(commands.Cog):
         
         if len(user_skin_list) == 0:
             empty_list = response_test.get('EMPTY_LIST')
-            raise RuntimeError(empty_list)
+            raise ValorantBotError(empty_list)
 
         channel_send = interaction.user if data['dm_message'] else self.bot.get_channel(int(data['notify_channel']))
         
@@ -308,7 +309,7 @@ class Notify(commands.Cog):
                     uuid = noti['uuid']
                     skin = GetItems.get_skin(uuid)
 
-                    name = skin['names'][language]
+                    name = skin['names'][str(VLR_locale)]
                     icon = skin['icon']
                     emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
@@ -322,22 +323,21 @@ class Notify(commands.Cog):
                     break
             
             elif data['notify_mode'] == 'All':
-                embeds = GetEmbed.notify_all_send(endpoint.player, offer, language, response_send, self.bot)
+                embeds = GetEmbed.notify_all_send(endpoint.player, offer, response_send, self.bot)
                 await channel_send.send(embeds=embeds)
              
             else:
-                raise RuntimeError(response_test.get('NOTIFY_TURN_OFF'))
+                raise ValorantBotError(response_test.get('NOTIFY_TURN_OFF'))
         
         except Forbidden:
             if channel_send == interaction.user:
-                raise RuntimeError(response_test.get('PLEASE_ALLOW_DM_MESSAGE'))
-            else:
-                raise RuntimeError(response_test.get('BOT_MISSING_PERM'))
+                raise ValorantBotError(response_test.get('PLEASE_ALLOW_DM_MESSAGE'))
+            raise ValorantBotError(response_test.get('BOT_MISSING_PERM'))
         except HTTPException:
-            raise RuntimeError(response_test.get('FAILED_SEND_NOTIFY'))
+            raise ValorantBotError(response_test.get('FAILED_SEND_NOTIFY'))
         except Exception as e:
             print(e)
-            raise RuntimeError(f"{response_test.get('FAILED_SEND_NOTIFY')} - {e}")
+            raise ValorantBotError(f"{response_test.get('FAILED_SEND_NOTIFY')} - {e}")
         else:
             await interaction.followup.send(embed=Embed(response_test.get('NOTIFY_IS_WORKING'), color=0x77dd77), ephemeral=True)
 
@@ -345,7 +345,6 @@ class Notify(commands.Cog):
     # @owner_only()
     # async def notify_manage(self, interaction: Interaction) -> None:
     #     ...
-
 
 async def setup(bot: ValorantBot) -> None:
     await bot.add_cog(Notify(bot))
