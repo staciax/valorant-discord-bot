@@ -1,3 +1,7 @@
+"""
+I WILL REMOVED THIS FILE AFTER THE LOCALIZATION V2 IS DONE
+"""
+
 from __future__ import annotations
 
 # credit by /giorgi-o/

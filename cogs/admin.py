@@ -18,41 +18,43 @@ class Admin(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def sync(self, ctx: commands.Context, sync_type: Literal['guild', 'global']) -> None:
+        """ Sync the application commands """
 
         async with ctx.typing():
             if sync_type == 'guild':
-                    guild = discord.Object(id=ctx.guild.id)
-                    self.bot.tree.copy_global_to(guild=guild)
-                    await self.bot.tree.sync(guild=guild)
-                    await ctx.reply(f"Synced guild !")
-            
-            elif sync_type == 'global':
-                await self.bot.tree.sync()
-                await ctx.reply(f"Synced global !")
+                guild = discord.Object(id=ctx.guild.id)
+                self.bot.tree.copy_global_to(guild=guild)
+                await self.bot.tree.sync(guild=guild)
+                await ctx.reply(f"Synced guild !")
+                return
+
+            await self.bot.tree.sync()
+            await ctx.reply(f"Synced global !")
 
     @commands.command()
     @commands.is_owner()
     async def unsync(self, ctx: commands.Context, unsync_type: Literal['guild', 'global']) -> None:
+        """ Unsync the application commands """
 
         async with ctx.typing():
             if unsync_type == 'guild':
-                    guild = discord.Object(id=ctx.guild.id)
-                    commands = self.bot.tree.get_commands(guild=guild)
-                    for command in commands:
-                        self.bot.tree.remove_command(command, guild=guild)
-                    await self.bot.tree.sync(guild=guild)
-                    await ctx.reply(f"Un-Synced guild !")    
-            
-            elif unsync_type == 'global':
-                
-                commands = self.bot.tree.get_commands()
+                guild = discord.Object(id=ctx.guild.id)
+                commands = self.bot.tree.get_commands(guild=guild)
                 for command in commands:
-                    self.bot.tree.remove_command(command)
-                await self.bot.tree.sync()
-                await ctx.reply(f"Un-Synced global !")
+                    self.bot.tree.remove_command(command, guild=guild)
+                await self.bot.tree.sync(guild=guild)
+                await ctx.reply(f"Un-Synced guild !")    
+                return
+    
+            commands = self.bot.tree.get_commands()
+            for command in commands:
+                self.bot.tree.remove_command(command)
+            await self.bot.tree.sync()
+            await ctx.reply(f"Un-Synced global !")
 
     @app_commands.command(description='Shows basic information about the bot.')
     async def about(self, interaction: Interaction) -> None:
+        """ Shows basic information about the bot. """
         
         owner_id = 240059262297047041
         owner_url = f'https://discord.com/users/{owner_id}'

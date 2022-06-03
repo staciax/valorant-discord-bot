@@ -118,6 +118,7 @@ python bot.py
 | `/battlepass`  | View your battlepass' current tier |
 | `/bundle`  | inspect a specific bundle `credit by Giorgio` |
 | `/bundles`  | Show the current featured bundles `credit by Giorgio` |
+| `/cookies`  | Login to your account with a cookie, [How to cookies](https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies) `credit by Giorgio` |
 | `/notify add`  | Set a notification when a specific skin is available on your store |
 | `/notify list`  | View skins you have set a notification for |
 | `/notify mode`  | Change notification mode `Specified skin` or `all skin` |

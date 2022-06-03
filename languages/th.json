@@ -24,7 +24,7 @@
                 "username": "กรุณาใส่ username! (เข้าสู่ระบบแบบชั่วคราวเท่านั้น)",
                 "password": "กรุณาใส่ password! (เข้าสู่ระบบแบบชั่วคราวเท่านั้น)"
             },
-            "RESPONSE": "ร้านค้าของคุณ **{username}** | จะหมดเวลาภายใน {duration}"
+            "RESPONSE": "ร้านค้าของคุณ **{username}** \nจะหมดเวลาภายใน {duration}"
         },
         "point": {
             "NAME": "point",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "bundles",
             "DESCRIPTION": "View your bundle progress",
-            "TITLE": "คอลเลคชั่นพิเศษ: {bundle}"
+            "TITLE": "คอลเลคชั่นพิเศษ: {bundle}",
+            "DURATION": "ระยะเวลาที่เหลือ: {duration}",
+            "DROPDOWN_CHOICE_TITLE": "เลือก คอลเลคชั่น:"
         },
         "debug": {
             "NAME": "debug",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "กรุณาใส่รหัส 2FA",
             "2FA_ENABLE": "คุณได้เปิดใช้งาน 2FA!",
             "2FA_TO_EMAIL": "Riot ส่งรหัสไปที่ อีเมล",
-            "2FA_INVALID_CODE": "2FA โค้ดไม่ถูกต้อง กรุณา `/login` อีกครั้ง"
+            "2FA_INVALID_CODE": "2FA โค้ดไม่ถูกต้อง กรุณา `/login` อีกครั้ง",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "เข้าสู่ระบบชั่วคราว ยังไม่รองรับ 2FA โปรดใช้ `/login` และใช้คำสั่งอื่นๆ โดยไม่มี username, password."
         },
         "DATABASE": {
             "NOT_LOGIN": "คุณยังไม่ได้เข้าสู่ระบบ!, กรุณา `/login` เพื่อเข้าสู่ระบบ!",

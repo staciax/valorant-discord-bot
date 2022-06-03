@@ -3,19 +3,25 @@ from __future__ import annotations
 # Standard
 import discord
 import contextlib
+from datetime import datetime, timedelta
 from discord import Interaction, TextStyle, ui, ButtonStyle
-from typing import Awaitable, List, Dict, TYPE_CHECKING
+from typing import Awaitable, List, Dict, TYPE_CHECKING, Optional, Union
 
 # Local
-from .useful import GetItems, GetEmoji, JSON
+from .useful import GetItems, GetEmoji, JSON, format_relative
 from .resources import get_item_type
+from ..errors import ValorantBotError
+
+from ..locale_v2 import ValorantTranslator
+
+VLR_locale = ValorantTranslator()
 
 if TYPE_CHECKING:
     from bot import ValorantBot
     from .db import DATABASE
 
 class share_button(ui.View):
-    def __init__(self, interaction: Interaction, embeds: List[discord.Embed]):
+    def __init__(self, interaction: Interaction, embeds: List[discord.Embed]) -> None:
         self.interaction: Interaction = interaction
         self.embeds = embeds
         super().__init__(timeout=300)
@@ -76,7 +82,7 @@ class _NotifyListButton(ui.Button):
             custom_id=str(custom_id)
         )
 
-    async def callback(self, interaction: Interaction):
+    async def callback(self, interaction: Interaction) -> None:
 
         await interaction.response.defer()    
         
@@ -94,6 +100,8 @@ class _NotifyListButton(ui.Button):
         await self.view.interaction.edit_original_message(embed=embed, view=self.view)
 
 class NotifyViewList(ui.View):
+    skin_source: Dict
+
     def __init__(self, interaction: Interaction, response: Dict) -> None:
         self.interaction: Interaction = interaction
         self.response = response
@@ -126,11 +134,11 @@ class NotifyViewList(ui.View):
 
         database = JSON.read('notifys')
         notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]
-        skin_source:dict = {}
+        skin_source = {}
 
         for uuid in notify_skin:
             skin = GetItems.get_skin(uuid)
-            name = skin['names'][self.default_language]
+            name = skin['names'][str(VLR_locale)]
             icon = skin['icon']
 
             skin_source[uuid] = {
@@ -144,7 +152,7 @@ class NotifyViewList(ui.View):
     def main_embed(self) -> discord.Embed:       
         """ Main embed for the view """
 
-        skin_list: dict = self.skin_source
+        skin_list = self.skin_source
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
         title = self.response.get('TITLE')
@@ -238,11 +246,11 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
 # inspired by https://github.com/giorgi-o
 class BaseBundle(ui.View):
-    def __init__(self, interaction: Interaction, entries: Dict, response: Dict, language: str) -> None:
+    def __init__(self, interaction: Interaction, entries: Dict, response: Dict) -> None:
         self.interaction: Interaction = interaction
         self.entries = entries
         self.response = response
-        self.language = language
+        self.language = str(VLR_locale)
         self.bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
         self.current_page: int = 0
         self.embeds: List[List[discord.Embed]] = []
@@ -305,7 +313,21 @@ class BaseBundle(ui.View):
         name = bundle['names'][self.language]
 
         featured_bundle_title = self.response.get('TITLE')
-        embed = discord.Embed(title=featured_bundle_title.format(bundle=name), description=f"{vp_emoji} **{bundle['price']}** ~~{bundle['base_price']}~~",color=0xfd4554).set_image(url=bundle['icon'])
+
+        duration = bundle['duration']
+        duration_text = self.response.get('DURATION').format(duration=format_relative(datetime.utcnow() + timedelta(seconds=duration)))
+
+        bundle_price = bundle['price']
+        bundle_base_price = bundle['base_price']
+        bundle_price_text = f"**{bundle_price}** {(f'~~{bundle_base_price}~~' if bundle_base_price != bundle_price else '')}"
+
+        embed = discord.Embed(
+            title=featured_bundle_title.format(bundle=name),
+            description=f"{vp_emoji} {bundle_price_text}"
+            f" ({duration_text})",
+            color=0xfd4554
+        )
+        embed.set_image(url=bundle['icon'])
 
         embed_list = []
 
@@ -318,7 +340,13 @@ class BaseBundle(ui.View):
             emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
             icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
             color = 0xfd4554 if item_type == 'Skins' else 0x0F1923
-            embed = self.base_embed(f"{emoji} {item['names'][self.language]}", f"**{vp_emoji} {items['price']}** ~~{items['base_price']}~~", icon, color)
+            
+            item_price = items['price']
+            item_base_price = items['base_price']
+            item_price_text = f"**{item_price}** {(f'~~{item_base_price}~~' if item_base_price != item_price else '')}"
+            
+            embed = self.base_embed(f"{emoji} {item['names'][self.language]}", f"**{vp_emoji}** {item_price_text}", icon, color)
+            
             embeds.append(embed)
 
             if len(embeds) == 10:
@@ -333,7 +361,7 @@ class BaseBundle(ui.View):
     def build_select(self) -> None:
         """ Builds the select bundle """
         for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):
-            self.select_bundle.add_option(label=bundle['names']['en-US'], value=index)
+            self.select_bundle.add_option(label=bundle['names'][self.language], value=index)
 
     @ui.select(placeholder='Select a bundle:')
     async def select_bundle(self, interaction: Interaction, select: ui.Select):
@@ -384,43 +412,72 @@ class BaseBundle(ui.View):
             return await self.interaction.followup.send('\u200b', view=self)
         
         not_found_bundle = self.response.get('NOT_FOUND_BUNDLE')
-        raise RuntimeError(not_found_bundle)
+        raise ValorantBotError(not_found_bundle)
 
     async def start_furture(self) -> Awaitable[None]:
         """ Starts the featured bundle view """
+
+        BUNDLES = []
+        FBundle = self.entries['FeaturedBundle']['Bundles']
         
-        FBundle = self.entries['FeaturedBundle']['Bundle']
-        get_bundle = GetItems.get_bundle(FBundle["DataAssetID"])
+        for fbd in FBundle:
+            get_bundle = GetItems.get_bundle(fbd["DataAssetID"])
 
-        bundle_payload = {
-            "uuid": FBundle["DataAssetID"],
-            "icon": get_bundle['icon'],
-            "names": get_bundle['names'],
-            "duration": FBundle["DurationRemainingInSeconds"],
-            "items": []
-        }
-
-        price = 0
-        baseprice = 0
-
-        for items in FBundle['Items']:
-            item_payload = {
-                "uuid": items["Item"]["ItemID"],
-                "type": items["Item"]["ItemTypeID"],
-                "item" : GetItems.get_item_by_type(items["Item"]["ItemTypeID"], items["Item"]["ItemID"]),
-                "amount": items["Item"]["Amount"],
-                "price": items["DiscountedPrice"],
-                "base_price": items["BasePrice"],
-                "discount": items["DiscountPercent"]
+            bundle_payload = {
+                "uuid": fbd["DataAssetID"],
+                "icon": get_bundle['icon'],
+                "names": get_bundle['names'],
+                "duration": fbd["DurationRemainingInSeconds"],
+                "items": []
             }
-            price += int(items["DiscountedPrice"])
-            baseprice += int(items["BasePrice"])
-            bundle_payload['items'].append(item_payload)
 
-        bundle_payload['price'] = price
-        bundle_payload['base_price'] = baseprice
+            price = 0
+            baseprice = 0
 
-        self.embeds = self.build_Featured_Bundle(bundle_payload)
+            for items in fbd['Items']:
+                item_payload = {
+                    "uuid": items["Item"]["ItemID"],
+                    "type": items["Item"]["ItemTypeID"],
+                    "item" : GetItems.get_item_by_type(items["Item"]["ItemTypeID"], items["Item"]["ItemID"]),
+                    "amount": items["Item"]["Amount"],
+                    "price": items["DiscountedPrice"],
+                    "base_price": items["BasePrice"],
+                    "discount": items["DiscountPercent"]
+                }
+                price += int(items["DiscountedPrice"])
+                baseprice += int(items["BasePrice"])
+                bundle_payload['items'].append(item_payload)
+
+            bundle_payload['price'] = price
+            bundle_payload['base_price'] = baseprice
+
+            BUNDLES.append(bundle_payload)
+
+        if len(BUNDLES) > 1:
+            return await self.interaction.followup.send('\u200b', view=SelectionFeaturedBundleView(BUNDLES, self))
+
+        self.embeds = self.build_Featured_Bundle(BUNDLES[0])
         self.fill_items()
         self.update_button()
         await self.interaction.followup.send(embeds=self.embeds[0], view=self)
+
+class SelectionFeaturedBundleView(ui.View):
+    def __init__(self, bundles: Dict, other_view: Union[ui.View, BaseBundle]= None):
+        self.bundles = bundles
+        self.other_view = other_view
+        super().__init__(timeout=120)
+        self.__build_select()
+        self.select_bundle.placeholder = self.other_view.response.get('DROPDOWN_CHOICE_TITLE')
+
+    def __build_select(self) -> None:
+        for index, bundle in enumerate(self.bundles):
+            self.select_bundle.add_option(label=bundle['names'][str(VLR_locale)], value=index)
+
+    @ui.select(placeholder='Select a bundle:')
+    async def select_bundle(self, interaction: Interaction, select: ui.Select):
+        value = select.values[0]
+        bundle = self.bundles[int(value)]
+        embeds = self.other_view.build_Featured_Bundle(bundle)
+        self.other_view.fill_items()
+        self.other_view.update_button()
+        await interaction.response.edit_message(content=None, embeds=embeds[0], view=self.other_view)

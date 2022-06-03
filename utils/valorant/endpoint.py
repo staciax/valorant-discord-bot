@@ -6,7 +6,7 @@ from __future__ import annotations
 import json
 import aiohttp
 import urllib3
-from typing import Dict
+from typing import Dict, Mapping, Any
 
 # Local
 from .resources import (
@@ -16,16 +16,17 @@ from .resources import (
     base_endpoint_glz,
     base_endpoint_shared
 )
-from .auth import Auth
 from .local import LocalErrorResponse
+from ..errors import ResponseError, HandshakeError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class API_ENDPOINT:
 
-    def __init__(self, session: aiohttp.ClientSession) -> None:
+    def __init__(self) -> None:
+        from .auth import Auth
         
-        self.session = session
+        self.session = aiohttp.ClientSession()
         self.auth = Auth()
         
         # self.headers = {}
@@ -43,7 +44,7 @@ class API_ENDPOINT:
         # language
         self.locale_code = 'en-US'
 
-    async def activate(self, auth: Dict) -> None:
+    async def activate(self, auth: Mapping[str, Any]) -> None:
         '''activate api'''
     
         try:
@@ -57,7 +58,7 @@ class API_ENDPOINT:
             self.__format_region()
             self.__build_urls()
         except:
-            raise RuntimeError(self.response.get('FAILED_ACTIVE'))
+            raise HandshakeError(self.response.get('FAILED_ACTIVE'))
 
     def locale_response(self) -> LocalErrorResponse:
         '''This function is used to check if the local response is enabled.'''
@@ -89,31 +90,31 @@ class API_ENDPOINT:
 
         if data["httpStatus"] == 400:
             response = LocalErrorResponse('AUTH', self.locale_code)
-            raise RuntimeError(response.get('COOKIES_EXPIRED')) 
+            raise ResponseError(response.get('COOKIES_EXPIRED')) 
             # await self.refresh_token()
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
-    async def put(self, endpoint: str="/", url: str='pd', body: Dict={}, errors: Dict={}) -> Dict:
+    async def put(self, endpoint: str="/", url: str='pd', data: Dict={}, errors: Dict={}) -> Dict:
         """ put data to the api """
         
         self.locale_response()
 
-        body = body if type(body) is list else json.dumps(body)
+        data = data if type(data) is list else json.dumps(data)
 
         endpoint_url = getattr(self, url)
         data = None
 
-        r = await self.session.put(f'{endpoint_url}{endpoint}', headers=self.headers, data=body)
+        r = await self.session.put(f'{endpoint_url}{endpoint}', headers=self.headers, data=data)
         data = json.loads(await r.text())
 
         if data is not None:
             return data
         else:
-            raise RuntimeError(self.response.get('REQUEST_FAILED'))
+            raise ResponseError(self.response.get('REQUEST_FAILED'))
 
     # contracts endpoints
 
-    async def fetch_contracts(self) -> Dict:
+    async def fetch_contracts(self) -> Mapping[str, Any]:
         '''
         Contracts_Fetch
         Get a list of contracts and completion status including match history       
@@ -123,7 +124,7 @@ class API_ENDPOINT:
 
     # PVP endpoints
 
-    async def fetch_content(self) -> Dict:
+    async def fetch_content(self) -> Mapping[str, Any]:
         '''
         Content_FetchContent
         Get names and ids for game content such as agents, maps, guns, etc.
@@ -131,7 +132,7 @@ class API_ENDPOINT:
         data = await self.fetch(endpoint='/content-service/v3/content', url='shared')
         return data
 
-    async def fetch_account_xp(self) -> Dict:
+    async def fetch_account_xp(self) -> Mapping[str, Any]:
         '''
         AccountXP_GetPlayer
         Get the account level, XP, and XP history for the active player
@@ -139,12 +140,12 @@ class API_ENDPOINT:
         data = await self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
         return data
     
-    async def fetch_player_mmr(self, puuid:str=None) -> Dict:
+    async def fetch_player_mmr(self, puuid:str=None) -> Mapping[str, Any]:
         puuid = self.__check_puuid(puuid)
         data = await self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
         return data
    
-    async def fetch_name_by_puuid(self, puuid:str=None) -> Dict:
+    async def fetch_name_by_puuid(self, puuid:str=None) -> Mapping[str, Any]:
         '''
         Name_service
         get player name tag by puuid
@@ -158,7 +159,7 @@ class API_ENDPOINT:
         data = await self.put(endpoint='/name-service/v2/players', url='pd', body=puuid)
         return data
     
-    async def fetch_player_loadout(self) -> Dict:
+    async def fetch_player_loadout(self) -> Mapping[str, Any]:
         '''
         playerLoadoutUpdate
         Get the player's current loadout
@@ -166,7 +167,7 @@ class API_ENDPOINT:
         data = await self.fetch(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd')
         return data
 
-    async def put_player_loadout(self, loadout: Dict) -> Dict:
+    async def put_player_loadout(self, loadout: Mapping) -> Mapping[str, Any]:
         '''
         playerLoadoutUpdate
         Use the values from `fetch_player_loadout` excluding properties like `subject` and `version.` Loadout changes take effect when starting a new game
@@ -176,7 +177,7 @@ class API_ENDPOINT:
 
     # store endpoints
 
-    async def store_fetch_offers(self) -> Dict:
+    async def store_fetch_offers(self) -> Mapping[str, Any]:
         '''
         Store_GetOffers
         Get prices for all store items
@@ -184,7 +185,7 @@ class API_ENDPOINT:
         data = await self.fetch('/store/v1/offers/', url='pd')
         return data 
 
-    async def store_fetch_storefront(self) -> Dict:
+    async def store_fetch_storefront(self) -> Mapping[str, Any]:
         '''
         Store_GetStorefrontV2
         Get the currently available items in the store
@@ -192,7 +193,7 @@ class API_ENDPOINT:
         data = await self.fetch(f'/store/v2/storefront/{self.puuid}', url='pd')
         return data 
 
-    async def store_fetch_wallet(self) -> Dict:
+    async def store_fetch_wallet(self) -> Mapping[str, Any]:
         '''
         Store_GetWallet
         Get amount of Valorant points and Radianite the player has
@@ -201,7 +202,7 @@ class API_ENDPOINT:
         data = await self.fetch(f'/store/v1/wallet/{self.puuid}', url='pd')
         return data 
 
-    async def store_fetch_order(self, order_id: str) -> Dict:
+    async def store_fetch_order(self, order_id: str) -> Mapping[str, Any]:
         '''
         Store_GetOrder
         {order id}: The ID of the order. Can be obtained when creating an order.
@@ -209,7 +210,7 @@ class API_ENDPOINT:
         data = await self.fetch(f'/store/v1/order/{order_id}', url='pd')
         return data 
     
-    async def store_fetch_entitlements(self, item_type: Dict) -> Dict:
+    async def store_fetch_entitlements(self, item_type: Mapping) -> Mapping[str, Any]:
         '''
         Store_GetEntitlements
         List what the player owns (agents, skins, buddies, ect.)
@@ -231,7 +232,7 @@ class API_ENDPOINT:
     
     # useful endpoints
 
-    async def fetch_mission(self):
+    async def fetch_mission(self) -> Mapping[str, Any]:
         '''
         Get player daily/weekly missions
         '''
@@ -239,7 +240,7 @@ class API_ENDPOINT:
         mission = data["Missions"]
         return mission
 
-    async def get_player_level(self):
+    async def get_player_level(self) -> Mapping[str, Any]:
         '''
         Aliases `fetch_account_xp` but received a level
         '''
@@ -280,7 +281,7 @@ class API_ENDPOINT:
         self.shared = base_endpoint_shared.format(shard=self.shard)
         self.glz = base_endpoint_glz.format(region=self.region, shard=self.shard)
 
-    async def __build_headers(self, headers: Dict) -> Dict:
+    async def __build_headers(self, headers: Mapping) -> Mapping[str, Any]:
         """ build headers """
 
         headers['X-Riot-ClientPlatform'] = self.client_platform
@@ -303,7 +304,7 @@ class API_ENDPOINT:
         data = data['data']
         return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}" # return formatted version string
 
-    async def _get_valorant_version(self):
+    async def _get_valorant_version(self) -> str:
         """ Get the valorant version """
         r = await self.session.get('https://valorant-api.com/v1/version')
         if r.status != 200:

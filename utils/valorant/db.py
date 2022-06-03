@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, Dict
+from typing import Optional, Dict, Any, Union, TYPE_CHECKING
 from datetime import datetime, timedelta
-from .auth import Auth
 from .useful import JSON
 from .cache import fetch_price
 from .local import LocalErrorResponse
+from .auth import Auth
+from ..errors import DatabaseError
 
 def timestamp_utc() -> datetime:
     return datetime.timestamp(datetime.utcnow())
@@ -35,7 +36,7 @@ class DATABASE:
         """ Insert cache """
         JSON.save('cache', data)
 
-    async def is_login(self, user_id: int, response: Dict) -> Optional[Dict]:
+    async def is_login(self, user_id: int, response: Dict) -> Optional[Dict[str, Any]]:
         """Check if user is logged in"""
 
         db = self.read_db()
@@ -44,19 +45,19 @@ class DATABASE:
         login = False
 
         if data is None:
-            raise RuntimeError(response.get('NOT_LOGIN'))
+            raise DatabaseError(response.get('NOT_LOGIN'))
         elif login:
             return False
         return data
 
-    async def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict]:
+    async def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict[str, Any]]:
         """Login to database"""
 
         # language
         response = LocalErrorResponse('DATABASE', locale_code)
 
         db = self.read_db()
-        auth = Auth()
+        auth = self.auth
 
         auth_data = data['data']
         cookie = auth_data['cookie']['cookie']
@@ -90,7 +91,7 @@ class DATABASE:
             
         except Exception as e:
             print(e)
-            raise RuntimeError(response.get('LOGIN_ERROR'))
+            raise DatabaseError(response.get('LOGIN_ERROR'))
         else:
             return {'auth': True, 'player': player_name}
     
@@ -105,14 +106,14 @@ class DATABASE:
             del db[str(user_id)]
             self.insert_user(db)
         except KeyError:
-            raise RuntimeError(response.get('LOGOUT_ERROR')) 
+            raise DatabaseError(response.get('LOGOUT_ERROR')) 
         except Exception as e:
             print(e)
-            raise RuntimeError(response.get('LOGOUT_EXCEPT')) 
+            raise DatabaseError(response.get('LOGOUT_EXCEPT')) 
         else:
             return True
     
-    async def is_data(self, user_id:int, locale_code: str = 'en-US') -> Optional[Dict]:
+    async def is_data(self, user_id:int, locale_code: str = 'en-US') -> Optional[Dict[str, Any]]:
         """Check if user is registered"""
 
         response = LocalErrorResponse('DATABASE', locale_code)
@@ -140,7 +141,7 @@ class DATABASE:
     async def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
         """ Refresh token """
 
-        auth = Auth()
+        auth = self.auth
 
         cookies, access_token, entitlements_token = await auth.redeem_cookies(data['cookie'])
 
@@ -151,6 +152,7 @@ class DATABASE:
         db[str(user_id)]['access_token'] = access_token
         db[str(user_id)]['emt'] = entitlements_token
         db[str(user_id)]['expiry_token'] = expired_cookie
+        
         self.insert_user(db)
 
         return access_token, entitlements_token
@@ -179,15 +181,13 @@ class DATABASE:
         
         self.insert_user(db)
     
-
-    
     def check_notify_list(self, user_id: int) -> None:
         database = JSON.read('notifys')
         notify_skin = [x for x in database if x['id'] == str(user_id)]
         if len(notify_skin) == 0:
-            raise RuntimeError("You're notification list is empty!")
+            raise DatabaseError("You're notification list is empty!")
 
-    def get_user_is_notify(self) -> Dict:
+    def get_user_is_notify(self) -> Dict[str, Any]:
         """Get user is notify """
         
         database = JSON.read('users')
@@ -195,7 +195,7 @@ class DATABASE:
         return notifys
 
     def insert_skin_price(self, skin_price: Dict, force=False) -> None:
-        """Insert skin price to database"""
+        """Insert skin price to cache """
         
         cache = self.read_cache()
         price = cache['prices']
@@ -203,10 +203,11 @@ class DATABASE:
         if check_price is False or force:
             fetch_price(skin_price)
 
-    async def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict]:
+    async def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict[str, Any]]:
+        """ Login with cookie """
         
         db = self.read_db()
-        auth = Auth()
+        auth = self.auth
         auth.locale_code = locale_code
 
         data = await auth.login_with_cookie(cookie)

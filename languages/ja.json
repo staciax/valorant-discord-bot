@@ -24,7 +24,7 @@
                 "username": "ユーザー名を入力してください！ (一時的なログイン)",
                 "password": "パスワードを入力してください！ (一時的なログイン)"
             },
-            "RESPONSE": "**{username}** のストア | 更新 {duration}"
+            "RESPONSE": "**{username}** のストア \n更新 {duration}"
         },
         "point": {
             "NAME": "ポイント",
@@ -123,7 +123,9 @@
         "bundles": {
             "NAME": "バンドル",
             "DESCRIPTION": "現在のバンドルを表示します。",
-            "TITLE": "注目のバンドル {bundle} コレクション"
+            "TITLE": "注目のバンドル {bundle} コレクション",
+            "DURATION": "更新 {duration}",
+            "DROPDOWN_CHOICE_TITLE": "バンドルを選択:"
         },
         "debug": {
             "NAME": "デバッグ",
@@ -160,7 +162,8 @@
             "INPUT_2FA_CODE": "認証コードを入力してください。",
             "2FA_ENABLE": "2FAは有効になっています！",
             "2FA_TO_EMAIL": "認証コードを送信しました。",
-            "2FA_INVALID_CODE": "コードが間違っています、もう一度お試しください。"
+            "2FA_INVALID_CODE": "コードが間違っています、もう一度お試しください。",
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "サポートされていない2FA、`/login` を使用して、別のコマンドを使用しないでください。"
         },
         "DATABASE": {
             "NOT_LOGIN": "あなたはログインしていません！今すぐ/loginでログインしてください！",
