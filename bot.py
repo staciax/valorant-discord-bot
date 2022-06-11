@@ -33,7 +33,7 @@ class ValorantBot(commands.Bot):
 
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
-        self.bot_version = '3.1.0'
+        self.bot_version = '3.1.0-aiohttp'
         self.tree.interaction_check = self.interaction_check
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
