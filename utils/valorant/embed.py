@@ -45,13 +45,13 @@ class GetEmbed:
 
         data = GetFormat.offer_format(offer)
 
-        duration = data['duration']
+        duration = data.pop('duration')
 
         description = store_esponse.format(username=player, duration= format_relative(datetime.utcnow() + timedelta(seconds=duration)))
         
         embed = Embed(description)
         embeds = [embed]
-        [embeds.append(cls.__giorgio_embed(data[skin], bot)) for skin in data if not skin == 'duration']
+        [embeds.append(cls.__giorgio_embed(data[skin], bot)) for skin in data]
 
         return embeds
 
@@ -230,11 +230,11 @@ class GetEmbed:
 
         data = GetFormat.offer_format(offer)
 
-        duration = data['duration']
+        duration = data.pop('duration')
 
         description = description_format.format(username=player, duration=format_relative(datetime.utcnow() + timedelta(seconds=duration)))
         embed = Embed(description)
         embeds = [embed]
-        [embeds.append(cls.__giorgio_embed(data[skin], bot)) for skin in data if not skin == 'duration']
+        [embeds.append(cls.__giorgio_embed(data[skin], bot)) for skin in data]
         
         return embeds
