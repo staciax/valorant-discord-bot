@@ -1,17 +1,14 @@
-# from __future__ import annotations
-
-# Standard
-import urllib3
 import re
+import ssl
+import urllib3
+import requests
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple, Any
-# Third
-import aiohttp
+from requests.adapters import HTTPAdapter
+from collections import OrderedDict
 
-# Local
 from .local import LocalErrorResponse, ResponseLanguage
 from ..errors import AuthenticationError
-
 from ..locale_v2 import ValorantTranslator
 
 vlr_locale = ValorantTranslator()
@@ -34,9 +31,27 @@ def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, Any]]:
     except IndexError:
         raise AuthenticationError('Cookies Invalid')
 
+# ---------- CUSTOM SESSION ADAPTER ---------- #
+
+class TLSAdapter(HTTPAdapter):
+    def init_poolmanager(self, *args: Any, **kwargs: Any) -> None:
+        ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        kwargs['ssl_context'] = ctx
+        return super(TLSAdapter, self).init_poolmanager(*args, **kwargs)
+
+class Session(requests.Session):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(Session, self).__init__(*args, **kwargs)
+        self.mount('https://', TLSAdapter())
+        self.headers = OrderedDict([('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'), ('Accept-Language', 'en-US,en;q=0.9'), ('Accept-Encoding', 'gzip, deflate, br')])
+
+# -------------------- #
+
 class Auth:
+
     def __init__(self) -> None:
-        self.user_agent = 'RiotClient/43.0.1.4195386.4190634 rso-auth (Windows;10;;Professional, x64)'
+        self.user_agent = 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
         
         self.locale_code = 'en-US' # default language
         self.response = {} # prepare response for local response
@@ -46,13 +61,13 @@ class Auth:
         self.response = LocalErrorResponse('AUTH', self.locale_code)
         return self.response
 
-    async def authenticate(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+    def authenticate(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         """ This function is used to authenticate the user. """
         
         # language
         local_response = self.local_response()
-
-        session = aiohttp.ClientSession()
+        
+        session = Session()
 
         data = {
             "client_id": "play-valorant-web-prod",
@@ -64,28 +79,25 @@ class Auth:
         
         headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
         
-        r = await session.post('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
+        r = session.post('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
         
-        # prepare cookies for auth request
         cookies = {}
-        cookies['cookie'] = {}
-        for cookie in r.cookies.items():
-            cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
+        cookies['cookie'] = r.cookies.get_dict()
 
         data = {"type": "auth", "username": username, "password": password, "remember": True}
-
-        async with session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers) as r:
-            data = await r.json()
-            for cookie in r.cookies.items():
-                cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
-
+    
+        r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers) 
+ 
         # print('Response Status:', r.status)
-        await session.close()
+        session.close()
 
-        if data['type'] == 'response':
+        for cookie in r.cookies.items():
+            cookies['cookie'][cookie[0]] = cookie[1]
+
+        if r.json()['type'] == 'response':
             expiry_token = datetime.now() + timedelta(hours=1)
 
-            response = _extract_tokens(data)
+            response = _extract_tokens(r.json())
             access_token = response[0]
             token_id = response[1]
 
@@ -94,16 +106,16 @@ class Auth:
             
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
 
-        elif data['type'] == 'multifactor':
+        elif r.json()['type'] == 'multifactor':
 
-            if r.status == 429:
+            if r.status_code == 429:
                 raise AuthenticationError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
             
             label_modal = local_response.get('INPUT_2FA_CODE')
             WaitFor2FA = {"auth": "2fa", "cookie": cookies, 'label': label_modal}
 
-            if data['multifactor']['method'] == 'email':
-                WaitFor2FA['message'] = f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+            if r.json()['multifactor']['method'] == 'email':
+                WaitFor2FA['message'] = f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {r.json()['multifactor']['email']}"
                 return WaitFor2FA
             
             WaitFor2FA['message'] = local_response.get('2FA_ENABLE', 'You have 2FA enabled!')
@@ -111,105 +123,100 @@ class Auth:
 
         raise AuthenticationError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
 
-    async def get_entitlements_token(self, access_token: str) -> Optional[str]:
+    def get_entitlements_token(self, access_token: str) -> Optional[str]:
         """ This function is used to get the entitlements token. """
         
         # language
         local_response = self.local_response()
 
-        session = aiohttp.ClientSession()
+        session = Session()
         
         headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
 
-        async with session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={}) as r:
-            data = await r.json()
+        r = session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={})
         
-        await session.close()
+        session.close()
         try:
-            entitlements_token = data['entitlements_token']
+            entitlements_token = r.json()['entitlements_token']
         except KeyError:
             raise AuthenticationError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!'))
         else:
             return entitlements_token
 
-    async def get_userinfo(self, access_token: str) -> Tuple[str, str, str]:
+    def get_userinfo(self, access_token: str) -> Tuple[str, str, str]:
         """ This function is used to get the user info. """
 
         # language
         local_response = self.local_response()
 
-        session = aiohttp.ClientSession()
+        session = Session()
         
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {access_token}'
         }
 
-        async with session.post('https://auth.riotgames.com/userinfo', headers=headers, json={}) as r:
-            data = await r.json()
+        r = session.post('https://auth.riotgames.com/userinfo', headers=headers, json={})
         
-        await session.close()
+        session.close()
         try:
-            puuid = data['sub']
-            name = data['acct']['game_name']
-            tag = data['acct']['tag_line']
+            puuid = r.json()['sub']
+            name = r.json()['acct']['game_name']
+            tag = r.json()['acct']['tag_line']
         except KeyError:
             raise AuthenticationError(local_response.get('NO_NAME_TAG', 'This user hasn\'t created a name or tagline yet.'))
         else:
             return puuid, name, tag
         
-    async def get_region(self, access_token: str, token_id: str) -> str:
+    def get_region(self, access_token: str, token_id: str) -> str:
         """ This function is used to get the region. """
 
         # language
         local_response = self.local_response()
 
-        session = aiohttp.ClientSession()
+        session = Session()
         
         headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
         
         body = {"id_token": token_id}
 
-        async with session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant', headers=headers, json=body) as r:
-            data = await r.json()
+        r = session.put('https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant', headers=headers, json=body)
         
-        await session.close()
+        session.close()
         try:
-            region = data['affinities']['live']
+            region = r.json()['affinities']['live']
         except KeyError:
             raise AuthenticationError(local_response.get('REGION_NOT_FOUND', 'An unknown error occurred, plz `/login` again'))
         else:
             return region 
 
-    async def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict[str, Any]:
+    def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict[str, Any]:
         """ This function is used to give the 2FA code. """
 
         # language
         local_response = self.local_response()
         
-        session = aiohttp.ClientSession()
+        session = Session()
         
         headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
         data = {"type": "multifactor", "code": twoFAcode, "rememberDevice": True}
 
-        async with session.put('https://auth.riotgames.com/api/v1/authorization', headers=headers, json=data, cookies=cookies['cookie']) as r:
-            data = await r.json()
+        r = session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers, cookies=cookies['cookie'])
         
-        await session.close()
-        if data['type'] == 'response':
+        session.close()
+        if r.json()['type'] == 'response':
             cookies = {}
-            cookies['cookie'] = {}
-            for cookie in r.cookies.items():
-                cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
-        
-            uri = data['response']['parameters']['uri']
-            access_token, token_id = _extract_tokens_from_uri(uri)
-                        
+            cookies['cookie'] = r.cookies.get_dict()
+
+            data = _extract_tokens(r.json())
+            access_token = data[0]
+            token_id = data[1]
+            
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
         
         return {'auth': 'failed', 'error': local_response.get('2FA_INVALID_CODE')}
 
-    async def redeem_cookies(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
+    def redeem_cookies(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
         """ This function is used to redeem the cookies. """
 
         # language
@@ -217,16 +224,15 @@ class Auth:
 
         # cookies = json.loads(cookies)
 
-        session = aiohttp.ClientSession()
+        session = Session()
         
-        async with session.get(
+        r = session.get(
             "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
-            cookies=cookies,
+            cookies=cookies['cookie'],
             allow_redirects=False
-        ) as r:
-            data = await r.text()
+        )
 
-        if r.status != 303:
+        if r.status_code != 303:
             raise AuthenticationError(local_response.get('COOKIES_EXPIRED'))
         
         if r.headers['Location'].startswith('/login'):
@@ -234,28 +240,29 @@ class Auth:
 
         old_cookie = cookies.copy()
 
-        new_cookies = {}
-        new_cookies['cookie'] = old_cookie
+        # NEW COOKIE
+        cookies = {}
+        cookies['cookie'] = old_cookie
         for cookie in r.cookies.items():
-            new_cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
+            cookies['cookie'][cookie[0]] = cookie[1]
 
-        await session.close()
+        session.close()
         
-        accessToken, tokenId = _extract_tokens_from_uri(data)
-        entitlements_token = await self.get_entitlements_token(accessToken)
+        accessToken, tokenId = _extract_tokens_from_uri(r.json())
+        entitlements_token = self.get_entitlements_token(accessToken)
                 
-        return new_cookies, accessToken, entitlements_token
+        return cookies, accessToken, entitlements_token
 
-    async def temp_auth(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+    def temp_auth(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         
-        authenticate = await self.authenticate(username, password)
+        authenticate = self.authenticate(username, password)
         if authenticate['auth'] == 'response':
             access_token = authenticate['data']['access_token']
             token_id = authenticate['data']['token_id']
 
-            entitlements_token = await self.get_entitlements_token(access_token)
-            puuid, name, tag = await self.get_userinfo(access_token)
-            region = await self.get_region(access_token, token_id)
+            entitlements_token = self.get_entitlements_token(access_token)
+            puuid, name, tag = self.get_userinfo(access_token)
+            region = self.get_region(access_token, token_id)
             player_name = f'{name}#{tag}' if tag is not None and tag is not None else 'no_username'
 
             headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
@@ -266,14 +273,13 @@ class Auth:
 
     # next update
 
-    async def login_with_cookie(self, cookies: Dict) -> Dict[str, Any]:
+    def login_with_cookie(self, cookies: Dict) -> Dict[str, Any]:
         """ This function is used to login with cookie. """
 
         # language
         local_response = ResponseLanguage('cookies', self.locale_code)
-        import requests
         
-        session = requests.session()
+        session = Session()
         headers = {
             'cookie': cookies
         }
@@ -291,7 +297,7 @@ class Auth:
         cookies = {}
         cookies['cookie'] = r.cookies.get_dict()
         accessToken, tokenID = _extract_tokens_from_uri(r.text)
-        entitlements_token = await self.get_entitlements_token(accessToken)
+        entitlements_token = self.get_entitlements_token(accessToken)
 
         data = {
             'cookies': cookies,
@@ -301,5 +307,5 @@ class Auth:
         }
         return data
 
-    async def refresh_token(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
-        return await self.redeem_cookies(cookies)
+    def refresh_token(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
+        return self.redeem_cookies(cookies)

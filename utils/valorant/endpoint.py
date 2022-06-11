@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # Standard 
 import json
-import aiohttp
+import requests
 import urllib3
 from typing import Dict, Mapping, Any
 
@@ -26,7 +26,6 @@ class API_ENDPOINT:
     def __init__(self) -> None:
         from .auth import Auth
         
-        self.session = aiohttp.ClientSession()
         self.auth = Auth()
         
         # self.headers = {}
@@ -44,11 +43,11 @@ class API_ENDPOINT:
         # language
         self.locale_code = 'en-US'
 
-    async def activate(self, auth: Mapping[str, Any]) -> None:
+    def activate(self, auth: Mapping[str, Any]) -> None:
         '''activate api'''
     
         try:
-            headers = await self.__build_headers(auth['headers'])
+            headers = self.__build_headers(auth['headers'])
             self.headers = headers
             # self.cookie = auth['cookie']
             self.puuid = auth['puuid']
@@ -57,8 +56,9 @@ class API_ENDPOINT:
             self.locale_code = auth.get('locale_code', 'en-US')
             self.__format_region()
             self.__build_urls()
-        except:
-            raise HandshakeError(self.response.get('FAILED_ACTIVE'))
+        except Exception as e:
+            print(e)
+            raise HandshakeError(self.locale_response().get('FAILED_ACTIVE'))
 
     def locale_response(self) -> LocalErrorResponse:
         '''This function is used to check if the local response is enabled.'''
@@ -71,17 +71,19 @@ class API_ENDPOINT:
 
         # self.__build_headers()
         
-    async def fetch(self, endpoint: str='/', url: str='pd', errors: Dict={}) -> Dict:
+    def fetch(self, endpoint: str='/', url: str='pd', errors: Dict={}) -> Dict:
         """ fetch data from the api """
 
         self.locale_response()
+
         endpoint_url = getattr(self, url)
         
         data = None
-        r = await self.session.get(f'{endpoint_url}{endpoint}', headers=self.headers)   
+
+        r = requests.get(f'{endpoint_url}{endpoint}', headers=self.headers)   
                 
         try:
-            data = json.loads(await r.text())
+            data = json.loads(r.text)
         except: # as no data is set, an exception will be raised later in the method
             pass
         
@@ -94,7 +96,7 @@ class API_ENDPOINT:
             # await self.refresh_token()
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
-    async def put(self, endpoint: str="/", url: str='pd', data: Dict={}, errors: Dict={}) -> Dict:
+    def put(self, endpoint: str="/", url: str='pd', data: Dict={}, errors: Dict={}) -> Dict:
         """ put data to the api """
         
         self.locale_response()
@@ -104,8 +106,8 @@ class API_ENDPOINT:
         endpoint_url = getattr(self, url)
         data = None
 
-        r = await self.session.put(f'{endpoint_url}{endpoint}', headers=self.headers, data=data)
-        data = json.loads(await r.text())
+        r = requests.put(f'{endpoint_url}{endpoint}', headers=self.headers, data=data)
+        data = json.loads(r.text)
 
         if data is not None:
             return data
@@ -114,38 +116,38 @@ class API_ENDPOINT:
 
     # contracts endpoints
 
-    async def fetch_contracts(self) -> Mapping[str, Any]:
+    def fetch_contracts(self) -> Mapping[str, Any]:
         '''
         Contracts_Fetch
         Get a list of contracts and completion status including match history       
         '''
-        data = await self.fetch(endpoint=f'/contracts/v1/contracts/{self.puuid}', url='pd')
+        data = self.fetch(endpoint=f'/contracts/v1/contracts/{self.puuid}', url='pd')
         return data
 
     # PVP endpoints
 
-    async def fetch_content(self) -> Mapping[str, Any]:
+    def fetch_content(self) -> Mapping[str, Any]:
         '''
         Content_FetchContent
         Get names and ids for game content such as agents, maps, guns, etc.
         '''
-        data = await self.fetch(endpoint='/content-service/v3/content', url='shared')
+        data = self.fetch(endpoint='/content-service/v3/content', url='shared')
         return data
 
-    async def fetch_account_xp(self) -> Mapping[str, Any]:
+    def fetch_account_xp(self) -> Mapping[str, Any]:
         '''
         AccountXP_GetPlayer
         Get the account level, XP, and XP history for the active player
         '''
-        data = await self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
+        data = self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
         return data
     
-    async def fetch_player_mmr(self, puuid:str=None) -> Mapping[str, Any]:
+    def fetch_player_mmr(self, puuid:str=None) -> Mapping[str, Any]:
         puuid = self.__check_puuid(puuid)
-        data = await self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
+        data = self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
         return data
    
-    async def fetch_name_by_puuid(self, puuid:str=None) -> Mapping[str, Any]:
+    def fetch_name_by_puuid(self, puuid:str=None) -> Mapping[str, Any]:
         '''
         Name_service
         get player name tag by puuid
@@ -156,61 +158,61 @@ class API_ENDPOINT:
             puuid = [self.__check_puuid()]
         elif puuid is not None and type(puuid) is str:
             puuid = [puuid]
-        data = await self.put(endpoint='/name-service/v2/players', url='pd', body=puuid)
+        data = self.put(endpoint='/name-service/v2/players', url='pd', body=puuid)
         return data
     
-    async def fetch_player_loadout(self) -> Mapping[str, Any]:
+    def fetch_player_loadout(self) -> Mapping[str, Any]:
         '''
         playerLoadoutUpdate
         Get the player's current loadout
         '''
-        data = await self.fetch(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd')
+        data = self.fetch(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd')
         return data
 
-    async def put_player_loadout(self, loadout: Mapping) -> Mapping[str, Any]:
+    def put_player_loadout(self, loadout: Mapping) -> Mapping[str, Any]:
         '''
         playerLoadoutUpdate
         Use the values from `fetch_player_loadout` excluding properties like `subject` and `version.` Loadout changes take effect when starting a new game
         '''
-        data = await self.put(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd', body=loadout)
+        data = self.put(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd', body=loadout)
         return data
 
     # store endpoints
 
-    async def store_fetch_offers(self) -> Mapping[str, Any]:
+    def store_fetch_offers(self) -> Mapping[str, Any]:
         '''
         Store_GetOffers
         Get prices for all store items
         '''
-        data = await self.fetch('/store/v1/offers/', url='pd')
+        data = self.fetch('/store/v1/offers/', url='pd')
         return data 
 
-    async def store_fetch_storefront(self) -> Mapping[str, Any]:
+    def store_fetch_storefront(self) -> Mapping[str, Any]:
         '''
         Store_GetStorefrontV2
         Get the currently available items in the store
         '''
-        data = await self.fetch(f'/store/v2/storefront/{self.puuid}', url='pd')
+        data = self.fetch(f'/store/v2/storefront/{self.puuid}', url='pd')
         return data 
 
-    async def store_fetch_wallet(self) -> Mapping[str, Any]:
+    def store_fetch_wallet(self) -> Mapping[str, Any]:
         '''
         Store_GetWallet
         Get amount of Valorant points and Radianite the player has
         Valorant points have the id 85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741 and Radianite points have the id e59aa87c-4cbf-517a-5983-6e81511be9b7        
         '''
-        data = await self.fetch(f'/store/v1/wallet/{self.puuid}', url='pd')
+        data = self.fetch(f'/store/v1/wallet/{self.puuid}', url='pd')
         return data 
 
-    async def store_fetch_order(self, order_id: str) -> Mapping[str, Any]:
+    def store_fetch_order(self, order_id: str) -> Mapping[str, Any]:
         '''
         Store_GetOrder
         {order id}: The ID of the order. Can be obtained when creating an order.
         '''
-        data = await self.fetch(f'/store/v1/order/{order_id}', url='pd')
+        data = self.fetch(f'/store/v1/order/{order_id}', url='pd')
         return data 
     
-    async def store_fetch_entitlements(self, item_type: Mapping) -> Mapping[str, Any]:
+    def store_fetch_entitlements(self, item_type: Mapping) -> Mapping[str, Any]:
         '''
         Store_GetEntitlements
         List what the player owns (agents, skins, buddies, ect.)
@@ -227,31 +229,31 @@ class API_ENDPOINT:
         '3ad1b2b2-acdb-4524-852f-954a76ddae0a': 'Skins chroma',\n
         'de7caa6b-adf7-4588-bbd1-143831e786c6': 'Player titles',\n
         '''
-        data = await self.fetch(endpoint=f"/store/v1/entitlements/{self.puuid}/{item_type}", url="pd")
+        data = self.fetch(endpoint=f"/store/v1/entitlements/{self.puuid}/{item_type}", url="pd")
         return data
     
     # useful endpoints
 
-    async def fetch_mission(self) -> Mapping[str, Any]:
+    def fetch_mission(self) -> Mapping[str, Any]:
         '''
         Get player daily/weekly missions
         '''
-        data = await self.fetch_contracts()
+        data = self.fetch_contracts()
         mission = data["Missions"]
         return mission
 
-    async def get_player_level(self) -> Mapping[str, Any]:
+    def get_player_level(self) -> Mapping[str, Any]:
         '''
         Aliases `fetch_account_xp` but received a level
         '''
-        data = await self.fetch_account_xp()['Progress']['Level']
+        data = self.fetch_account_xp()['Progress']['Level']
         return data
     
-    async def get_player_tier_rank(self, puuid: str=None) -> str:
+    def get_player_tier_rank(self, puuid: str=None) -> str:
         '''
         get player current tier rank
         '''
-        data = await self.fetch_player_mmr(puuid)
+        data = self.fetch_player_mmr(puuid)
         season_id = data['LatestCompetitiveUpdate']['SeasonID']
         if len(season_id) == 0:
             season_id = self.__get_live_season()
@@ -261,12 +263,12 @@ class API_ENDPOINT:
 
     # local utility functions
     
-    async def __get_live_season(self) -> str:
+    def __get_live_season(self) -> str:
         '''Get the UUID of the live competitive season'''
         content = self.fetch_content()
         season_id = [season["ID"] for season in content["Seasons"] if season["IsActive"] and season["Type"] == "act"]
         if not season_id:
-            return await self.fetch_player_mmr()["LatestCompetitiveUpdate"]["SeasonID"]
+            return self.fetch_player_mmr()["LatestCompetitiveUpdate"]["SeasonID"]
         return season_id[0]
 
     def __check_puuid(self, puuid: str) -> str:
@@ -281,11 +283,11 @@ class API_ENDPOINT:
         self.shared = base_endpoint_shared.format(shard=self.shard)
         self.glz = base_endpoint_glz.format(region=self.region, shard=self.shard)
 
-    async def __build_headers(self, headers: Mapping) -> Mapping[str, Any]:
+    def __build_headers(self, headers: Mapping) -> Mapping[str, Any]:
         """ build headers """
 
         headers['X-Riot-ClientPlatform'] = self.client_platform
-        headers['X-Riot-ClientVersion'] = await self._get_client_version()
+        headers['X-Riot-ClientVersion'] = self._get_client_version()
         return headers
             
     def __format_region(self) -> None:
@@ -297,19 +299,17 @@ class API_ENDPOINT:
         if self.shard in shard_region_override.keys():
             self.region = shard_region_override[self.shard]
 
-    async def _get_client_version(self) -> str:
+    def _get_client_version(self) -> str:
         """ Get the client version """
-        r = await self.session.get('https://valorant-api.com/v1/version')
-        data = await r.json()
-        data = data['data']
+        r = requests.get('https://valorant-api.com/v1/version')
+        data = r.json()['data']
         return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}" # return formatted version string
 
-    async def _get_valorant_version(self) -> str:
+    def _get_valorant_version(self) -> str:
         """ Get the valorant version """
-        r = await self.session.get('https://valorant-api.com/v1/version')
+        r = requests.get('https://valorant-api.com/v1/version')
         if r.status != 200:
             return None
-        data = await r.json()
-        data = data['data']
+        data = r.json()['data']
         return data['version']
 

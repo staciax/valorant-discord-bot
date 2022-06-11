@@ -36,7 +36,7 @@ class DATABASE:
         """ Insert cache """
         JSON.save('cache', data)
 
-    async def is_login(self, user_id: int, response: Dict) -> Optional[Dict[str, Any]]:
+    def is_login(self, user_id: int, response: Dict) -> Optional[Dict[str, Any]]:
         """Check if user is logged in"""
 
         db = self.read_db()
@@ -50,7 +50,7 @@ class DATABASE:
             return False
         return data
 
-    async def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict[str, Any]]:
+    def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict[str, Any]]:
         """Login to database"""
 
         # language
@@ -65,9 +65,9 @@ class DATABASE:
         token_id = auth_data['token_id']
 
         try:
-            entitlements_token = await auth.get_entitlements_token(access_token)
-            puuid, name, tag = await auth.get_userinfo(access_token)
-            region = await auth.get_region(access_token, token_id)
+            entitlements_token = auth.get_entitlements_token(access_token)
+            puuid, name, tag = auth.get_userinfo(access_token)
+            region = auth.get_region(access_token, token_id)
             player_name = f'{name}#{tag}' if tag is not None and tag is not None else 'no_username'
 
             expiry_token = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
@@ -113,12 +113,12 @@ class DATABASE:
         else:
             return True
     
-    async def is_data(self, user_id:int, locale_code: str = 'en-US') -> Optional[Dict[str, Any]]:
+    def is_data(self, user_id:int, locale_code: str = 'en-US') -> Optional[Dict[str, Any]]:
         """Check if user is registered"""
 
         response = LocalErrorResponse('DATABASE', locale_code)
 
-        auth = await self.is_login(user_id, response)  
+        auth = self.is_login(user_id, response)  
         puuid = auth['puuid']
         region = auth['region']
         username = auth['username']
@@ -131,19 +131,19 @@ class DATABASE:
         dm_message = auth.get('DM_Message', None)
 
         if timestamp_utc() > expiry_token:
-            access_token, entitlements_token = await self.refresh_token(user_id, auth)
+            access_token, entitlements_token = self.refresh_token(user_id, auth)
 
         headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
 
         data = dict(puuid=puuid, region=region, headers=headers, player_name=username, notify_mode=notify_mode, cookie=cookie, notify_channel=notify_channel, dm_message=dm_message)
         return data
         
-    async def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
+    def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
         """ Refresh token """
 
         auth = self.auth
 
-        cookies, access_token, entitlements_token = await auth.redeem_cookies(data['cookie'])
+        cookies, access_token, entitlements_token = auth.redeem_cookies(data['cookie'])
 
         expired_cookie = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
 
@@ -203,22 +203,22 @@ class DATABASE:
         if check_price is False or force:
             fetch_price(skin_price)
 
-    async def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict[str, Any]]:
+    def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict[str, Any]]:
         """ Login with cookie """
         
         db = self.read_db()
         auth = self.auth
         auth.locale_code = locale_code
 
-        data = await auth.login_with_cookie(cookie)
+        data = auth.login_with_cookie(cookie)
 
         cookie = data['cookies']
         access_token = data['AccessToken']
         token_id = data['token_id']
         entitlements_token = data['emt']
         
-        puuid, name, tag = await auth.get_userinfo(access_token)
-        region = await auth.get_region(access_token, token_id)
+        puuid, name, tag = auth.get_userinfo(access_token)
+        region = auth.get_region(access_token, token_id)
         player_name = f'{name}#{tag}' if tag is not None and tag is not None else 'no_username'
 
         expiry_token = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
