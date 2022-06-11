@@ -225,11 +225,11 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             if not code.isdigit():
                 return await send_embed(f"`{code}` is not a number")
 
-            auth = auth.give2facode(code, cookie)
+            auth = await auth.give2facode(code, cookie)
     
             if auth['auth'] == 'response':
                 
-                login = self.db.login(user_id, auth, self.interaction.locale)
+                login = await self.db.login(user_id, auth, self.interaction.locale)
                 if login['auth']:
                     return await send_embed(f"{self.response.get('SUCCESS')} **{login['player']}!**")
                 

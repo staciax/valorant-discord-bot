@@ -66,22 +66,27 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         """ When the bot is ready """
+        try:
+            open('data/cache.json')
+        except FileNotFoundError:
+            Cache.get_cache()
+                    
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT()
 
-    def get_endpoint(self, user_id: int, locale_code: str = None, username:str= None, password: str = None) -> Any:
+    async def get_endpoint(self, user_id: int, locale_code: str = None, username:str= None, password: str = None) -> Any:
         """ Get the endpoint for the user """
         if username is not None and password is not None:
             auth = self.db.auth
             auth.locale_code = locale_code
-            data = auth.temp_auth(username, password)
+            data = await auth.temp_auth(username, password)
         elif username or password:
             raise ValorantBotError(f"Please provide both username and password!")
         else:
-            data = self.db.is_data(user_id, locale_code)
+            data = await self.db.is_data(user_id, locale_code)
         data['locale_code'] = locale_code
         endpoint = self.endpoint
-        endpoint.activate(data)
+        await endpoint.activate(data)
         return endpoint
 
     @app_commands.command(description='Log in with your Riot acoount')
@@ -94,11 +99,11 @@ class ValorantCog(commands.Cog, name='Valorant'):
         user_id = interaction.user.id
         auth = self.db.auth
         auth.locale_code = interaction.locale
-        authenticate =auth.authenticate(username, password)
+        authenticate = await auth.authenticate(username, password)
 
         if authenticate['auth'] == 'response':
             await interaction.response.defer(ephemeral=True)
-            login = self.db.login(user_id, authenticate, interaction.locale)
+            login = await self.db.login(user_id, authenticate, interaction.locale)
 
             if login['auth']:
                 embed = Embed(f"{response.get('SUCCESS')} **{login['player']}!**")
@@ -146,14 +151,14 @@ class ValorantCog(commands.Cog, name='Valorant'):
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
         # get endpoint
-        endpoint = self.get_endpoint(interaction.user.id, interaction.locale, username, password)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # fetch skin price
-        skin_price = endpoint.store_fetch_offers()
+        skin_price = await endpoint.store_fetch_offers()
         self.db.insert_skin_price(skin_price)
 
         # data
-        data = endpoint.store_fetch_storefront()
+        data = await endpoint.store_fetch_storefront()
         embeds = GetEmbed.store(endpoint.player, data, response, self.bot)
         await interaction.followup.send(embeds=embeds, view=View.share_button(interaction, embeds) if is_private_message else MISSING)
 
@@ -173,10 +178,10 @@ class ValorantCog(commands.Cog, name='Valorant'):
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
         
         # endpoint
-        endpoint = self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
+        endpoint = await self.get_endpoint(interaction.user.id, locale_code=interaction.locale)
 
         # data
-        data = endpoint.store_fetch_wallet()
+        data = await endpoint.store_fetch_wallet()
         embed = GetEmbed.point(endpoint.player, data, response, self.bot)
 
         await interaction.followup.send(embed=embed, view=View.share_button(interaction, [embed]) if is_private_message else MISSING)
@@ -193,10 +198,10 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = self.get_endpoint(interaction.user.id, interaction.locale, username, password)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # data
-        data = endpoint.fetch_contracts()
+        data = await endpoint.fetch_contracts()
         embed = GetEmbed.mission(endpoint.player, data, response)
 
         await interaction.followup.send(embed=embed, view=View.share_button(interaction, [embed]) if is_private_message else MISSING)
@@ -217,14 +222,14 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = self.get_endpoint(interaction.user.id, interaction.locale, username, password)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # fetch skin price
-        skin_price = endpoint.store_fetch_offers()
+        skin_price = await endpoint.store_fetch_offers()
         self.db.insert_skin_price(skin_price)
 
         # data
-        data = endpoint.store_fetch_storefront()
+        data = await endpoint.store_fetch_storefront()
         embeds = GetEmbed.nightmarket(endpoint.player, data, self.bot, response)
 
         await interaction.followup.send(embeds=embeds, view=View.share_button(interaction, embeds) if is_private_message else MISSING)
@@ -241,11 +246,11 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = self.get_endpoint(interaction.user.id, interaction.locale, username, password)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale, username, password)
 
         # data
-        data = endpoint.fetch_contracts()
-        content = endpoint.fetch_content()
+        data = await endpoint.fetch_contracts()
+        content = await endpoint.fetch_content()
         season = useful.get_season_by_content(content)
 
         embed = GetEmbed.battlepass(endpoint.player, data, season, response)
@@ -291,10 +296,10 @@ class ValorantCog(commands.Cog, name='Valorant'):
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # endpoint
-        endpoint = self.get_endpoint(interaction.user.id, interaction.locale)
+        endpoint = await self.get_endpoint(interaction.user.id, interaction.locale)
 
         # data
-        bundle_entries = endpoint.store_fetch_storefront()
+        bundle_entries = await endpoint.store_fetch_storefront()
 
         # bundle view   
         view = View.BaseBundle(interaction, bundle_entries, response)
@@ -311,7 +316,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         # language
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
-        login = self.db.cookie_login(interaction.user.id, cookie, interaction.locale)
+        login = await self.db.cookie_login(interaction.user.id, cookie, interaction.locale)
 
         if login['auth']:
             embed = Embed(f"{response.get('SUCCESS')} **{login['player']}!**")
@@ -350,10 +355,10 @@ class ValorantCog(commands.Cog, name='Valorant'):
         
         if bug == 'Skin price not loading':
             # endpoint
-            endpoint = self.get_endpoint(interaction.user.id, interaction.locale)
+            endpoint = await self.get_endpoint(interaction.user.id, interaction.locale)
 
             # fetch skin price
-            skin_price = endpoint.store_fetch_offers()
+            skin_price = await endpoint.store_fetch_offers()
             self.db.insert_skin_price(skin_price, force=True)
 
         elif bug == 'Emoji not loading':

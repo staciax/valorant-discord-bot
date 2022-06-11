@@ -55,10 +55,10 @@ class Notify(commands.Cog):
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT()
 
-    def get_endpoint_and_data(self, user_id: int) -> Tuple:
-        data = self.db.is_data(user_id, 'en-US')
+    async def get_endpoint_and_data(self, user_id: int) -> Tuple:
+        data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
-        endpoint.activate(data)
+        await endpoint.activate(data)
         return endpoint, data
 
     async def send_notify(self) -> None:
@@ -69,7 +69,7 @@ class Notify(commands.Cog):
             try:
                 
                 # endpoint
-                endpoint, data = self.get_endpoint_and_data(int(user_id))
+                endpoint, data = await self.get_endpoint_and_data(int(user_id))
                 
                 # offer
                 offer = await endpoint.store_fetch_storefront()
@@ -148,7 +148,7 @@ class Notify(commands.Cog):
 
         await interaction.response.defer()
 
-        self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
 
         # language
 
@@ -220,7 +220,7 @@ class Notify(commands.Cog):
         
         response = ResponseLanguage('notify_list', interaction.locale)
 
-        self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
         view = View.NotifyViewList(interaction, response)
         await view.start()
 
@@ -234,7 +234,7 @@ class Notify(commands.Cog):
         # language
         response = ResponseLanguage('notify_mode', interaction.locale)
         
-        self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
 
         if mode == 'Specified Skin': # Check notify list if use mode specified skin
             self.db.check_notify_list(interaction.user.id) # check total notify list
@@ -264,7 +264,7 @@ class Notify(commands.Cog):
         # language
         response = ResponseLanguage('notify_channel', interaction.locale)
         
-        self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
+        await self.db.is_data(interaction.user.id, interaction.locale) # check if user is in db
         
         self.db.check_notify_list(interaction.user.id) # check total notify list
         self.db.change_notify_channel(interaction.user.id, channel, interaction.channel_id) # change notify channel
@@ -290,8 +290,8 @@ class Notify(commands.Cog):
         notify_data = JSON.read('notifys')
         
         # get user data and offer
-        endpoint, data = self.get_endpoint_and_data(int(interaction.user.id))
-        offer = endpoint.store_fetch_storefront()
+        endpoint, data = await self.get_endpoint_and_data(int(interaction.user.id))
+        offer = await endpoint.store_fetch_storefront()
 
         # offer data
         duration = offer["SkinsPanelLayout"]["SingleItemOffersRemainingDurationInSeconds"]

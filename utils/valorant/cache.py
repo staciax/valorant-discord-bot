@@ -21,20 +21,23 @@ def create_json(filename: str, formats: Dict) -> None:
 
 def get_valorant_version() -> Optional[str]:
     """ Get the valorant version from valorant-api.com """
+
+    session = requests.session()
     
     print('Fetching Valorant version !')
     
-    resp = requests.get('https://valorant-api.com/v1/version')
-
+    resp = session.get('https://valorant-api.com/v1/version')
+    session.close() 
     return resp.json()['data']['manifestId']
 
 def fetch_skin() -> None:
     """ Fetch the skin from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
 
     print('Fetching weapons skin !')
-    resp = requests.get(f'https://valorant-api.com/v1/weapons/skins?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/weapons/skins?language=all')
     if resp.status_code == 200:
         json = {}
         for skin in resp.json()['data']:
@@ -47,15 +50,18 @@ def fetch_skin() -> None:
             }
         data['skins'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_tier() -> None:
 
     """ Fetch the skin tier from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
+
     print('Fetching tier skin !')
 
-    resp = requests.get('https://valorant-api.com/v1/contenttiers/')
+    resp = session.get('https://valorant-api.com/v1/contenttiers/')
     if resp.status_code == 200:
         json = {}
         for tier in resp.json()['data']:
@@ -66,6 +72,7 @@ def fetch_tier() -> None:
             }
         data['tiers'] = json 
         JSON.save('cache', data)
+    session.close()
 
 def pre_fetch_price() -> None:
     """ Pre fetch the price of all skins """
@@ -82,9 +89,10 @@ def fetch_mission() -> None:
     """ Fetch the mission from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching mission !')
 
-    resp = requests.get(f'https://valorant-api.com/v1/missions?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/missions?language=all')
     if resp.status_code == 200:
         json = {}
         # json['version'] = get_valorant_version()
@@ -98,13 +106,15 @@ def fetch_mission() -> None:
             }
         data['missions'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_playercard() -> None:
     """ Fetch the player card from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching Playercards !')
-    resp = requests.get(f'https://valorant-api.com/v1/playercards?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/playercards?language=all')
     if resp.status_code == 200:
         json = {}
         # json['version'] = get_valorant_version()
@@ -120,14 +130,16 @@ def fetch_playercard() -> None:
             }
         data['playercards'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_titles() -> None:
     """ Fetch the player titles from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching Player titles !')
 
-    resp = requests.get(f'https://valorant-api.com/v1/playertitles?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/playertitles?language=all')
     if resp.status_code == 200:
         json = {}
         for title in resp.json()['data']:
@@ -138,6 +150,7 @@ def fetch_titles() -> None:
             }
         data['titles'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_spray() -> None:
     """ Fetch the spray from valorant-api.com"""
@@ -145,7 +158,7 @@ def fetch_spray() -> None:
     data = JSON.read('cache')
     session = requests.session()
     print('Fetching Sprays !')
-    resp = requests.get(f'https://valorant-api.com/v1/sprays?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/sprays?language=all')
     if resp.status_code == 200:
         json = {} 
         for spray in resp.json()['data']:
@@ -156,13 +169,15 @@ def fetch_spray() -> None:
             }
         data['sprays'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_bundles() -> None:
     """ Fetch all bundles from valorant-api.com and https://docs.valtracker.gg/bundles"""
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching bundles !')
-    resp = requests.get(f'https://valorant-api.com/v1/bundles?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/bundles?language=all')
     if resp.status_code == 200:
         bundles = {}
         for bundle in resp.json()['data']:
@@ -178,7 +193,7 @@ def fetch_bundles() -> None:
                 'expires': None,
             }
 
-        resp2 = requests.get(f'https://api.valtracker.gg/bundles')
+        resp2 = session.get(f'https://api.valtracker.gg/bundles')
 
         for bundle2 in resp2.json()['data']:
             if bundle2['uuid'] in bundles:
@@ -219,13 +234,15 @@ def fetch_bundles() -> None:
     
         data['bundles'] = bundles
         JSON.save('cache', data)
+    session.close()
                 
 def fetch_contracts() -> None:
     """ Fetch contracts from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching Contracts !')
-    resp = requests.get(f'https://valorant-api.com/v1/contracts?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/contracts?language=all')
 
     # IGNOR OLD BATTLE_PASS
     ignor_contract = [
@@ -256,6 +273,7 @@ def fetch_contracts() -> None:
                 }
         data['contracts'] = json
         JSON.save('cache', data)
+    session.close()
 
 # def fetch_ranktiers(lang: str):
 #     """ Fetch rank tiers from from valorant-api.com """
@@ -284,8 +302,9 @@ def fetch_currencies() -> None:
     """ Fetch currencies from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
     print('Fetching currencies !')
-    resp = requests.get(f'https://valorant-api.com/v1/currencies?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/currencies?language=all')
     if resp.status_code == 200:
         json = {}
         for currencie in resp.json()['data']:
@@ -296,15 +315,17 @@ def fetch_currencies() -> None:
             }
         data['currencies'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_buddies() -> None:
     """ Fetch all buddies from valorant-api.com """
 
     data = JSON.read('cache')
+    session = requests.session()
 
     print('Fetching buddies !')
 
-    resp = requests.get(f'https://valorant-api.com/v1/buddies?language=all')
+    resp = session.get(f'https://valorant-api.com/v1/buddies?language=all')
     if resp.status_code == 200:
         json = {}
         for buddy in resp.json()['data']:
@@ -316,6 +337,7 @@ def fetch_buddies() -> None:
             }
         data['buddies'] = json
         JSON.save('cache', data)
+    session.close()
 
 def fetch_price(data_price: Dict) -> None:
     """ Fetch the price of an skin """

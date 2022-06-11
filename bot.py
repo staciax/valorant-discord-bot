@@ -10,7 +10,6 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 from utils import locale_v2
-from utils.valorant.cache import get_cache
 
 load_dotenv()
 
@@ -33,13 +32,8 @@ class ValorantBot(commands.Bot):
 
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
-        self.bot_version = '3.1.0'
+        self.bot_version = '3.1.0-rc1'
         self.tree.interaction_check = self.interaction_check
-
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        locale_v2.set_interaction_locale(interaction.locale) # bot responses localized
-        locale_v2.set_valorant_locale(interaction.locale) # valorant localized
-        return True 
 
     @property
     def owner(self) -> discord.User:
@@ -63,7 +57,6 @@ class ValorantBot(commands.Bot):
             self.bot_app_info = await self.application_info()
             self.owner_id = self.bot_app_info.owner.id
         
-        self.setup_cache()
         await self.load_cogs()
     
     async def load_cogs(self) -> None:
@@ -73,12 +66,11 @@ class ValorantBot(commands.Bot):
             except Exception as e:
                 print(f'Failed to load extension {ext}.', file=sys.stderr)
                 traceback.print_exc()
-    
-    def setup_cache(self) -> None:
-        try:
-            open('data/cache.json')
-        except FileNotFoundError:
-            get_cache()
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        locale_v2.set_interaction_locale(interaction.locale) # bot responses localized
+        locale_v2.set_valorant_locale(interaction.locale) # valorant localized
+        return True 
 
     async def close(self) -> None:
         await self.session.close()
