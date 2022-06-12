@@ -44,14 +44,17 @@ class ClientSession(aiohttp.ClientSession):
         super().__init__(
             *args,
             **kwargs,
-            connector=aiohttp.TCPConnector(ssl=ctx),
-            headers=MultiDict({
-            "Accept-Language": "en-US,en;q=0.9",
-            "Accept": "application/json, text/plain, */*"
-        }))
+            cookie_jar=aiohttp.CookieJar(),
+            connector=aiohttp.TCPConnector(ssl=ctx)
+            )
 
 class Auth:
     def __init__(self) -> None:
+        self._headers: Dict = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+            'Accept': 'application/json, text/plain, */*',
+        }
         self.user_agent = 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
         
         self.locale_code = 'en-US' # default language
@@ -78,9 +81,9 @@ class Auth:
             'scope': 'account openid',
         }
         
-        headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
+        # headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
         
-        r = await session.post('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers)
+        r = await session.post('https://auth.riotgames.com/api/v1/authorization', json=data, headers=self._headers)
         
         # prepare cookies for auth request
         cookies = {}
@@ -90,7 +93,7 @@ class Auth:
 
         data = {"type": "auth", "username": username, "password": password, "remember": True}
 
-        async with session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=headers) as r:
+        async with session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=self._headers) as r:
             data = await r.json()
             for cookie in r.cookies.items():
                 cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
@@ -136,7 +139,7 @@ class Auth:
         session = ClientSession()
         
         headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
-
+    
         async with session.post('https://entitlements.auth.riotgames.com/api/token/v1', headers=headers, json={}) as r:
             data = await r.json()
         
@@ -205,10 +208,11 @@ class Auth:
         
         session = ClientSession()
         
-        headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
+        # headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
+        
         data = {"type": "multifactor", "code": twoFAcode, "rememberDevice": True}
 
-        async with session.put('https://auth.riotgames.com/api/v1/authorization', headers=headers, json=data, cookies=cookies['cookie']) as r:
+        async with session.put('https://auth.riotgames.com/api/v1/authorization', headers=self._headers, json=data, cookies=cookies['cookie']) as r:
             data = await r.json()
         
         await session.close()
