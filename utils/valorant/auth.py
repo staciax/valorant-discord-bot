@@ -37,10 +37,27 @@ def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, Any]]:
     except IndexError:
         raise AuthenticationError('Cookies Invalid')
 
+# https://developers.cloudflare.com/ssl/ssl-tls/cipher-suites/
+
+FORCED_CIPHERS = [
+    'ECDHE-ECDSA-AES128-GCM-SHA256',
+    'ECDHE-ECDSA-CHACHA20-POLY1305',
+    'ECDHE-RSA-AES128-GCM-SHA256',
+    'ECDHE-RSA-CHACHA20-POLY1305',
+    'ECDHE+AES128',
+    'RSA+AES128',
+    'ECDHE+AES256',
+    'RSA+AES256',
+    'ECDHE+3DES',
+    'RSA+3DES'
+]
+
 class ClientSession(aiohttp.ClientSession):
     def __init__(self, *args, **kwargs):
         ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-        ctx.set_ciphers("DEFAULT@SECLEVEL=1")
+        ctx.set_ciphers(':'.join(FORCED_CIPHERS))
+        # ctx.options |= ssl.OP_NO_TLSv1|ssl.OP_NO_TLSv1_1|ssl.OP_NO_TLSv1_2|ssl.OP_NO_TLSv1_3
+        
         super().__init__(
             *args,
             **kwargs,
