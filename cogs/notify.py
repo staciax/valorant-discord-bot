@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import traceback
 from datetime import datetime, time, timedelta
 from difflib import get_close_matches
-import traceback
-from typing import Literal, Tuple, TYPE_CHECKING
+from typing import Literal, Tuple, Any, TYPE_CHECKING
 
 # Standard
 import discord
@@ -41,7 +41,7 @@ class Notify(commands.Cog):
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT()
     
-    async def get_endpoint_and_data(self, user_id: int) -> Tuple:
+    async def get_endpoint_and_data(self, user_id: int) -> Tuple[API_ENDPOINT, Any]:
         data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
         endpoint.activate(data)
@@ -113,7 +113,6 @@ class Notify(commands.Cog):
                 continue
     
     @tasks.loop(time=time(hour=0, minute=0, second=10))  # utc 00:00:15
-    # @tasks.loop(seconds=10)
     async def notifys(self) -> None:
         __verify_time = datetime.utcnow()
         if __verify_time.hour == 0:

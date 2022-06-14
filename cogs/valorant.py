@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Any, Literal, TYPE_CHECKING  # noqa: F401
+from typing import Literal, TYPE_CHECKING  # noqa: F401
 
 from discord import app_commands, Interaction
 from discord.ext import commands, tasks
@@ -11,13 +11,13 @@ from utils.checks import owner_only
 from utils.errors import (
     ValorantBotError
 )
-from utils.locale_v2 import ValorantTranslator
 from utils.valorant import cache as Cache, useful, view as View
 from utils.valorant.db import DATABASE
 from utils.valorant.embed import Embed, GetEmbed
 from utils.valorant.endpoint import API_ENDPOINT
 from utils.valorant.local import ResponseLanguage
 from utils.valorant.resources import setup_emoji
+from utils.locale_v2 import ValorantTranslator
 
 VLR_locale = ValorantTranslator()
 
@@ -63,7 +63,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT()
     
-    async def get_endpoint(self, user_id: int, locale_code: str = None, username: str = None, password: str = None) -> Any:
+    async def get_endpoint(self, user_id: int, locale_code: str = None, username: str = None, password: str = None) -> API_ENDPOINT:
         """ Get the endpoint for the user """
         if username is not None and password is not None:
             auth = self.db.auth

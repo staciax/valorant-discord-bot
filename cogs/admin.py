@@ -57,8 +57,7 @@ class Admin(commands.Cog):
     async def about(self, interaction: Interaction) -> None:
         """ Shows basic information about the bot. """
         
-        owner_id = 240059262297047041
-        owner_url = f'https://discord.com/users/{owner_id}'
+        owner_url = f'https://discord.com/users/240059262297047041'
         github_project = 'https://github.com/staciax/Valorant-DiscordBot'
         support_url = 'https://discord.gg/FJSXPqQZgz'
         
