@@ -78,7 +78,8 @@ class Admin(commands.Cog):
                   "[sevzin](https://github.com/sevzin)\n"
                   "[miigoxyz](https://github.com/miigoxyz)\n"
                   "[Connor](https://github.com/ConnorDoesDev)\n"
-                  "[KohanaSann](https://github.com/KohanaSann)\n",
+                  "[KohanaSann](https://github.com/KohanaSann)\n"
+                  "[RyugaXhypeR](https://github.com/RyugaXhypeR)\n",
             inline=False
         )
         view = ui.View()
