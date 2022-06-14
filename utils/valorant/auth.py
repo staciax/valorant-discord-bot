@@ -61,19 +61,17 @@ FORCED_CIPHERS = [
     'RSA+3DES',
 ]
 
-
 class ClientSession(aiohttp.ClientSession):
     def __init__(self, *args, **kwargs):
         ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ctx.minimum_version = ssl.TLSVersion.TLSv1_3
         ctx.set_ciphers(':'.join(FORCED_CIPHERS))
-        # ctx.protocol = ssl.PROTOCOL_TLSv1 | ssl.PROTOCOL_TLSv1_1 | ssl.PROTOCOL_TLSv1_2 | ssl.PROTOCOL_TLSv1_3
         super().__init__(
             *args,
             **kwargs,
             cookie_jar=aiohttp.CookieJar(),
             connector=aiohttp.TCPConnector(ssl=ctx)
         )
-
 
 class Auth:
     def __init__(self) -> None:
@@ -321,21 +319,9 @@ class Auth:
         
         cookie_payload = f'ssid={cookies};' if cookies.startswith('e') else cookies
         
-        class CookieClientSession(aiohttp.ClientSession):
-            def __init__(self, *args, **kwargs):
-                ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-                ctx.set_ciphers("DEFAULT@SECLEVEL=1")
-                super().__init__(
-                    *args,
-                    **kwargs,
-                    connector=aiohttp.TCPConnector(ssl=ctx),
-                    headers=MultiDict({
-                        "Accept-Language": "en-US,en;q=0.9",
-                        "Accept": "application/json, text/plain, */*",
-                        'cookie': cookie_payload,
-                    }))
+        self._headers['cookie'] = cookie_payload
         
-        session = CookieClientSession()
+        session = ClientSession()
         
         r = await session.get(
             "https://auth.riotgames.com/authorize"
@@ -345,6 +331,7 @@ class Auth:
             "&scope=account%20openid"
             "&nonce=1",
             allow_redirects=False,
+            headers=self._headers
         )
         if r.status != 303:
             raise AuthenticationError(local_response.get('FAILED'))
