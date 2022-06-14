@@ -333,6 +333,10 @@ class Auth:
             allow_redirects=False,
             headers=self._headers
         )
+        
+        # pop cookie
+        self._headers.pop('cookie')
+
         if r.status != 303:
             raise AuthenticationError(local_response.get('FAILED'))
         
