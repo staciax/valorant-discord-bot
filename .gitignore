@@ -2,3 +2,4 @@
 .vscode
 venv/
 data/
+.idea/
