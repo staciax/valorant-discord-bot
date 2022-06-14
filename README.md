@@ -45,12 +45,16 @@
 <!-- https://github.com/Cog-Creators/Red-DiscordBot -->
 
 # About
-Discord bot that shows your infomation and more without open the VALORANT by using the [In-game API.](https://github.com/HeyM1ke/ValorantClientAPI)
+
+Discord bot that shows your infomation and more without open the VALORANT by using
+the [In-game API.](https://github.com/HeyM1ke/ValorantClientAPI)
 written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) library <br>
 For support using Valorant Bot, please join the [support server](https://discord.gg/RaCzsPnfNM)
 
 ## Heroku
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 - [Youtube Tutorial](https://youtu.be/5ZFsEcDT8e4)
 
 ## Screenshot
@@ -67,7 +71,6 @@ For support using Valorant Bot, please join the [support server](https://discord
 <img src="https://i.imgur.com/5jEZt3Z.png" alt="points">
 </details>
 
-
 ## Installations
 
 * [Python 3.8+](https://www.python.org/downloads/)
@@ -76,7 +79,9 @@ For support using Valorant Bot, please join the [support server](https://discord
 
 * Install requirements
 
-* **Create** the [discord bot](https://discord.com/developers/applications) and **Enable Privileged Gateway Intents** [`MESSAGE CONTENT INTENT`](https://i.imgur.com/TiiaYR9.png) then invite bot to server with scope [`applications.commands`](https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png)
+* **Create** the [discord bot](https://discord.com/developers/applications) and **Enable Privileged Gateway
+  Intents** [`MESSAGE CONTENT INTENT`](https://i.imgur.com/TiiaYR9.png) then invite bot to server with
+  scope [`applications.commands`](https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png)
 
 * Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
 
@@ -91,15 +96,20 @@ pip install requests
 pip install python-dotenv
 ```
 
-* Store discord bot token and owner ID in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
+* Store discord bot token and owner ID
+  in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
+
 ```
 TOKEN='INPUT DISCORD TOKEN HERE'
 OWNER_ID='INPUT YOUR DISCORD ID'
 ```
+
 * Run the bot
+
 ```
 python bot.py
 ```
+
 * Slash Command is automatic global commands `(takes 1 hour to process.)`
 * If you want to use commands in server right now `-sync guild` to sync the commands in your server.
 * if you want remove commands in your server `-unsync guild` to remove server commands.
@@ -127,7 +137,9 @@ python bot.py
 | `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
 <!-- ## Translations (credit by [giorgio](https://github.com/giorgi-o) -->
+
 ## Translations
+
 If you want to use your language and would like help translate the bot, please do!
 
 - Option 1
@@ -142,29 +154,29 @@ If you want to use your language and would like help translate the bot, please d
 4. Open that file and do the thing
 5. Open a pull request
 
- - Alternatively, you can just send me the JSON on discord and I'll upload it for you.
+- Alternatively, you can just send me the JSON on discord and I'll upload it for you.
 
 ## Special Thanks
 
 This project wouldn't have happened without.
 
 - [HeyM1ke/ValorantClientAPI](https://github.com/RumbleMike/ValorantClientAPI)
-for providing a great API about Valorant!
+  for providing a great API about Valorant!
 
 - [colinhartigan/valclient.py](https://github.com/colinhartigan/valclient.py)
-for beautiful client endpoint
+  for beautiful client endpoint
 
 - [techchrism/valorant-api-docs](https://github.com/techchrism/valorant-api-docs/)
-for API docs documentation 
+  for API docs documentation
 
 - [Valorant-API.com](https://valorant-api.com/)
-for every skin names and images!
+  for every skin names and images!
 
 - [github/giorgi-o](https://github.com/giorgi-o)
-for always helping me and more!. ValoBot in JS [SkinPeek](https://github.com/giorgi-o/SkinPeek/) 
+  for always helping me and more!. ValoBot in JS [SkinPeek](https://github.com/giorgi-o/SkinPeek/)
 
 - [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm)
-developer community for valorant api
+  developer community for valorant api
 
 - [Contributors](https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors) <3 <3
 

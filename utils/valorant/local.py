@@ -4,33 +4,35 @@ I WILL REMOVED THIS FILE AFTER THE LOCALIZATION V2 IS DONE
 
 from __future__ import annotations
 
+import contextlib
+import json
+from typing import Any, Dict
+
 # credit by /giorgi-o/
 
-import json
-import contextlib
-from typing import Dict, Any, Optional
-
 Locale = {
-    'en-US': 'en-US', # american_english
-    'en-GB': 'en-US', # british_english
-    'zh-CN': 'zh-CN', # chinese
-    'zh-TW': 'zh-TW', # taiwan_chinese
-    'fr'   : 'fr-FR', # french
-    'de'   : 'de-DE', # german
-    'it'   : 'it-IT', # italian
-    'ja'   : 'ja-JP', # japanese
-    'ko'   : 'ko-KR', # korean
-    'pl'   : 'pl-PL', # polish
-    'pt-BR': 'pt-BR', # portuguese_brazil
-    'ru'   : 'ru-RU', # russian
-    'es-ES': 'es-ES', # spanish
-    'th'   : 'th-TH', # thai
-    'tr'   : 'tr-TR', # turkish
-    'vi'   : 'vi-VN', # vietnamese
+    'en-US': 'en-US',  # american_english
+    'en-GB': 'en-US',  # british_english
+    'zh-CN': 'zh-CN',  # chinese
+    'zh-TW': 'zh-TW',  # taiwan_chinese
+    'fr': 'fr-FR',  # french
+    'de': 'de-DE',  # german
+    'it': 'it-IT',  # italian
+    'ja': 'ja-JP',  # japanese
+    'ko': 'ko-KR',  # korean
+    'pl': 'pl-PL',  # polish
+    'pt-BR': 'pt-BR',  # portuguese_brazil
+    'ru': 'ru-RU',  # russian
+    'es-ES': 'es-ES',  # spanish
+    'th': 'th-TH',  # thai
+    'tr': 'tr-TR',  # turkish
+    'vi': 'vi-VN',  # vietnamese
 }
+
 
 def InteractionLanguage(local_code: str) -> Dict[str, Any]:
     return Locale.get(str(local_code), 'en-US')
+
 
 def __LocalRead(filename: str) -> Dict:
     data = {}
@@ -41,6 +43,7 @@ def __LocalRead(filename: str) -> Dict:
         return __LocalRead('en-US')
     return data
 
+
 def ResponseLanguage(command_name: str, local_code: str) -> Dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
@@ -49,6 +52,7 @@ def ResponseLanguage(command_name: str, local_code: str) -> Dict[str, Any]:
         local = local_dict['commands'][str(command_name)]
     return local
 
+
 def LocalErrorResponse(value: str, local_code: str) -> Dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
@@ -56,7 +60,8 @@ def LocalErrorResponse(value: str, local_code: str) -> Dict[str, Any]:
         local_dict = __LocalRead(local_code)
         local = local_dict['errors'][value]
     return local
-    
+
+
 def __verify_localcode(local_code: str) -> str:
     if local_code in ['en-US', 'en-GB']:
         return 'en-US'
