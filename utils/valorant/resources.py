@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from io import BytesIO
+from typing import Optional, TYPE_CHECKING
+
 import discord
 import requests
-from io import BytesIO
-from .local import LocalErrorResponse
-from ..errors  import ValorantBotError
 
-from typing import TYPE_CHECKING, Optional
+from .local import LocalErrorResponse
+from ..errors import ValorantBotError
 
 if TYPE_CHECKING:
     from bot import ValorantBot
@@ -18,10 +19,10 @@ base_endpoint = "https://pd.{shard}.a.pvp.net"
 base_endpoint_glz = "https://glz-{region}-1.{shard}.a.pvp.net"
 base_endpoint_shared = "https://shared.{shard}.a.pvp.net"
 
-regions: list = ["na","eu","latam","br","ap","kr","pbe"]
+regions: list = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
 region_shard_override = {
-    "latam":"na",
-    "br":"na",
+    "latam": "na",
+    "br": "na",
 }
 shard_region_override = {
     "pbe": "na"
@@ -43,17 +44,18 @@ emoji_icon_assests = {
 }
 
 tiers = {
-    '0cebb8be-46d7-c12a-d306-e9907bfc5a25': {'name':'DeluxeTier', 'emoji':'<:Deluxe:950372823048814632>', 'color': 0x009587},
-    'e046854e-406c-37f4-6607-19a9ba8426fc': {'name':'ExclusiveTier', 'emoji':'<:Exclusive:950372911036915762>', 'color': 0xf1b82d},
-    '60bca009-4182-7998-dee7-b8a2558dc369': {'name':'PremiumTier', 'emoji':'<:Premium:950376774620049489>', 'color': 0xd1548d},
-    '12683d76-48d7-84a3-4e09-6985794f0445': {'name':'SelectTier', 'emoji':'<:Select:950376833982021662>', 'color': 0x5a9fe2},
-    '411e4a55-4e59-7757-41f0-86a53f101bb5': {'name':'UltraTier', 'emoji':'<:Ultra:950376896745586719>', 'color': 0xefeb65}
+    '0cebb8be-46d7-c12a-d306-e9907bfc5a25': {'name': 'DeluxeTier', 'emoji': '<:Deluxe:950372823048814632>', 'color': 0x009587},
+    'e046854e-406c-37f4-6607-19a9ba8426fc': {'name': 'ExclusiveTier', 'emoji': '<:Exclusive:950372911036915762>', 'color': 0xf1b82d},
+    '60bca009-4182-7998-dee7-b8a2558dc369': {'name': 'PremiumTier', 'emoji': '<:Premium:950376774620049489>', 'color': 0xd1548d},
+    '12683d76-48d7-84a3-4e09-6985794f0445': {'name': 'SelectTier', 'emoji': '<:Select:950376833982021662>', 'color': 0x5a9fe2},
+    '411e4a55-4e59-7757-41f0-86a53f101bb5': {'name': 'UltraTier', 'emoji': '<:Ultra:950376896745586719>', 'color': 0xefeb65}
 }
 
 points = {
-    'ValorantPointIcon':f'<:ValorantPoint:950365917613817856>',
-    'RadianitePointIcon':f'<:RadianitePoint:950365909636235324>'
+    'ValorantPointIcon': f'<:ValorantPoint:950365917613817856>',
+    'RadianitePointIcon': f'<:RadianitePoint:950365909636235324>'
 }
+
 
 def get_item_type(uuid: str) -> Optional[str]:
     """Get item type"""
@@ -69,19 +71,20 @@ def get_item_type(uuid: str) -> Optional[str]:
     }
     return item_type.get(uuid, None)
 
+
 def __url_to_image(url) -> Optional[bytes]:
     session = requests.session()
-
+    
     r = session.get(url)
     image = BytesIO(r.content)
     image_value = image.getvalue()
     if r.status_code in range(200, 299):
         return image_value
 
-async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, force:bool =False) -> None:
 
+async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, force: bool = False) -> None:
     response = LocalErrorResponse('SETUP_EMOJI', local_code)
-
+    
     """Setup emoji"""
     for name, emoji_url in emoji_icon_assests.items():
         emoji = discord.utils.get(bot.emojis, name=name)
