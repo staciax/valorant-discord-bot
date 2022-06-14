@@ -66,6 +66,7 @@ class ClientSession(aiohttp.ClientSession):
     def __init__(self, *args, **kwargs):
         ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
         ctx.set_ciphers(':'.join(FORCED_CIPHERS))
+        # ctx.protocol = ssl.PROTOCOL_TLSv1 | ssl.PROTOCOL_TLSv1_1 | ssl.PROTOCOL_TLSv1_2 | ssl.PROTOCOL_TLSv1_3
         super().__init__(
             *args,
             **kwargs,
