@@ -1,9 +1,9 @@
 {
-  "translation_by": "KANATA IS GOD#6356",
+  "translation_by": "KANATA IS GOD#6356 / uwaaaa#3107",
   "commands": {
     "login": {
       "NAME": "ログイン",
-      "DESCRIPTION": "お使いのRiotアカウントでログインしてください！",
+      "DESCRIPTION": "Riotアカウントでログインします。",
       "DESCRIBE": {
         "username": "ユーザー名を入力してください！",
         "password": "パスワードを入力してください！"
@@ -129,13 +129,13 @@
     },
     "debug": {
       "NAME": "デバッグ",
-      "DESCRIPTION": "The command debug for the bot",
+      "DESCRIPTION": "Botのデバッグ用コマンドです。",
       "DESCRIBE": {
-        "bug": "The bug you want to fix.",
+        "bug": "修正したいバグ:",
         "choice": {
-          "skin_price_not_loading": "Skin price not loading",
-          "emoji_price_not_loading": "Emoji not loading",
-          "cache_price_not_loading": "Cache not loading"
+          "skin_price_not_loading": "スキン価格がロードされていません。",
+          "emoji_price_not_loading": "絵文字がロードされていません。",
+          "cache_price_not_loading": "キャッシュがロードされていません。"
         }
       },
       "SUCCESS": "Successfully debuged: **{bug}**"
@@ -146,7 +146,7 @@
       "DESCRIBE": {
         "cookie": "Your cookie"
       },
-      "SUCCESS": "Successfully logged in",
+      "SUCCESS": "ログインが完了しました！",
       "FAILED": "Invalid cookie"
     }
   },
@@ -172,8 +172,8 @@
       "LOGOUT_EXCEPT": "ログアウト中にエラーが発生しました。。"
     },
     "API": {
-      "FAILED_ACTIVE": "Failed to activate API",
-      "REQUEST_FAILED": "API Response Failed !"
+      "FAILED_ACTIVE": "APIの有効化に失敗しました。",
+      "REQUEST_FAILED": "APIのレスポンスが失敗しました。"
     },
     "SETUP_EMOJI": {
       "MISSING_PERM": "絵文字を作成する権限がありません！",

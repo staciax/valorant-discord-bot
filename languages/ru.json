@@ -1,0 +1,173 @@
+{
+    "translation_by": "Джудиз Юиюидасов(https://crowdin.com/profile/server.start.ok) | ItzBoddish(https://crowdin.com/profile/itzboddish) ",
+    "commands": {
+        "login": {
+            "NAME": "вход",
+            "DESCRIPTION": "Войти с помощью аккаунта Риот",
+            "DESCRIBE": {
+                "username": "Введите ник!",
+                "password": "Введите пароль!"
+            },
+            "SUCCESS": "Вы вошли",
+            "FAILED": "Не удалось войти, попробуйте снова"
+        },
+        "logout": {
+            "NAME": "выход",
+            "DESCRIPTION": "Выйти и удалить свой аккаунт из базы данных",
+            "SUCCESS": "Успешно вошли в аккаунт!",
+            "FAILED": "Не получилось выйти, попробуйте снова!"
+        },
+        "store": {
+            "NAME": "магазин",
+            "DESCRIPTION": "Показывает ваш ежедневный магазин в ваших аккаунтах",
+            "DESCRIBE": {
+                "username": "Введите ник! (временный вход)",
+                "password": "Введите ник! (временный вход)"
+            },
+            "RESPONSE": "Ежедневный магазин {username}, Осталось времени до смены: {duration}"
+        },
+        "point": {
+            "NAME": "поинт",
+            "DESCRIPTION": "Просмотри оставшиеся Валорант или Радианит Поинты",
+            "POINT": "Поинты"
+        },
+        "mission": {
+            "NAME": "миссия",
+            "DESCRIPTION": "Просмотреть ваш прогресс по дневным/еженедельным Миссиям",
+            "TITLE": "Миссия",
+            "DAILY": "Ежедневные",
+            "WEEKLY": "Еженедельно",
+            "NEWPLAYER": "Миссии Нового Игрока",
+            "NO_MISSION": "У вас нет активных миссий на данный момент",
+            "DAILY_RESET": "Сброс через {duration}",
+            "REFILLS": "Восполняется через {duration}"
+        },
+        "nightmarket": {
+            "NAME": "найтмаркет",
+            "DESCRIPTION": "Показивает ваши скины на найтмаркете",
+            "RESPONSE": "Найтмаркет {username}, Осталось времени до смены: {duration}",
+            "NIGMARKET_HAS_END": "**НайтМаркет** завершен"
+        },
+        "battlepass": {
+            "NAME": "боевой пропуск",
+            "DESCRIPTION": "Просмотреть ваш баттлпасс",
+            "RESPONSE": "**Следующая награда:** {next}\n**Тип награды:** {type}\n**Очки опыта:** {xp}\n**КОНЕЦ АКТА:** {end}",
+            "TIER": "Уровень",
+            "PLAYER_CARD": "Карточка игрока",
+            "SPRAY": "Графити",
+            "BUDDY": "Брелок",
+            "POINT": "Очко",
+            "PLAYER_TITLE": "Титул",
+            "SKIN": "Скин"
+        },
+        "notify_add": {
+            "NAME": "добавить",
+            "DESCRIPTION": "Включив, отправит уведомление когда выбранный вами скин появится в вашем магазине",
+            "DESCRIBE": {
+                "skin": "Имя желанного скина"
+            },
+            "SUCCESS": "Уведомление для {emoji} **{skin}** успешно установлено",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** уже добавлен в ваш список уведомлений",
+            "NOT_FOUND": "Скин не найден",
+            "REMOVE_NOTIFY": "Удалить уведомление",
+            "REMOVED_NOTIFY": "**{skin}** теперь не отсылает уведомления"
+        },
+        "notify_list": {
+            "NAME": "list",
+            "DESCRIPTION": "View skins you have set a for notification.",
+            "TITLE": "Your Notify List",
+            "DONT_HAVE_NOTIFY": "You don't have any notification",
+            "REMOVE_NOTIFY": "Click button for remove from notify"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "Change notification mode",
+            "DESCRIBE": {
+                "mode": "The mode you want to change to"
+            },
+            "SUCCESS": "Successfully changed your notification mode to **{mode}**",
+            "TURN_OFF": "Turn off notification mode"
+        },
+        "notify_test": {
+            "NAME": "test",
+            "DESCRIPTION": "Testing notification",
+            "NOTIFY_IS_WORKING": "Notification is working",
+            "NOTIFY_TURN_OFF": "You're not turn on notification mode",
+            "EMPTY_LIST": "Notify list is empty",
+            "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
+            "FAILED_SEND_NOTIFY": "Failed to send notification, please try again",
+            "PLEASE_ALLOW_DM_MESSAGE": "Please allow DM message in your privacy settings"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store!\nRemaining {duration}",
+            "RESPONSE_ALL": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "notify_channel": {
+            "NAME": "channel",
+            "DESCRIPTION": "Change notification channel.",
+            "DESCRIBE": {
+                "channel": "Select the channel you want to change."
+            },
+            "SUCCESS": "Notify channel changed to: **{channel}**"
+        },
+        "bundle": {
+            "NAME": "bundle",
+            "DESCRIPTION": "View your bundle progress",
+            "DESCRIBE": {
+                "bundle": "The name of the bundle you want to inspect!"
+            },
+            "TITLE": "Collection",
+            "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
+            "NOT_FOUND_BUNDLE": "Not found any bundle"
+        },
+        "bundles": {
+            "NAME": "bundles",
+            "DESCRIPTION": "View your bundle progress",
+            "TITLE": "Featured Bundle: {bundle} Collection",
+            "DURATION": "Remaining {duration}",
+            "DROPDOWN_CHOICE_TITLE": "Select a bundle:"
+        },
+        "debug": {
+            "NAME": "debug",
+            "DESCRIPTION": "The command debug for the bot",
+            "DESCRIBE": {
+                "bug": "The bug you want to fix.",
+                "choice": {
+                    "skin_price_not_loading": "Skin price not loading",
+                    "emoji_price_not_loading": "Emoji not loading",
+                    "cache_price_not_loading": "Cache not loading"
+                }
+            },
+            "SUCCESS": "Successfully debuged: **{bug}**"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "An unknown error occurred.",
+        "AUTH": {
+            "INVALID_PASSWORD": "Your username or password may be incorrect!",
+            "RATELIMIT": "Please wait a few minutes and try again.",
+            "COOKIES_EXPIRED": "Cookies is expired, please `/login` again!",
+            "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
+            "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again",
+            "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
+            "INPUT_2FA_CODE": "Input 2FA code!",
+            "2FA_ENABLE": "You have 2FA enabled!",
+            "2FA_TO_EMAIL": "Вам отправили код",
+            "2FA_INVALID_CODE": "Код неверен. Напишите /login опять"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "вы не зарегистрированы в нашей системе! Напишите /login чтобы зарегистрироваться!",
+            "LOGIN_ERROR": "Не удалось войти, попробуйте снова!",
+            "LOGOUT_ERROR": "Вы не можете выйти из системы, если вы не зарегистрированы!",
+            "LOGOUT_EXCEPT": "Произошла ошибка при выходе из учетной записи."
+        },
+        "API": {
+            "FAILED_ACTIVE": "Не удалось активировать API",
+            "REQUEST_FAILED": "Ошибка ответа API!"
+        },
+        "SETUP_EMOJI": {
+            "MISSING_PERM": "У вас нет прав, чтобы создать смайлик!",
+            "FAILED_CREATE_EMOJI": "Я не могу создать эмодзи попробуйте снова"
+        }
+    }
+}

@@ -1,0 +1,173 @@
+{
+    "translation_by": "TUO_NOME",
+    "commands": {
+        "login": {
+            "NAME": "login",
+            "DESCRIPTION": "Accedi con il tuo account Riot",
+            "DESCRIBE": {
+                "username": "Inserire l'username!",
+                "password": "Inserire la password!"
+            },
+            "SUCCESS": "Accesso avvenuto con successo",
+            "FAILED": "Impossibile connettersi, Prova di nuovo"
+        },
+        "logout": {
+            "NAME": "esci",
+            "DESCRIPTION": "Esci ed elimina il tuo account dal database",
+            "SUCCESS": "Accesso avvenuto con successo!",
+            "FAILED": "Impossibile scollegarsi, Per favore riprova!"
+        },
+        "store": {
+            "NAME": "negozio",
+            "DESCRIPTION": "Mostra il tuo negozio di oggi nei tuoi account",
+            "DESCRIBE": {
+                "username": "Inserire nome utente!(login temporaneo)",
+                "password": "Inserire nome utente!(login temporaneo)"
+            },
+            "RESPONSE": "Negozio giornaliero per **{username}** Rimanenti {duration}"
+        },
+        "point": {
+            "NAME": "punti",
+            "DESCRIPTION": "Visualizza i tuoi punti rimanenti Valorant e Radianite (VP/RP)",
+            "POINT": "Punti"
+        },
+        "mission": {
+            "NAME": "missione",
+            "DESCRIPTION": "Visualizza i progressi giornalieri/settimanali delle missioni",
+            "TITLE": "Missione",
+            "DAILY": "Giornaliera",
+            "WEEKLY": "Settimanale",
+            "NEWPLAYER": "Nuovo Giocatore",
+            "NO_MISSION": "Nessuna missione disponibile",
+            "DAILY_RESET": "Ripristina {duration}",
+            "REFILLS": "Ricarica {duration}"
+        },
+        "nightmarket": {
+            "NAME": "mercato notturno",
+            "DESCRIPTION": "Mostra offerte sul mercato notturno",
+            "RESPONSE": "Mercato notturno per **{username}** Rimanenti {duration}",
+            "NIGMARKET_HAS_END": "**NightMarket** è finito"
+        },
+        "battlepass": {
+            "NAME": "battlepass",
+            "DESCRIPTION": "Visualizza il tuo livello corrente del Battlepass",
+            "RESPONSE": "**Prossima Ricompensa:** {next}\n**Tipo:** {type}\n**XP:** {xp}\n**ACT END:** {end}",
+            "TIER": "TIER",
+            "PLAYER_CARD": "Carta Giocatore",
+            "SPRAY": "Spray",
+            "BUDDY": "Ciondolino",
+            "POINT": "Punti",
+            "PLAYER_TITLE": "Titolo",
+            "SKIN": "Skin"
+        },
+        "notify_add": {
+            "NAME": "aggiungi",
+            "DESCRIPTION": "Imposta una notifica quando una skin specifica è disponibile sul tuo negozio",
+            "DESCRIBE": {
+                "skin": "Il nome dello skin che si desidera notificare"
+            },
+            "SUCCESS": "Hai impostato con successo una notifica per {emoji} **{skin}**",
+            "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** è già stato aggiunto alla tua lista di notifiche",
+            "NOT_FOUND": "Skin non trovata",
+            "REMOVE_NOTIFY": "Rimuovi Notifiche",
+            "REMOVED_NOTIFY": "**{skin}** è stato rimosso dalle notifiche"
+        },
+        "notify_list": {
+            "NAME": "lista",
+            "DESCRIPTION": "View skins you have set a for notification.",
+            "TITLE": "Your Notify List",
+            "DONT_HAVE_NOTIFY": "You don't have any notification",
+            "REMOVE_NOTIFY": "Click button for remove from notify"
+        },
+        "notify_mode": {
+            "NAME": "mode",
+            "DESCRIPTION": "Change notification mode",
+            "DESCRIBE": {
+                "mode": "The mode you want to change to"
+            },
+            "SUCCESS": "Successfully changed your notification mode to **{mode}**",
+            "TURN_OFF": "Turn off notification mode"
+        },
+        "notify_test": {
+            "NAME": "test",
+            "DESCRIPTION": "Testing notification",
+            "NOTIFY_IS_WORKING": "Notification is working",
+            "NOTIFY_TURN_OFF": "You're not turn on notification mode",
+            "EMPTY_LIST": "Notify list is empty",
+            "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
+            "FAILED_SEND_NOTIFY": "Failed to send notification, please try again",
+            "PLEASE_ALLOW_DM_MESSAGE": "Please allow DM message in your privacy settings"
+        },
+        "notify_send": {
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store!\nRemaining {duration}",
+            "RESPONSE_ALL": "Daily store for **{username}** | Remaining {duration}"
+        },
+        "notify_channel": {
+            "NAME": "channel",
+            "DESCRIPTION": "Change notification channel.",
+            "DESCRIBE": {
+                "channel": "Select the channel you want to change."
+            },
+            "SUCCESS": "Notify channel changed to: **{channel}**"
+        },
+        "bundle": {
+            "NAME": "bundle",
+            "DESCRIPTION": "View your bundle progress",
+            "DESCRIBE": {
+                "bundle": "The name of the bundle you want to inspect!"
+            },
+            "TITLE": "Collection",
+            "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
+            "NOT_FOUND_BUNDLE": "Not found any bundle"
+        },
+        "bundles": {
+            "NAME": "bundles",
+            "DESCRIPTION": "View your bundle progress",
+            "TITLE": "Featured Bundle: {bundle} Collection",
+            "DURATION": "Remaining {duration}",
+            "DROPDOWN_CHOICE_TITLE": "Select a bundle:"
+        },
+        "debug": {
+            "NAME": "debug",
+            "DESCRIPTION": "The command debug for the bot",
+            "DESCRIBE": {
+                "bug": "The bug you want to fix.",
+                "choice": {
+                    "skin_price_not_loading": "Skin price not loading",
+                    "emoji_price_not_loading": "Emoji not loading",
+                    "cache_price_not_loading": "Cache not loading"
+                }
+            },
+            "SUCCESS": "Successfully debuged: **{bug}**"
+        }
+    },
+    "errors": {
+        "UNKNOW_ERROR": "An unknown error occurred.",
+        "AUTH": {
+            "INVALID_PASSWORD": "Your username or password may be incorrect!",
+            "RATELIMIT": "Please wait a few minutes and try again.",
+            "COOKIES_EXPIRED": "Cookies is expired, please `/login` again!",
+            "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
+            "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again",
+            "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
+            "INPUT_2FA_CODE": "Input 2FA code!",
+            "2FA_ENABLE": "You have 2FA enabled!",
+            "2FA_TO_EMAIL": "Riot sent a code to",
+            "2FA_INVALID_CODE": "Il codice non è valido. Si prega di riprovare `/login`"
+        },
+        "DATABASE": {
+            "NOT_LOGIN": "non sei registrato!, per favore `/login` per registrarti!",
+            "LOGIN_ERROR": "Impossibile connettersi, Prova di nuovo!",
+            "LOGOUT_ERROR": "Impossibile disconnettersi se non si è registrati scimmietta!",
+            "LOGOUT_EXCEPT": "Si è verificato un errore durante il logout."
+        },
+        "API": {
+            "FAILED_ACTIVE": "Attivazione API fallita",
+            "REQUEST_FAILED": "Risposta dell' API fallita!"
+        },
+        "SETUP_EMOJI": {
+            "MISSING_PERM": "Non hai l'autorizzazione per creare emoji !",
+            "FAILED_CREATE_EMOJI": "Impossibile creare emoji riprova perfavore"
+        }
+    }
+}
