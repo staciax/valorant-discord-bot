@@ -36,7 +36,7 @@ class ValorantBot(commands.Bot):
     
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
-        self.bot_version = '3.2.0'
+        self.bot_version = '3.2.1'
         self.tree.interaction_check = self.interaction_check
     
     @staticmethod

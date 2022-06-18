@@ -263,11 +263,13 @@ class Auth:
         # cookies = json.loads(cookies)
         
         session = ClientSession()
+
+        if 'cookie' in cookies: cookies = cookies['cookie']
         
         async with session.get(
             "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
             cookies=cookies,
-            allow_redirects=False
+            allow_redirects=False,
         ) as r:
             data = await r.text()
         
