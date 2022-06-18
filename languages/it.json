@@ -141,6 +141,15 @@
             "SUCCESS": "Successfully debuged: **{bug}**"
         }
     },
+    "cookies": {
+        "NAME": "cookies",
+        "DESCRIPTION": "Login your riot account with a browser cookie",
+        "DESCRIBE": {
+            "cookie": "Your cookie"
+        },
+        "SUCCESS": "Successfully logged in",
+        "FAILED": "Invalid cookie"
+    },
     "errors": {
         "UNKNOW_ERROR": "An unknown error occurred.",
         "AUTH": {

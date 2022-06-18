@@ -1,58 +1,58 @@
 {
-  "translation_by": "KANATA IS GOD#6356 / uwaaaa#3107",
+  "translation_by": "uwaaaa#3107 | KANATA IS GOD#6356",
   "commands": {
     "login": {
       "NAME": "ログイン",
       "DESCRIPTION": "Riotアカウントでログインします。",
       "DESCRIBE": {
-        "username": "ユーザー名を入力してください！",
-        "password": "パスワードを入力してください！"
+        "username": "ユーザー名を入力してください",
+        "password": "パスワードを入力してください"
       },
-      "SUCCESS": "ログインが完了しました！",
-      "FAILED": "ログインに失敗しました、もう一度お試しください。"
+      "SUCCESS": "ログインが完了しました。",
+      "FAILED": "ログインに失敗しました。再度お試しください。"
     },
     "logout": {
       "NAME": "ログアウト",
-      "DESCRIPTION": "ログアウトします。",
-      "SUCCESS": "ログアウトが完了しました！",
-      "FAILED": "ログアウトに失敗しました！もう一度お試しください。"
+      "DESCRIPTION": "ログアウトし、データベースからアカウントを削除します。",
+      "SUCCESS": "ログアウトが完了しました。",
+      "FAILED": "ログアウトに失敗しました。再度お試しください。"
     },
     "store": {
       "NAME": "ストア",
-      "DESCRIPTION": "ストアを表示します。",
+      "DESCRIPTION": "アカウントのデイリーストアを表示します。",
       "DESCRIBE": {
-        "username": "ユーザー名を入力してください！ (一時的なログイン)",
-        "password": "パスワードを入力してください！ (一時的なログイン)"
+        "username": "ユーザー名を入力してください。（一時的ログイン）",
+        "password": "パスワードを入力してください。（一時的ログイン）"
       },
-      "RESPONSE": "**{username}** のストア \n更新 {duration}"
+      "RESPONSE": "**{username}**のデイリーストア | 残り時間 {duration}"
     },
     "point": {
       "NAME": "ポイント",
-      "DESCRIPTION": "所有しているVALORANTポイントを表示します。",
+      "DESCRIPTION": "残りのヴァロラントポイント（VP）・レディアナイトポイント（RP）の所持数を表示します。",
       "POINT": "ポイント"
     },
     "mission": {
       "NAME": "ミッション",
-      "DESCRIPTION": "ミッションを確認できます。",
+      "DESCRIPTION": "自分のデイリーミッション・ウィークリーミッションの進行度を表示します。",
       "TITLE": "ミッション",
       "DAILY": "デイリー",
       "WEEKLY": "ウィークリー",
-      "NEWPLAYER": "New Player",
-      "NO_MISSION": "ミッションはありません！お疲れ様です！",
-      "DAILY_RESET": "更新 {duration}",
-      "REFILLS": "更新 {duration}"
+      "NEWPLAYER": "新規プレイヤー",
+      "NO_MISSION": "ミッションなし",
+      "DAILY_RESET": "リセットまで {duration}",
+      "REFILLS": "更新まで {duration}"
     },
     "nightmarket": {
       "NAME": "ナイトマーケット",
-      "DESCRIPTION": "ナイトマーケットオファーを表示します。",
-      "RESPONSE": "**{username}** のナイトマーケット| 残り {duration}",
-      "NIGMARKET_HAS_END": "ナイトマーケットは開催されていません。"
+      "DESCRIPTION": "ナイトマーケットのスキンオファー一覧を表示します。",
+      "RESPONSE": "**{username}**のナイトマーケット | 残り時間 {duration}",
+      "NIGMARKET_HAS_END": "**ナイトマーケット**が終了しました"
     },
     "battlepass": {
       "NAME": "バトルパス",
-      "DESCRIPTION": "現在のバトルパス進行状況を表示します。",
-      "RESPONSE": "**次の報酬:** {next}\n**タイプ:** {type}\n**XP:** {xp}\n**ACT終了:** {end}",
-      "TIER": "ティア",
+      "DESCRIPTION": "自分の現在のバトルパスレベルを表示します。",
+      "RESPONSE": "**次報酬:** {next}\n**種類:** {type}\n**XP:** {xp}\n**ACT終了時間:** {end}",
+      "TIER": "レベル",
       "PLAYER_CARD": "プレイヤーカード",
       "SPRAY": "スプレー",
       "BUDDY": "バディー",
@@ -61,88 +61,88 @@
       "SKIN": "スキン"
     },
     "notify_add": {
-      "NAME": "通知の追加",
-      "DESCRIPTION": "追加したスキンがストアに出たら通知します。",
+      "NAME": "追加",
+      "DESCRIPTION": "ストアに登場した際に通知するスキンを指定します。",
       "DESCRIBE": {
-        "skin": "通知してほしいスキンの名前"
+          "skin": "登場時に通知してほしいスキンの名前"
       },
-      "SUCCESS": "以下のスキンをリストに追加しました {emoji} **{skin}**",
-      "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** はすでに通知リストに存在します！",
-      "NOT_FOUND": "スキンが見つかりません。",
-      "REMOVE_NOTIFY": "通知を削除",
-      "REMOVED_NOTIFY": "**{skin}** は削除済みです。"
+      "SUCCESS": "通知対象として {emoji} **{skin}**を指定しました",
+      "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}**は既に通知対象に追加されています",
+      "NOT_FOUND": "スキンが見つかりませんでした",
+      "REMOVE_NOTIFY": "通知対象から削除",
+      "REMOVED_NOTIFY": "**{skin}**が通知対象から削除されました"
     },
     "notify_list": {
-      "NAME": "通知リスト",
-      "DESCRIPTION": "現在設定されているスキンを表示します。",
-      "TITLE": "通知リスト",
-      "DONT_HAVE_NOTIFY": "通知が設定されていません。",
-      "REMOVE_NOTIFY": "ボタンをクリックすると通知が削除されます。"
+      "NAME": "一覧",
+      "DESCRIPTION": "通知対象として設定しているスキンの一覧を表示します。",
+      "TITLE": "自分の通知対象一覧",
+      "DONT_HAVE_NOTIFY": "通知がありません。",
+      "REMOVE_NOTIFY": "通知対象から削除したい場合は、ボタンを押してください。"
     },
     "notify_mode": {
-      "NAME": "mode",
+      "NAME": "モード",
       "DESCRIPTION": "通知モードを変更します。",
       "DESCRIBE": {
-        "mode": "変更したいモード"
+          "mode": "次からの通知モード"
       },
-      "SUCCESS": "通知モードの変更が完了しました！ **{mode}**",
-      "TURN_OFF": "Turn off notification mode"
+      "SUCCESS": "通知モードを**{mode}**に変更しました。",
+      "TURN_OFF": "通知モードをOFFにする"
     },
     "notify_test": {
-      "NAME": "test",
+      "NAME": "試す",
       "DESCRIPTION": "通知をテストします。",
-      "NOTIFY_IS_WORKING": "通知は動作しています！",
-      "NOTIFY_TURN_OFF": "通知モードがオンになっていません。",
-      "EMPTY_LIST": "通知リストが空です。",
-      "BOT_MISSING_PERM": "**このチャンネルで通知を送る権限がありません！** \nBOTの権限設定を確認してください。 `View channel`, `Send messages`, `Embed links`, `Use external emoji`. を設定して試してみてください。 `/notify test`.",
-      "FAILED_SEND_NOTIFY": "通知の送信に失敗しました、もう一度やり直してください。",
-      "PLEASE_ALLOW_DM_MESSAGE": "プライバシー設定でダイレクトメッセージを許可してください。"
+      "NOTIFY_IS_WORKING": "通知機能は正常です。",
+      "NOTIFY_TURN_OFF": "通知モードがOFFになっています",
+      "EMPTY_LIST": "通知対象一覧が空です",
+      "BOT_MISSING_PERM": "**Botにこのチャンネルに通知を送信する権限がありません。**\nBotの「チャンネルを見る」、「メッセージを送信」、「埋め込みリンク」、「外部の絵文字を使用する」をONにしてから、もう一度 `/notify test` をお試しください。",
+      "FAILED_SEND_NOTIFY": "通知の送信に失敗しました。再度お試しください。",
+      "PLEASE_ALLOW_DM_MESSAGE": "プライバシー設定から、DMの送信を許可してください。"
     },
     "notify_send": {
-      "RESPONSE_SPECIFIED": "{emoji} **{name}** があなたのストアにあります！ \n更新 {duration}",
-      "RESPONSE_ALL": "**{username}** のストア | 更新 {duration}"
+      "RESPONSE_SPECIFIED": "{emoji} **{name}**がデイリーストアに登場しました！\n残り {duration}",
+      "RESPONSE_ALL": "**{username}**のデイリーストア | 残り時間 {duration}"
     },
     "notify_channel": {
-      "NAME": "通知チャンネル",
-      "DESCRIPTION": "通知するチャンネルを変更します。",
+      "NAME": "チャンネル",
+      "DESCRIPTION": "通知を送信するチャンネルを変更します。",
       "DESCRIBE": {
-        "channel": "通知するチャンネルを選択"
+          "channel": "変更先のチャンネルを選択してください。"
       },
-      "SUCCESS": "チャンネルを変更しました。 **{channel}**"
+      "SUCCESS": "通知を送信するチャンネルが **{channel}** に送信されました。"
     },
     "bundle": {
-      "NAME": "バンドル",
-      "DESCRIPTION": "バンドルの内容を表示します。",
+      "NAME": "セット",
+      "DESCRIPTION": "セットの進行状況を表示します。",
       "DESCRIBE": {
-        "bundle": "見たいバンドルの名前を入力してください！"
+          "bundle": "チェックしたいセットの名前"
       },
-      "TITLE": "バンドル",
-      "DROPDOWN_CHOICE_TITLE": "バンドルを選択:",
-      "NOT_FOUND_BUNDLE": "バンドルが見つかりません。"
+      "TITLE": "コレクション",
+      "DROPDOWN_CHOICE_TITLE": "セットを選択してください:",
+      "NOT_FOUND_BUNDLE": "セットが1つも見つかりませんでした。"
     },
     "bundles": {
-      "NAME": "バンドル",
-      "DESCRIPTION": "現在のバンドルを表示します。",
-      "TITLE": "注目のバンドル {bundle} コレクション",
-      "DURATION": "更新 {duration}",
-      "DROPDOWN_CHOICE_TITLE": "バンドルを選択:"
+      "NAME": "セット一覧",
+      "DESCRIPTION": "セットの進行状況を表示します。",
+      "TITLE": "注目のセット: {bundle}コレクション",
+      "DURATION": "残り時間 {duration}",
+      "DROPDOWN_CHOICE_TITLE": "セットを選択してください:"
     },
-    "debug": {
-      "NAME": "デバッグ",
-      "DESCRIPTION": "Botのデバッグ用コマンドです。",
-      "DESCRIBE": {
-        "bug": "修正したいバグ:",
-        "choice": {
-          "skin_price_not_loading": "スキン価格がロードされていません。",
-          "emoji_price_not_loading": "絵文字がロードされていません。",
-          "cache_price_not_loading": "キャッシュがロードされていません。"
-        }
-      },
-      "SUCCESS": "Successfully debuged: **{bug}**"
+      "debug": {
+        "NAME": "デバッグ",
+        "DESCRIPTION": "Botのデバッグ用コマンドです。",
+        "DESCRIBE": {
+            "bug": "修正したいバグ:",
+            "choice": {
+                "skin_price_not_loading": "スキン価格がロードされていません。",
+                "emoji_price_not_loading": "絵文字がロードされていません。",
+                "cache_price_not_loading": "キャッシュがロードされていません。"
+            }
+        },
+        "SUCCESS": "**{bug}**のデバッグが完了しました。"
     },
     "cookies": {
       "NAME": "cookies",
-      "DESCRIPTION": "Login to your account with a cookie",
+      "DESCRIPTION": "Login your riot account with a browser cookie",
       "DESCRIBE": {
         "cookie": "Your cookie"
       },
@@ -151,33 +151,33 @@
     }
   },
   "errors": {
-    "UNKNOW_ERROR": "不明なエラーです。",
+    "UNKNOW_ERROR": "未知のエラーが発生しました。",
     "AUTH": {
-      "INVALID_PASSWORD": "ユーザー名、パスワードが間違っています。",
-      "RATELIMIT": "数分待ってから、もう一度試してください。",
-      "COOKIES_EXPIRED": "Cookieの有効期限が切れています、もう一度ログインしてください。",
-      "NO_NAME_TAG": "このユーザーはまだVALORANTアカウントを作成していません。",
-      "REGION_NOT_FOUND": "不明なエラーが発生しました、もう一度お試しください。",
-      "LOGIN_COOKIE_FAILED": "Cookieを使ったログインに失敗しました。",
-      "INPUT_2FA_CODE": "認証コードを入力してください。",
-      "2FA_ENABLE": "2FAは有効になっています！",
-      "2FA_TO_EMAIL": "認証コードを送信しました。",
-      "2FA_INVALID_CODE": "コードが間違っています、もう一度お試しください。",
+      "INVALID_PASSWORD": "ユーザー名、またはパスワードが間違っている可能性があります。",
+      "RATELIMIT": "数分後に再度お試しください。",
+      "COOKIES_EXPIRED": "Cookieの期限が切れています。再度 `/login` をお試しください。",
+      "NO_NAME_TAG": "このユーザーはまだ名前・タグラインを作成していません。",
+      "REGION_NOT_FOUND": "未知のエラーが発生しました。再度 `/login` をお試しください。",
+      "LOGIN_COOKIE_FAILED": "Cookieでのログインに失敗しました。",
+      "INPUT_2FA_CODE": "二段階認証コードを入力してください",
+      "2FA_ENABLE": "二段階認証がONになっています。",
+      "2FA_TO_EMAIL": "Riotが次のメールアドレスにコードを送信しました:",
+      "2FA_INVALID_CODE": "コードが間違っています。再度 `/login` をお試しください。",
       "TEMP_LOGIN_NOT_SUPPORT_2FA": "サポートされていない2FA、`/login` を使用して、別のコマンドを使用しないでください。"
     },
     "DATABASE": {
-      "NOT_LOGIN": "あなたはログインしていません！今すぐ/loginでログインしてください！",
-      "LOGIN_ERROR": "ログインに失敗しました、もう一度お試しください。",
-      "LOGOUT_ERROR": "あなたはログインしていません。",
-      "LOGOUT_EXCEPT": "ログアウト中にエラーが発生しました。。"
+      "NOT_LOGIN": "あなたはまだ登録されていません。`/login` で登録してください。",
+      "LOGIN_ERROR": "ログインに失敗しました。再度お試しください。",
+      "LOGOUT_ERROR": "登録がされていないため、ログアウトが行えません。",
+      "LOGOUT_EXCEPT": "ログアウト中にエラーが発生しました。"
     },
     "API": {
       "FAILED_ACTIVE": "APIの有効化に失敗しました。",
       "REQUEST_FAILED": "APIのレスポンスが失敗しました。"
     },
     "SETUP_EMOJI": {
-      "MISSING_PERM": "絵文字を作成する権限がありません！",
-      "FAILED_CREATE_EMOJI": "絵文字の作成に失敗しました。もう一度お試しください。"
+      "MISSING_PERM": "Botに絵文字作成の権限がありません。",
+      "FAILED_CREATE_EMOJI": "絵文字の作成に失敗しました。再度お試しください。"
     }
   }
 }

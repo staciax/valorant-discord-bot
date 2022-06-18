@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 from typing import Literal, TYPE_CHECKING  # noqa: F401
 
-from discord import app_commands, Interaction
+from discord import app_commands, Interaction, ui
 from discord.ext import commands, tasks
 from discord.utils import MISSING
 
@@ -297,6 +297,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
     # credit https://github.com/giorgi-o
     # https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies
     @app_commands.command()
+    @app_commands.describe(cookie="Your cookie")
     async def cookies(self, interaction: Interaction, cookie: str) -> None:
         """ Login to your account with a cookie """
         
@@ -312,7 +313,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
             await interaction.followup.send(embed=embed, ephemeral=True)
             return
         
-        raise ValorantBotError(response.get('FAILED'))
+        view = ui.View()
+        view.add_item(ui.Button(label="Tutorial", emoji="🔗", url="https://youtu.be/cFMNHEHEp2A"))
+        await interaction.followup.send(f"{response.get('FAILURE')}", view=view, ephemeral=True)
     
     # ---------- ROAD MAP ---------- #
     

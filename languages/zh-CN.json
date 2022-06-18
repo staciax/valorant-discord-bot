@@ -142,7 +142,7 @@
     },
     "cookies": {
       "NAME": "cookies",
-      "DESCRIPTION": "Login to your account with a cookie",
+      "DESCRIPTION": "Login your riot account with a browser cookie",
       "DESCRIBE": {
         "cookie": "Your cookie"
       },
