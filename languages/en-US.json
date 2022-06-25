@@ -1,5 +1,5 @@
 {
-  "translation_by": "ꜱᴛᴀᴄɪᴀ.#7475",
+  "translation_by": "nekomata#1136",
   "commands": {
     "login": {
       "NAME": "login",
@@ -9,11 +9,11 @@
         "password": "Input password!"
       },
       "SUCCESS": "Successfully logged in",
-      "FAILED": "Failed to log in please try again"
+      "FAILED": "Failed to log in, please try again"
     },
     "logout": {
       "NAME": "logout",
-      "DESCRIPTION": "Logout and Delete your account from database",
+      "DESCRIPTION": "Logout and delete your account from database",
       "SUCCESS": "Successfully logged out!",
       "FAILED": "Failed to logout, please try again!"
     },
@@ -24,7 +24,7 @@
         "username": "Input username! (temporary login)",
         "password": "Input password! (temporary login)"
       },
-      "RESPONSE": "Daily store for **{username}** \nRemaining {duration}"
+      "RESPONSE": "Daily store for **{username}** \nResets {duration}"
     },
     "point": {
       "NAME": "point",
@@ -45,7 +45,7 @@
     "nightmarket": {
       "NAME": "nightmarket",
       "DESCRIPTION": "Show skin offers on the nightmarket",
-      "RESPONSE": "NightMarket for **{username}** | Remaining {duration}",
+      "RESPONSE": "NightMarket for **{username}** | Expires {duration}",
       "NIGMARKET_HAS_END": "**NightMarket** has been ended"
     },
     "battlepass": {
@@ -70,14 +70,14 @@
       "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** is already added to your notification list",
       "NOT_FOUND": "Skin is not found",
       "REMOVE_NOTIFY": "Remove Notify",
-      "REMOVED_NOTIFY": "**{skin}** been removed from notify"
+      "REMOVED_NOTIFY": "**{skin}** has been removed from notify"
     },
     "notify_list": {
       "NAME": "list",
-      "DESCRIPTION": "View skins you have set a for notification.",
+      "DESCRIPTION": "View skins you have set a notification for.",
       "TITLE": "Your Notify List",
-      "DONT_HAVE_NOTIFY": "You don't have any notification",
-      "REMOVE_NOTIFY": "Click button for remove from notify"
+      "DONT_HAVE_NOTIFY": "You don't have any notifications",
+      "REMOVE_NOTIFY": "Click button to remove from notify list"
     },
     "notify_mode": {
       "NAME": "mode",
@@ -92,7 +92,7 @@
       "NAME": "test",
       "DESCRIPTION": "Testing notification",
       "NOTIFY_IS_WORKING": "Notification is working",
-      "NOTIFY_TURN_OFF": "You're not turn on notification mode",
+      "NOTIFY_TURN_OFF": "You've not turned on notification mode",
       "EMPTY_LIST": "Notify list is empty",
       "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
       "FAILED_SEND_NOTIFY": "Failed to send notification, please try again",
@@ -112,19 +112,19 @@
     },
     "bundle": {
       "NAME": "bundle",
-      "DESCRIPTION": "View your bundle progress",
+      "DESCRIPTION": "Inspect a specific bundle",
       "DESCRIBE": {
         "bundle": "The name of the bundle you want to inspect!"
       },
       "TITLE": "Collection",
       "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
-      "NOT_FOUND_BUNDLE": "Not found any bundle"
+      "NOT_FOUND_BUNDLE": "Bundle not found"
     },
     "bundles": {
       "NAME": "bundles",
-      "DESCRIPTION": "View your bundle progress",
+      "DESCRIPTION": "View featured bundles in store",
       "TITLE": "Featured Bundle: {bundle} Collection",
-      "DURATION": "Remaining {duration}",
+      "DURATION": "Expires {duration}",
       "DROPDOWN_CHOICE_TITLE": "Select a bundle:"
     },
     "debug": {
@@ -138,11 +138,11 @@
           "cache_price_not_loading": "Cache not loading"
         }
       },
-      "SUCCESS": "Successfully debuged: **{bug}**"
+      "SUCCESS": "Successfully debugged: **{bug}**"
     },
     "cookies": {
       "NAME": "cookies",
-      "DESCRIPTION": "Login your riot account with a browser cookie",
+      "DESCRIPTION": "Log into your riot account with a browser cookie",
       "DESCRIBE": {
         "cookie": "Your cookie"
       },
@@ -155,7 +155,7 @@
     "AUTH": {
       "INVALID_PASSWORD": "Your username or password may be incorrect!",
       "RATELIMIT": "Please wait a few minutes and try again.",
-      "COOKIES_EXPIRED": "Cookies is expired, please `/login` again!",
+      "COOKIES_EXPIRED": "Cookies has expired, please `/login` again!",
       "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
       "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again",
       "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
@@ -166,7 +166,7 @@
       "TEMP_LOGIN_NOT_SUPPORT_2FA": "Not supported 2FA, Please use `/login` and use other cmd without username, password."
     },
     "DATABASE": {
-      "NOT_LOGIN": "you're not registered!, please `/login` to register!",
+      "NOT_LOGIN": "You're not registered!, please `/login` to register!",
       "LOGIN_ERROR": "Fail to login, please try again!",
       "LOGOUT_ERROR": "I can't logout you if you're not registered!",
       "LOGOUT_EXCEPT": "An error occurred while logging out."
@@ -176,8 +176,8 @@
       "REQUEST_FAILED": "API Response Failed !"
     },
     "SETUP_EMOJI": {
-      "MISSING_PERM": "I doesn't have permission to create emoji !",
-      "FAILED_CREATE_EMOJI": "I Can't create emoji please try again"
+      "MISSING_PERM": "I don't have permission to create emojis!",
+      "FAILED_CREATE_EMOJI": "I can't create emojis, please try again"
     }
   }
 }
