@@ -93,7 +93,7 @@ TODO: Add docker command after pushing to docker hub using github actions
 
 * **Create** the [discord bot][DiscordBotDocs]
 
-* Under **Privileged Gateway Intents** enable [`MESSAGE CONTENT INTENT`](/resources/dc_MESSAGE_CONTENT_INTENT.png.png)
+* Under **Privileged Gateway Intents** enable [`MESSAGE CONTENT INTENT`](/resources/dc_MESSAGE_CONTENT_INTENT.png)
 
 * Enable the required bot [permissions](/resources/dc_BOT_PERMS.png).
 
