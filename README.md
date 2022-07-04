@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">Store, Nightmarket, Battlepass, Mission, Bundle, Notify</h4>
+<h4 align="center">Store, Nightmarket, Battlepass, Missions, Bundle, Notify</h4>
 
 <p align="center">
   <a href="https://discord.gg/RaCzsPnfNM">
@@ -28,13 +28,15 @@
 <p align="center">
   <a href="#about">About</a>
   •
-  <a href="#installations">Installations</a>
+  <a href="#installation">Installation</a>
   •
-  <a href="#screenshot">Screenshot</a>
+  <a href="#screenshots">Screenshots</a>
   •
   <a href="#usage">Usage</a>
   •
   <a href="#translations">Translations</a>
+  •
+  <a href="#disclaimer">Disclaimer</a>
   •
   <a href="#special-thanks">Special Thanks</a>
   •
@@ -47,19 +49,29 @@
 # About
 
 Discord bot that shows your infomation and more without open the VALORANT by using
-the [In-game API.](https://github.com/HeyM1ke/ValorantClientAPI)
-written using Python and the [Discord.py](https://github.com/Rapptz/discord.py) library <br>
-For support using Valorant Bot, please join the [support server](https://discord.gg/RaCzsPnfNM)
+the [In-game API.][ValorantClientAPI]
+written using Python and the [Discord.py][DiscordPy] library <br>
+If you need help regarding Valorant Discord Bot, please join the [support server][Support]
 
 ## Heroku
 
+> Important: Please note that dynos will have be restarted every **24 hours**. All changes to the local filesystem will be deleted, which means you'll have to relogin using `/login` once the 24-hour limit is reached. Read more about automatic dyno restarts [here][Heroku].
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-- [Youtube Tutorial](https://youtu.be/5ZFsEcDT8e4)
+- [Youtube Tutorial][Tutorial]
 
-## Screenshot
+<!-- 
 
-* Embed Design by [Giorgio](https://github.com/giorgi-o)
+TODO: Add docker command after pushing to docker hub using github actions
+
+## Docker
+ -->
+
+
+## Screenshots
+
+* Embed Design by [Giorgio][Giorgio]
 
 ![image](https://i.imgur.com/uF9THEa.png)
 ![image](https://i.imgur.com/ijjvQV3.png)
@@ -71,7 +83,7 @@ For support using Valorant Bot, please join the [support server](https://discord
 <img src="https://i.imgur.com/5jEZt3Z.png" alt="points">
 </details>
 
-## Installations
+## Installation
 
 * [Python 3.8+](https://www.python.org/downloads/)
 
@@ -79,41 +91,55 @@ For support using Valorant Bot, please join the [support server](https://discord
 
 * Install requirements
 
-* **Create** the [discord bot](https://discord.com/developers/applications) and **Enable Privileged Gateway
-  Intents** [`MESSAGE CONTENT INTENT`](https://i.imgur.com/TiiaYR9.png) then invite bot to server with
-  scope [`applications.commands`](https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png)
+* **Create** the [discord bot][DiscordBotDocs]
 
-* Clone/[Download](https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip)
+* Under **Privileged Gateway Intents** enable [`MESSAGE CONTENT INTENT`](/resources/dc_MESSAGE_CONTENT_INTENT.png.png)
 
-```
+* Enable the required bot [permissions](/resources/dc_BOT_PERMS.png).
+
+* Invite your bot to the server with the scopes [`bot & applications.commands`](/resources/dc_SCOPES.png)
+
+* Clone/[Download][ZipDownload]
+
+```bash
 pip install -r requirements.txt
 ```
 
-```
+```bash
 # manual install package
 pip install git+https://github.com/Rapptz/discord.py@master
 pip install requests
 pip install python-dotenv
 ```
 
-* Store discord bot token and owner ID
-  in [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
+* Store discord bot token and owner ID under [.env](/.env)
 
 ```
 TOKEN='INPUT DISCORD TOKEN HERE'
 OWNER_ID='INPUT YOUR DISCORD ID'
 ```
+*  <details><summary>How to get your Owner ID</summary>
+    <p>
+
+    1. Turn on Developer Mode under Discord Settings > Advanced <img src="resources/dc_DevMode.png">
+
+    2. Right click on your profile icon in any chat and copy your ID <img src="resources/dc_CopyID.png">
+
+    </p>
+  </details>
 
 * Run the bot
 
-```
+```bash
 python bot.py
 ```
 
-* Slash Command is automatic global commands `(takes 1 hour to process.)`
-* If you want to use commands in server right now `-sync guild` to sync the commands in your server.
-* if you want remove commands in your server `-unsync guild` to remove server commands.
-* You can remove global command `-unsync global` to remove global commands.
+* the Slash Command (`/`) will automaticalled be assigned for global commands (global commands can also take up to an hour to update for Android users). Refer to [docs][CommandDocs].
+* to use commands in your server immediately, use `-sync guild`.
+* remove commands in your server by using `-unsync guild`.
+* remove global commands by using `-unsync global`. This removes commands for everyone using the bot.
+
+> Important: custom emojis used by the bot will be added to your server so that they can be accessed when needed. If there are no slots left, emojis will not be added and therefore displayed in text from e.g. `:ValorantPointIcon:`. There are 7 custom emojis in total.
 
 ## Usage
 
@@ -128,7 +154,7 @@ python bot.py
 | `/battlepass`  | View your battlepass' current tier |
 | `/bundle`  | inspect a specific bundle `credit by Giorgio` |
 | `/bundles`  | Show the current featured bundles `credit by Giorgio` |
-| `/cookies`  | Login to your account with a cookie, [How to cookies](https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies) `credit by Giorgio`, [video](https://youtu.be/cFMNHEHEp2A) |
+| `/cookies`  | Login to your account with a cookie, [How to cookies][SkinpeekCookies] `credit by Giorgio`, [video][CookieLogin] |
 | `/notify add`  | Set a notification when a specific skin is available on your store |
 | `/notify list`  | View skins you have set a notification for |
 | `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
@@ -136,49 +162,59 @@ python bot.py
 | `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
 | `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
 
-<!-- ## Translations (credit by [giorgio](https://github.com/giorgi-o) -->
-
 ## Translations
 
 If you want to use your language and would like help translate the bot, please do!
 
 - Option 1
 
-1. You can translate my crowdin project [here.](https://crowdin.com/project/discord-bot-valorant)
+1. You can translate my crowdin project [here][Crowdin].
 
-- Option 2 (inspiration by [giorgio](https://github.com/giorgi-o))
+- Option 2 (inspiration by [giorgi-o][Giorgio])
 
-1. [Fork the repo](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
-2. Look up the language code for your language [here](https://discord.com/developers/docs/reference#locales)
+1. [Fork the repo][ForkDocs]
+2. Look up the language code for your language [here][Locales]
 3. In the `languages` folder of your forked repo, copy `en-US.json` and rename it to your language code
 4. Open that file and do the thing
 5. Open a pull request
 
 - Alternatively, you can just send me the JSON on discord and I'll upload it for you.
 
+## License
+
+This project is licensed under the GNUv3 License - see the [LICENSE](LICENSE.md) file for details.
+
+## Disclaimer
+
+Please read the [DISCLAIMER](DISCLAIMER.md) before using the code to host your bot.
+
+```
+Valorant-DiscordBot is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+```
+
 ## Special Thanks
 
 This project wouldn't have happened without.
 
-- [HeyM1ke/ValorantClientAPI](https://github.com/RumbleMike/ValorantClientAPI)
+- [HeyM1ke/ValorantClientAPI][ValorantClientAPI]
   for providing a great API about Valorant!
 
-- [colinhartigan/valclient.py](https://github.com/colinhartigan/valclient.py)
+- [colinhartigan/valclient.py][ValClientPy]
   for beautiful client endpoint
 
-- [techchrism/valorant-api-docs](https://github.com/techchrism/valorant-api-docs/)
+- [techchrism/valorant-api-docs][ValApiDocs]
   for API docs documentation
 
-- [Valorant-API.com](https://valorant-api.com/)
+- [Valorant-API.com][ValApi]
   for every skin names and images!
 
-- [github/giorgi-o](https://github.com/giorgi-o)
-  for always helping me and more!. ValoBot in JS [SkinPeek](https://github.com/giorgi-o/SkinPeek/)
+- [github/giorgi-o][Giorgio]
+  for always helping me and more!. ValoBot in JS [SkinPeek][Skinpeek]
 
-- [Discord - Valorant App Developer ](https://discord.gg/a9yzrw3KAm)
+- [Discord - Valorant App Developer ][VAD]
   developer community for valorant api
 
-- [Contributors](https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors) <3 <3
+- [Contributors][Contributors] <3 <3
 
 - Thank you very much <3
 
@@ -189,3 +225,36 @@ This project wouldn't have happened without.
 <a href="https://tipme.in.th/renlyx">
 <img link="https://ko-fi.com/staciax" src="https://static.tipme.in.th/img/logo.f8267020b29b.svg" width="170" />
 </a>
+
+
+<!------------------- Links -------------------->
+
+<!-- Valorant -->
+[ValApi]: https://valorant-api.com/
+
+<!-- Discord -->
+[Support]: https://discord.gg/RaCzsPnfNM
+[DiscordBotDocs]: https://discord.com/developers/applications
+[VAD]: https://discord.gg/a9yzrw3KAm
+[Locales]: https://discord.com/developers/docs/reference#locales
+[CommandDocs]: https://discord.com/developers/docs/interactions/application-commands
+
+<!-- Github -->
+[ZipDownload]: https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip
+[ForkDocs]: https://docs.github.com/en/get-started/quickstart/fork-a-repo
+[ValorantClientAPI]: https://github.com/HeyM1ke/ValorantClientAPI
+[ValClientPy]: https://github.com/colinhartigan/valclient.py
+[ValApiDocs]: https://github.com/techchrism/valorant-api-docs/
+[Giorgio]: https://github.com/giorgi-o
+[DiscordPy]: https://github.com/Rapptz/discord.py
+[Skinpeek]: https://github.com/giorgi-o/SkinPeek/
+[SkinpeekCookies]: https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies
+[Contributors]: https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors
+
+<!-- YouTube -->
+[Tutorial]: https://youtu.be/5ZFsEcDT8e4
+[CookieLogin]: https://youtu.be/cFMNHEHEp2A
+
+<!-- Other -->
+[Heroku]: https://devcenter.heroku.com/articles/dynos#automatic-dyno-restarts
+[Crowdin]: (https://crowdin.com/project/discord-bot-valorant)
