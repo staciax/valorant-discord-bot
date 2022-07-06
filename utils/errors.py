@@ -19,9 +19,9 @@ class ValorantBotError(app_commands.AppCommandError):
 # https://github.com/colinhartigan/valclient.py/blob/0dcff9e384943a2889e6b3f8e71781c9fc950bce/src/valclient/exceptions.py#L1
 
 class ResponseError(app_commands.AppCommandError):
-    '''
+    """
     Raised whenever an empty response is given by the Riot server.
-    '''
+    """
     pass
 
 

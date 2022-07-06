@@ -26,12 +26,12 @@ class DATABASE:
         JSON.save('users', data)
     
     def read_db(self) -> Dict:
-        '''Read database'''
+        """Read database"""
         data = JSON.read('users')
         return data
     
     def read_cache(self) -> Dict:
-        '''Read database'''
+        """Read database"""
         data = JSON.read('cache')
         return data
     

@@ -36,6 +36,7 @@ class ValorantBot(commands.Bot):
     
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
+        self.session: aiohttp.ClientSession = None
         self.bot_version = '3.2.5'
         self.tree.interaction_check = self.interaction_check
     
@@ -59,7 +60,8 @@ class ValorantBot(commands.Bot):
         await self.change_presence(activity=discord.Activity(type=activity_type, name="(╯•﹏•╰)"))
     
     async def setup_hook(self) -> None:
-        self.session = aiohttp.ClientSession()
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
         
         try:
             self.owner_id = int(os.getenv('OWNER_ID'))

@@ -194,7 +194,7 @@ class NotifyViewList(ui.View):
 
 
 class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
-    '''Modal for riot login with 2 factor authentication'''
+    """Modal for riot login with multifactorial authentication"""
     
     def __init__(self, interaction: Interaction, db: DATABASE, cookie: dict, message: str, label: str, response: Dict) -> None:
         super().__init__(timeout=600)
@@ -311,7 +311,7 @@ class BaseBundle(ui.View):
         
         self.embeds = embeds_list
     
-    def build_Featured_Bundle(self, bundle: List[Dict]) -> List[discord.Embed]:
+    def build_featured_bundle(self, bundle: List[Dict]) -> List[discord.Embed]:
         """ Builds the featured bundle embeds """
         
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
@@ -392,6 +392,7 @@ class BaseBundle(ui.View):
         await interaction.response.edit_message(embeds=embeds, view=self)
     
     def update_button(self) -> None:
+        """ Updates the button """
         self.next_button.disabled = self.current_page == len(self.embeds) - 1
         self.back_button.disabled = self.current_page == 0
     
@@ -462,7 +463,7 @@ class BaseBundle(ui.View):
         if len(BUNDLES) > 1:
             return await self.interaction.followup.send('\u200b', view=SelectionFeaturedBundleView(BUNDLES, self))
         
-        self.embeds = self.build_Featured_Bundle(BUNDLES[0])
+        self.embeds = self.build_featured_bundle(BUNDLES[0])
         self.fill_items()
         self.update_button()
         await self.interaction.followup.send(embeds=self.embeds[0], view=self)
@@ -477,6 +478,7 @@ class SelectionFeaturedBundleView(ui.View):
         self.select_bundle.placeholder = self.other_view.response.get('DROPDOWN_CHOICE_TITLE')
     
     def __build_select(self) -> None:
+        """ Builds the select bundle """
         for index, bundle in enumerate(self.bundles):
             self.select_bundle.add_option(label=bundle['names'][str(VLR_locale)], value=index)
     
@@ -484,7 +486,7 @@ class SelectionFeaturedBundleView(ui.View):
     async def select_bundle(self, interaction: Interaction, select: ui.Select):
         value = select.values[0]
         bundle = self.bundles[int(value)]
-        embeds = self.other_view.build_Featured_Bundle(bundle)
+        embeds = self.other_view.build_featured_bundle(bundle)
         self.other_view.fill_items()
         self.other_view.update_button()
         await interaction.response.edit_message(content=None, embeds=embeds[0], view=self.other_view)

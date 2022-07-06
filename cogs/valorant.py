@@ -30,6 +30,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     
     def __init__(self, bot: ValorantBot) -> None:
         self.bot: ValorantBot = bot
+        self.endpoint: API_ENDPOINT = None
+        self.db: DATABASE = None
         self.reload_cache.start()
     
     def cog_unload(self) -> None:

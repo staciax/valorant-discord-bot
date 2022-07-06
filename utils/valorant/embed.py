@@ -61,7 +61,7 @@ class GetEmbed:
         title_mission = response.get('TITLE')
         title_daily = response.get('DAILY')
         title_weekly = response.get('WEEKLY')
-        title_newplayer = response.get('NEWPLAYER')
+        title_new_player = response.get('NEWPLAYER')
         clear_all_mission = response.get('NO_MISSION')
         reset_in = response.get('DAILY_RESET')
         refill_in = response.get('REFILLS')
@@ -73,11 +73,11 @@ class GetEmbed:
         daily_end = data['daily_end']
         weekly_format = data['weekly']
         weekly_end = data['weekly_end']
-        newplayer_format = data['newplayer']
+        new_player_format = data['newplayer']
         
         daily = ''.join(daily_format)
         weekly = ''.join(weekly_format)
-        newplayer = ''.join(newplayer_format)
+        new_player = ''.join(new_player_format)
         
         weekly_end_time = ''
         with contextlib.suppress(Exception):
@@ -97,10 +97,10 @@ class GetEmbed:
                 value=f"{weekly}\n\n{weekly_end_time}",
                 inline=False
             )
-        if len(newplayer) != 0:
+        if len(new_player) != 0:
             embed.add_field(
-                name=f"**{title_newplayer}**",
-                value=f"{newplayer}",
+                name=f"**{title_new_player}**",
+                value=f"{new_player}",
                 inline=False
             )
         if len(embed.fields) == 0:
@@ -141,10 +141,10 @@ class GetEmbed:
         
         return embed
     
-    # ---------- NIGHTMARKET EMBED ---------- #
+    # ---------- NIGHT MARKET EMBED ---------- #
     
     def __nightmarket_embed(skins: Dict, bot: ValorantBot) -> discord.Embed:
-        """Generate Embed Nightmarket"""
+        """Generate Embed Night Market"""
         
         uuid, name, icon, price, dpice = skins['uuid'], skins['name'], skins['icon'], skins['price'], skins['disprice']
         
@@ -156,7 +156,7 @@ class GetEmbed:
     
     @classmethod
     def nightmarket(cls, player: str, offer: Dict, bot: ValorantBot, response: Dict) -> discord.Embed:
-        """Embed Nightmarket"""
+        """Embed Night Market"""
         
         # language
         msg_response = response.get('RESPONSE')
@@ -177,7 +177,7 @@ class GetEmbed:
     # ---------- BATTLEPASS EMBED ---------- #
     
     def battlepass(player: str, data: Dict, season: Dict, response: Dict) -> discord.Embed:
-        """Embed Battlepass"""
+        """Embed Battle-pass"""
         
         # language
         MSG_RESPONSE = response.get('RESPONSE')

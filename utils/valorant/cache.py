@@ -73,7 +73,7 @@ def fetch_tier() -> None:
 
 
 def pre_fetch_price() -> None:
-    """ Pre fetch the price of all skins """
+    """ Pre-fetch the price of all skins """
     try:
         data = JSON.read('cache')
         pre_json = {'is_price': False}
@@ -110,13 +110,13 @@ def fetch_playercard() -> None:
     """ Fetch the player card from valorant-api.com """
     
     data = JSON.read('cache')
-    print('Fetching Playercards !')
+    print('Fetching Player cards !')
     resp = requests.get(f'https://valorant-api.com/v1/playercards?language=all')
     if resp.status_code == 200:
-        json = {}
+        payload = {}
         # json['version'] = get_valorant_version()
         for card in resp.json()['data']:
-            json[card['uuid']] = {
+            payload[card['uuid']] = {
                 'uuid': card['uuid'],
                 'names': card['displayName'],
                 'icon': {
@@ -125,7 +125,7 @@ def fetch_playercard() -> None:
                     'large': card['largeArt'],
                 }
             }
-        data['playercards'] = json
+        data['playercards'] = payload
         JSON.save('cache', data)
 
 
@@ -137,14 +137,14 @@ def fetch_titles() -> None:
     
     resp = requests.get(f'https://valorant-api.com/v1/playertitles?language=all')
     if resp.status_code == 200:
-        json = {}
+        payload = {}
         for title in resp.json()['data']:
-            json[title['uuid']] = {
+            payload[title['uuid']] = {
                 'uuid': title['uuid'],
                 'names': title['displayName'],
                 'text': title['titleText']
             }
-        data['titles'] = json
+        data['titles'] = payload
         JSON.save('cache', data)
 
 
@@ -156,14 +156,14 @@ def fetch_spray() -> None:
     print('Fetching Sprays !')
     resp = requests.get(f'https://valorant-api.com/v1/sprays?language=all')
     if resp.status_code == 200:
-        json = {}
+        payload = {}
         for spray in resp.json()['data']:
-            json[spray['uuid']] = {
+            payload[spray['uuid']] = {
                 'uuid': spray['uuid'],
                 'names': spray['displayName'],
                 'icon': spray['fullTransparentIcon'] or spray['displayIcon']
             }
-        data['sprays'] = json
+        data['sprays'] = payload
         JSON.save('cache', data)
 
 
@@ -299,14 +299,14 @@ def fetch_currencies() -> None:
     print('Fetching currencies !')
     resp = requests.get(f'https://valorant-api.com/v1/currencies?language=all')
     if resp.status_code == 200:
-        json = {}
+        payload = {}
         for currencie in resp.json()['data']:
-            json[currencie['uuid']] = {
+            payload[currencie['uuid']] = {
                 'uuid': currencie['uuid'],
                 'names': currencie['displayName'],
                 'icon': currencie['displayIcon']
             }
-        data['currencies'] = json
+        data['currencies'] = payload
         JSON.save('cache', data)
 
 
@@ -319,29 +319,29 @@ def fetch_buddies() -> None:
     
     resp = requests.get(f'https://valorant-api.com/v1/buddies?language=all')
     if resp.status_code == 200:
-        json = {}
+        payload = {}
         for buddy in resp.json()['data']:
-            buddyone = buddy['levels'][0]
-            json[buddyone['uuid']] = {
-                'uuid': buddyone['uuid'],
+            buddy_one = buddy['levels'][0]
+            payload[buddy_one['uuid']] = {
+                'uuid': buddy_one['uuid'],
                 'names': buddy['displayName'],
-                'icon': buddyone['displayIcon']
+                'icon': buddy_one['displayIcon']
             }
-        data['buddies'] = json
+        data['buddies'] = payload
         JSON.save('cache', data)
 
 
 def fetch_price(data_price: Dict) -> None:
-    """ Fetch the price of an skin """
+    """ Fetch the price of a skin """
     
     data = JSON.read('cache')
-    prices = {}
+    payload = {}
     for skin in data_price['Offers']:
         if skin["OfferID"] in data['skins']:
             *cost, = skin["Cost"].values()
-            prices[skin['OfferID']] = cost[0]
+            payload[skin['OfferID']] = cost[0]
     # prices['is_price'] = True
-    data['prices'] = prices
+    data['prices'] = payload
     JSON.save('cache', data)
 
 

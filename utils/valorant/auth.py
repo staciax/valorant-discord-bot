@@ -30,11 +30,11 @@ def _extract_tokens(data: str) -> str:
     return response
 
 
-def _extract_tokens_from_uri(URL: str) -> Optional[Tuple[str, Any]]:
+def _extract_tokens_from_uri(url: str) -> Optional[Tuple[str, Any]]:
     try:
-        accessToken = URL.split("access_token=")[1].split("&scope")[0]
-        tokenId = URL.split("id_token=")[1].split("&")[0]
-        return accessToken, tokenId
+        access_token = url.split("access_token=")[1].split("&scope")[0]
+        token_id = url.split("id_token=")[1].split("&")[0]
+        return access_token, token_id
     except IndexError:
         raise AuthenticationError('Cookies Invalid')
 
@@ -86,7 +86,7 @@ class Auth:
         self.response = {}  # prepare response for local response
     
     def local_response(self) -> LocalErrorResponse:
-        '''This function is used to check if the local response is enabled.'''
+        """This function is used to check if the local response is enabled."""
         self.response = LocalErrorResponse('AUTH', self.locale_code)
         return self.response
     
@@ -111,8 +111,7 @@ class Auth:
         r = await session.post('https://auth.riotgames.com/api/v1/authorization', json=data, headers=self._headers)
         
         # prepare cookies for auth request
-        cookies = {}
-        cookies['cookie'] = {}
+        cookies = {'cookie': {}}
         for cookie in r.cookies.items():
             cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
         
@@ -225,7 +224,7 @@ class Auth:
         else:
             return region
     
-    async def give2facode(self, twoFAcode: str, cookies: Dict) -> Dict[str, Any]:
+    async def give2facode(self, code: str, cookies: Dict) -> Dict[str, Any]:
         """ This function is used to give the 2FA code. """
         
         # language
@@ -235,15 +234,14 @@ class Auth:
         
         # headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
         
-        data = {"type": "multifactor", "code": twoFAcode, "rememberDevice": True}
+        data = {"type": "multifactor", "code": code, "rememberDevice": True}
         
         async with session.put('https://auth.riotgames.com/api/v1/authorization', headers=self._headers, json=data, cookies=cookies['cookie']) as r:
             data = await r.json()
         
         await session.close()
         if data['type'] == 'response':
-            cookies = {}
-            cookies['cookie'] = {}
+            cookies = {'cookie': {}}
             for cookie in r.cookies.items():
                 cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
             
@@ -267,7 +265,8 @@ class Auth:
         if 'cookie' in cookies: cookies = cookies['cookie']
         
         async with session.get(
-            "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
+            "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play"
+            "-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
             cookies=cookies,
             allow_redirects=False,
         ) as r:
@@ -281,8 +280,7 @@ class Auth:
         
         old_cookie = cookies.copy()
         
-        new_cookies = {}
-        new_cookies['cookie'] = old_cookie
+        new_cookies = {'cookie': old_cookie}
         for cookie in r.cookies.items():
             new_cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
         
@@ -314,7 +312,7 @@ class Auth:
     # next update
     
     async def login_with_cookie(self, cookies: Dict) -> Dict[str, Any]:
-        """ This function is used to login with cookie. """
+        """ This function is used to log in with cookie. """
         
         # language
         local_response = ResponseLanguage('cookies', self.locale_code)

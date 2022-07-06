@@ -31,6 +31,8 @@ if TYPE_CHECKING:
 class Notify(commands.Cog):
     def __init__(self, bot: ValorantBot) -> None:
         self.bot: ValorantBot = bot
+        self.endpoint: API_ENDPOINT = None
+        self.db: DATABASE = None
         self.notifys.start()
     
     def cog_unload(self) -> None:
@@ -62,7 +64,7 @@ class Notify(commands.Cog):
                 skin_offer_list = offer["SkinsPanelLayout"]["SingleItemOffers"]
                 duration = offer["SkinsPanelLayout"]["SingleItemOffersRemainingDurationInSeconds"]
                 
-                # auhor
+                # author
                 author = self.bot.get_user(int(user_id)) or await self.bot.fetch_user(int(user_id))
                 channel_send = author if data['dm_message'] else self.bot.get_channel(int(data['notify_channel']))
                 
@@ -142,22 +144,22 @@ class Notify(commands.Cog):
         # # setup emoji 
         # await setup_emoji(self.bot, interaction.guild, interaction.locale)
         
-        # check file if or not
+        # check file whether
         create_json('notifys', [])
         
         # get cache
-        skindata = self.db.read_cache()
+        skin_data = self.db.read_cache()
         
         # find skin
-        skin_list = [skindata['skins'][x]['names'][str(VLR_locale)] for x in skindata['skins']]  # get skin list
+        skin_list = [skin_data['skins'][x]['names'][str(VLR_locale)] for x in skin_data['skins']]  # get skin list
         skin_name = get_close_matches(skin, skin_list, 1)  # get skin close match
         
         if skin_name:
             notify_data = JSON.read('notifys')
             
-            find_skin = [x for x in skindata['skins'] if skindata['skins'][x]['names'][str(VLR_locale)] == skin_name[0]]
+            find_skin = [x for x in skin_data['skins'] if skin_data['skins'][x]['names'][str(VLR_locale)] == skin_name[0]]
             skin_uuid = find_skin[0]
-            skin_source = skindata['skins'][skin_uuid]
+            skin_source = skin_data['skins'][skin_uuid]
             
             name = skin_source['names'][str(VLR_locale)]
             icon = skin_source['icon']
@@ -290,8 +292,8 @@ class Notify(commands.Cog):
         
         try:
             if data['notify_mode'] == 'Specified':
-                for noti in user_skin_list:
-                    uuid = noti['uuid']
+                for notify in user_skin_list:
+                    uuid = notify['uuid']
                     skin = GetItems.get_skin(uuid)
                     
                     name = skin['names'][str(VLR_locale)]

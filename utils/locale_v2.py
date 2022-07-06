@@ -95,11 +95,10 @@ class ValorantTranslator():
     def __str__(self) -> str:
         locale = get_valorant_locale()
         return locale
-    
+
     def lower(self) -> str:
         locale = get_valorant_locale()
         return locale.lower()
-
 
 class Translator():
     """Translate valorant item name"""
