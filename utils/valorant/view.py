@@ -241,7 +241,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
                 return await send_embed(login['error'])
             
             elif auth['auth'] == 'failed':
-                return await send_embed(login['error'])
+                return await send_embed(auth['error'])
     
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
         """ Called when the user submits the modal with an error. """

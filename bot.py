@@ -37,7 +37,7 @@ class ValorantBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
         self.session: aiohttp.ClientSession = None
-        self.bot_version = '3.2.5'
+        self.bot_version = '3.2.6'
         self.tree.interaction_check = self.interaction_check
     
     @staticmethod
