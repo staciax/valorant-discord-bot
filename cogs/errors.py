@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ssl import SSLCertVerificationError
 
 import traceback
 from typing import TYPE_CHECKING, Union
@@ -36,7 +37,7 @@ class ErrorHandler(commands.Cog):
             error = "You are not the owner of this bot."
         elif isinstance(error, BadArgument):
             error = "Bad argument."
-        elif isinstance(error, (ValorantBotError, ResponseError, HandshakeError, DatabaseError, AuthenticationError)):
+        elif isinstance(error, (ValorantBotError, ResponseError, HandshakeError, DatabaseError, AuthenticationError, SSLCertVerificationError)):
             error = error
         elif isinstance(error, ResponseError):
             error = "Empty response from Riot server."
