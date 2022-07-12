@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import sys
 import traceback
 
@@ -9,12 +8,13 @@ import aiohttp
 import discord
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
-from dotenv import load_dotenv
 
 from utils import locale_v2
+from utils.valorant import (
+    TOKEN,
+    OWNER_ID
+)
 from utils.valorant.cache import get_cache
-
-load_dotenv()
 
 initial_extensions = [
     'cogs.admin',
@@ -64,7 +64,7 @@ class ValorantBot(commands.Bot):
             self.session = aiohttp.ClientSession()
         
         try:
-            self.owner_id = int(os.getenv('OWNER_ID'))
+            self.owner_id = int(OWNER_ID)
         except ValueError:
             self.bot_app_info = await self.application_info()
             self.owner_id = self.bot_app_info.owner.id
@@ -97,7 +97,7 @@ class ValorantBot(commands.Bot):
     
     async def start(self, debug: bool = False) -> None:
         self.debug = debug
-        return await super().start(os.getenv('TOKEN'), reconnect=True)
+        return await super().start(TOKEN, reconnect=True)
 
 
 def run_bot() -> None:
