@@ -17,7 +17,7 @@ from utils.valorant.embed import Embed, GetEmbed
 from utils.valorant.endpoint import API_ENDPOINT
 from utils.valorant.local import ResponseLanguage
 from utils.valorant.resources import setup_emoji
-from utils.locale_v2 import ValorantTranslator
+from utils.i18n import ValorantTranslator
 
 VLR_locale = ValorantTranslator()
 

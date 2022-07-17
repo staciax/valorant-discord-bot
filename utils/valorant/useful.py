@@ -11,7 +11,7 @@ import discord
 
 from .resources import get_item_type, points as points_emoji, tiers as tiers_resources
 from ..errors import ValorantBotError
-from ..locale_v2 import ValorantTranslator
+from ..i18n import ValorantTranslator
 
 VLR_locale = ValorantTranslator()
 

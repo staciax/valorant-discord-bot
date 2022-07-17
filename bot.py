@@ -11,7 +11,7 @@ from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
 from dotenv import load_dotenv
 
-from utils import locale_v2
+from utils import i18n
 from utils.valorant.cache import get_cache
 
 load_dotenv()
@@ -42,8 +42,8 @@ class ValorantBot(commands.Bot):
     
     @staticmethod
     async def interaction_check(interaction: discord.Interaction) -> bool:
-        locale_v2.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update
-        locale_v2.set_valorant_locale(interaction.locale)  # valorant localized
+        i18n.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update
+        i18n.set_valorant_locale(interaction.locale)  # valorant localized
         return True
     
     @property

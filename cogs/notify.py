@@ -13,7 +13,7 @@ from discord.ext import commands, tasks
 from utils.errors import (
     ValorantBotError
 )
-from utils.locale_v2 import ValorantTranslator
+from utils.i18n import ValorantTranslator
 from utils.valorant import view as View
 from utils.valorant.cache import create_json
 from utils.valorant.db import DATABASE

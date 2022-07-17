@@ -14,7 +14,7 @@ import urllib3
 # Local
 from .local import LocalErrorResponse, ResponseLanguage
 from ..errors import AuthenticationError
-from ..locale_v2 import ValorantTranslator
+from ..i18n import ValorantTranslator
 
 vlr_locale = ValorantTranslator()
 

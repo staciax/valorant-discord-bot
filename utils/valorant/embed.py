@@ -7,7 +7,7 @@ from typing import Any, Dict, List, TYPE_CHECKING, Union
 import discord
 
 from .useful import (calculate_level_xp, format_relative, GetEmoji, GetFormat, iso_to_time, JSON)
-from ..locale_v2 import ValorantTranslator
+from ..i18n import ValorantTranslator
 
 VLR_locale = ValorantTranslator()
 

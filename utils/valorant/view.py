@@ -12,7 +12,7 @@ from .resources import get_item_type
 # Local
 from .useful import format_relative, GetEmoji, GetItems, JSON
 from ..errors import ValorantBotError
-from ..locale_v2 import ValorantTranslator
+from ..i18n import ValorantTranslator
 
 VLR_locale = ValorantTranslator()
 
