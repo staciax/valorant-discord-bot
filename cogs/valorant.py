@@ -83,7 +83,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='Log in with your Riot acoount')
     @app_commands.describe(username='Input username', password='Input password')
     # @dynamic_cooldown(cooldown_5s)
-    async def login(self, interaction: Interaction, username: str, password: str) -> None:
+    async def login(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24],
+        password: app_commands.Range[str, 1, 128]
+    ) -> None:
         
         response = ResponseLanguage(interaction.command.name, interaction.locale)
         
@@ -128,7 +133,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.describe(username='Input username (without login)', password='password (without login)')
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
-    async def store(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+    async def store(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24] = None,
+        password: app_commands.Range[str, 1, 128] = None
+    ) -> None:
         
         # language
         response = ResponseLanguage(interaction.command.name, interaction.locale)
@@ -156,7 +166,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='View your remaining Valorant and Riot Points (VP/RP)')
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
-    async def point(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+    async def point(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24] = None,
+        password: app_commands.Range[str, 1, 128] = None
+    ) -> None:
         
         # check if user is logged in
         is_private_message = True if username is not None or password is not None else False
@@ -179,7 +194,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     
     @app_commands.command(description='View your daily/weekly mission progress')
     # @dynamic_cooldown(cooldown_5s)
-    async def mission(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+    async def mission(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24] = None,
+        password: app_commands.Range[str, 1, 128] = None
+    ) -> None:
         
         # check if user is logged in
         is_private_message = True if username is not None or password is not None else False
@@ -199,7 +219,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     
     @app_commands.command(description='Show skin offers on the nightmarket')
     # @dynamic_cooldown(cooldown_5s)
-    async def nightmarket(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+    async def nightmarket(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24] = None,
+        password: app_commands.Range[str, 1, 128] = None
+    ) -> None:
         
         # check if user is logged in
         is_private_message = True if username is not None or password is not None else False
@@ -227,7 +252,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     
     @app_commands.command(description='View your battlepass current tier')
     # @dynamic_cooldown(cooldown_5s)
-    async def battlepass(self, interaction: Interaction, username: str = None, password: str = None) -> None:
+    async def battlepass(
+        self,
+        interaction: Interaction,
+        username: app_commands.Range[str, 1, 24] = None,
+        password: app_commands.Range[str, 1, 128] = None
+    ) -> None:
         
         # check if user is logged in
         is_private_message = True if username is not None or password is not None else False
