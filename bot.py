@@ -29,6 +29,7 @@ intents.message_content = True
 
 BOT_PREFIX = '-'
 
+# todo claer white space
 
 class ValorantBot(commands.Bot):
     debug: bool
@@ -37,7 +38,7 @@ class ValorantBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
         self.session: aiohttp.ClientSession = None
-        self.bot_version = '3.2.6'
+        self.bot_version = '3.3.0'
         self.tree.interaction_check = self.interaction_check
     
     @staticmethod
@@ -71,6 +72,7 @@ class ValorantBot(commands.Bot):
         
         self.setup_cache()
         await self.load_cogs()
+        # await self.tree.sync()
     
     async def load_cogs(self) -> None:
         for ext in initial_extensions:
@@ -83,18 +85,18 @@ class ValorantBot(commands.Bot):
             ):
                 print(f'Failed to load extension {ext}.', file=sys.stderr)
                 traceback.print_exc()
-    
+
     @staticmethod
     def setup_cache() -> None:
         try:
             open('data/cache.json')
         except FileNotFoundError:
             get_cache()
-    
+
     async def close(self) -> None:
         await self.session.close()
         await super().close()
-    
+
     async def start(self, debug: bool = False) -> None:
         self.debug = debug
         return await super().start(os.getenv('TOKEN'), reconnect=True)
@@ -102,7 +104,7 @@ class ValorantBot(commands.Bot):
 
 def run_bot() -> None:
     bot = ValorantBot()
-    asyncio.run(bot.start(debug=False))
+    asyncio.run(bot.start())
 
 
 if __name__ == '__main__':
