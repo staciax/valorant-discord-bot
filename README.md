@@ -46,6 +46,11 @@
 <!-- Inspired by Red Discord Bot -->
 <!-- https://github.com/Cog-Creators/Red-DiscordBot -->
 
+# Note ⚠️
+- will not receive updates until The new version will be finished. sorry 😭
+- `
+I'm a student and I have to divide my study time with this project.`
+
 # About
 
 Discord bot that shows your infomation and more without open the VALORANT by using
