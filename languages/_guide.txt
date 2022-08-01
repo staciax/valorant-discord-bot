@@ -6,6 +6,7 @@
 'zh-CN' chinese / translate by JL Lai#5533
 'pt-BR' Brazilian Portuguese / translate by sev#1337
 'ja' japanese /  translate by KANATA IS GOD#6356
+'de' german / translate by Hackante#1482
 
 Look up the language code for your language in https://discord.com/developers/docs/reference#locales
 
