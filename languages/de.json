@@ -18,18 +18,18 @@
         "FAILED": "Abmelden fehlgeschlagen, bitte versuche es erneut!"
       },
       "store": {
-        "NAME": "store",
-        "DESCRIPTION": "Shows your daily store in your accounts",
+        "NAME": "shop",
+        "DESCRIPTION": "Zeigt dir den Shop deines Kontos an",
         "DESCRIBE": {
-          "username": "Input username! (temporary login)",
-          "password": "Input password! (temporary login)"
+          "username": "Benutzername eingeben! (temporäre Anmeldung)",
+          "password": "Passwort eingeben! (temporäre Anmeldung)"
         },
-        "RESPONSE": "Daily store for **{username}** \nResets {duration}"
+        "RESPONSE": "Täglicher Shop für **{username}** \nZurücksetzen {duration}"
       },
       "point": {
-        "NAME": "point",
-        "DESCRIPTION": "View your remaining Valorant and Radiant Points (VP/RP)",
-        "POINT": "Points"
+        "NAME": "punkte",
+        "DESCRIPTION": "Sieh deine verbleibenden Valorant und Radiant Punkte (VP/RP) an",
+        "POINT": "Punkte"
       },
       "mission": {
         "NAME": "mission",
