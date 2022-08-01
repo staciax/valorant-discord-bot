@@ -33,7 +33,7 @@
       },
       "mission": {
         "NAME": "mission",
-        "DESCRIPTION": "Zeigt deinen täglichen/wöchentlichen Missionsfortschritt an",
+        "DESCRIPTION": "Zeigt deinen täglichen/wöchentlichen Missions-Fortschritt an",
         "TITLE": "Mission",
         "DAILY": "Täglich",
         "WEEKLY": "Wöchentlich",
@@ -64,7 +64,7 @@
         "NAME": "hinzufügen",
         "DESCRIPTION": "Füge eine Benachrichtigung hinzu, wenn ein bestimmter Skin im Shop verfügbar ist",
         "DESCRIBE": {
-          "skin": "Skinname bei dem du benachrichtigt werden willst"
+          "skin": "Skin-Name bei dem du benachrichtigt werden willst"
         },
         "SUCCESS": "Benachrichtigung für {emoji} **{skin}** erfolgreich hinzugefügt",
         "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** ist bereits in deinen Benachrichtigungen",
@@ -75,26 +75,26 @@
       "notify_list": {
         "NAME": "liste",
         "DESCRIPTION": "Zeigt die Skins, für die du Benachrichtigungen erhälst",
-        "TITLE": "Deine Benachrichtigungsliste",
+        "TITLE": "Deine Benachrichtigungs-Liste",
         "DONT_HAVE_NOTIFY": "Du hast keine Benachrichtigungen",
         "REMOVE_NOTIFY": "Auf den Knopf klicken um  Benachrichtigung zu entfernen"
       },
       "notify_mode": {
         "NAME": "modus",
-        "DESCRIPTION": "Ändere den Benachrichtigungsmodus",
+        "DESCRIPTION": "Ändere den Benachrichtigungs-Modus",
         "DESCRIBE": {
-          "mode": "Der neue Benachrichtigungsmodus"
+          "mode": "Der neue Benachrichtigungs-Modus"
         },
-        "SUCCESS": "Benarichtigingsmodus erfolgreich zu **{mode}** geändert",
-        "TURN_OFF": "Benachrichtigungsmodus ausschalten"
+        "SUCCESS": "Benachrichtigungs-Modus erfolgreich zu **{mode}** geändert",
+        "TURN_OFF": "Benachrichtigungs-Modus ausschalten"
       },
       "notify_test": {
         "NAME": "test",
         "DESCRIPTION": "Benachrichtigung testen",
         "NOTIFY_IS_WORKING": "Benachrichtigung funktioniert",
         "NOTIFY_TURN_OFF": "Du hast die Benachrichtigungen ausgeschaltet",
-        "EMPTY_LIST": "Benachrichtigungsliste ist leer",
-        "BOT_MISSING_PERM": "**Ich besitze keine Berechtigungen Benachrichtigungen in diesen Kanal zu senden!** \nBitte überprüfe ob der Bot diese Berechtigungen in diesem Kanal hat: `Kanal anzeigen`, `Nachrichten senden`, `Links einbetten`, `Externe Emojis verwenden`. Versuche `/notify test` danach.",
+        "EMPTY_LIST": "Benachrichtigungs-Liste ist leer",
+        "BOT_MISSING_PERM": "**Ich besitze keine Berechtigungen, Benachrichtigungen in diesen Kanal zu senden!** \nBitte überprüfe ob der Bot diese Berechtigungen in diesem Kanal hat: `Kanal anzeigen`, `Nachrichten senden`, `Links einbetten`, `Externe Emojis verwenden`. Versuche `/notify test` danach.",
         "FAILED_SEND_NOTIFY": "Fehler beim senden der Benachrichtigung, bitte versuche es erneut",
         "PLEASE_ALLOW_DM_MESSAGE": "Bitte lasse Direktnachrichten in deinen Privatsphäreeinstellungen zu."
       },
@@ -104,11 +104,11 @@
       },
       "notify_channel": {
         "NAME": "kanal",
-        "DESCRIPTION": "Ändere den Benachrichtigungskanal",
+        "DESCRIPTION": "Ändere den Benachrichtigungs-Kanal",
         "DESCRIBE": {
-          "channel": "Select the channel you want to change."
+          "channel": "Wähle den Kanal zum Ändern aus"
         },
-        "SUCCESS": "Benachrichtigungskanal zu **{channel}** geändert"
+        "SUCCESS": "Benachrichtigungs-Kanal zu **{channel}** geändert"
       },
       "bundle": {
         "NAME": "Paket",
