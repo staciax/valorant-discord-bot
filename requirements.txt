@@ -4,3 +4,4 @@ python-dotenv~=0.19.2
 aiohttp~=3.8.1
 urllib3~=1.26.8
 multidict~=6.0.2
+uvloop; sys_platform != 'win32'

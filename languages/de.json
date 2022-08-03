@@ -1,0 +1,183 @@
+{
+    "translation_by": "Hackante#1482",
+    "commands": {
+      "login": {
+        "NAME": "anmelden",
+        "DESCRIPTION": "Melde dich mit deinem Riot Konto an",
+        "DESCRIBE": {
+          "username": "Benutzername eingeben!",
+          "password": "Passwort eingeben!"
+        },
+        "SUCCESS": "Erfolgreich angemeldet",
+        "FAILED": "Anmelden fehlgeschlagen, bitte versuche es erneut!"
+      },
+      "logout": {
+        "NAME": "abmelden",
+        "DESCRIPTION": "Melde dich ab und lösche deinen Account aus der Datenbank",
+        "SUCCESS": "Erfolgreich abgemeldet!",
+        "FAILED": "Abmelden fehlgeschlagen, bitte versuche es erneut!"
+      },
+      "store": {
+        "NAME": "shop",
+        "DESCRIPTION": "Zeigt dir den Shop deines Kontos an",
+        "DESCRIBE": {
+          "username": "Benutzername eingeben! (temporäre Anmeldung)",
+          "password": "Passwort eingeben! (temporäre Anmeldung)"
+        },
+        "RESPONSE": "Täglicher Shop für **{username}** \nZurückgesetzt {duration}"
+      },
+      "point": {
+        "NAME": "punkte",
+        "DESCRIPTION": "Sieh dir deine verbleibenden Valorant und Radiant Punkte (VP/RP) an",
+        "POINT": "Punkte"
+      },
+      "mission": {
+        "NAME": "mission",
+        "DESCRIPTION": "Zeigt deinen täglichen/wöchentlichen Missions-Fortschritt an",
+        "TITLE": "Mission",
+        "DAILY": "Täglich",
+        "WEEKLY": "Wöchentlich",
+        "NEWPLAYER": "Neuer Spieler",
+        "NO_MISSION": "Keine Missionen",
+        "DAILY_RESET": "Zurückgesetzt {duration}",
+        "REFILLS": "Aufgefüllt {duration}"
+      },
+      "nightmarket": {
+        "NAME": "nachtmarkt",
+        "DESCRIPTION": "Zeigt Skinangebote auf dem Nachtmarkt an",
+        "RESPONSE": "Nachtmarkt für **{username}** | Läuft {duration} ab",
+        "NIGMARKET_HAS_END": "**Nachtmarkt** ist vorbei"
+      },
+      "battlepass": {
+        "NAME": "battlepass",
+        "DESCRIPTION": "Zeigt deine momentane Battlepass-Stufe an",
+        "RESPONSE": "**Nächste Belohnung:** {next}\n**Typ:** {type}\n**XP:** {xp}\n**AKT ENDE:** {end}",
+        "TIER": "Stufe",
+        "PLAYER_CARD": "Spieler Banner",
+        "SPRAY": "Graffiti",
+        "BUDDY": "Talismane",
+        "POINT": "Punkt",
+        "PLAYER_TITLE": "Titel",
+        "SKIN": "Skin"
+      },
+      "notify_add": {
+        "NAME": "hinzufügen",
+        "DESCRIPTION": "Füge eine Benachrichtigung hinzu, wenn ein bestimmter Skin im Shop verfügbar ist",
+        "DESCRIBE": {
+          "skin": "Skin-Name bei dem du benachrichtigt werden willst"
+        },
+        "SUCCESS": "Benachrichtigung für {emoji} **{skin}** erfolgreich hinzugefügt",
+        "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** ist bereits in deinen Benachrichtigungen",
+        "NOT_FOUND": "Skin nicht gefunden",
+        "REMOVE_NOTIFY": "Entferne Benachrichtigung",
+        "REMOVED_NOTIFY": "**{skin}** wurde von deinen Benachrichtigungen entfernt"
+      },
+      "notify_list": {
+        "NAME": "liste",
+        "DESCRIPTION": "Zeigt die Skins, für die du Benachrichtigungen erhälst",
+        "TITLE": "Deine Benachrichtigungs-Liste",
+        "DONT_HAVE_NOTIFY": "Du hast keine Benachrichtigungen",
+        "REMOVE_NOTIFY": "Auf den Knopf klicken um  Benachrichtigung zu entfernen"
+      },
+      "notify_mode": {
+        "NAME": "modus",
+        "DESCRIPTION": "Ändere den Benachrichtigungs-Modus",
+        "DESCRIBE": {
+          "mode": "Der neue Benachrichtigungs-Modus"
+        },
+        "SUCCESS": "Benachrichtigungs-Modus erfolgreich zu **{mode}** geändert",
+        "TURN_OFF": "Benachrichtigungs-Modus ausschalten"
+      },
+      "notify_test": {
+        "NAME": "test",
+        "DESCRIPTION": "Benachrichtigung testen",
+        "NOTIFY_IS_WORKING": "Benachrichtigung funktioniert",
+        "NOTIFY_TURN_OFF": "Du hast die Benachrichtigungen ausgeschaltet",
+        "EMPTY_LIST": "Benachrichtigungs-Liste ist leer",
+        "BOT_MISSING_PERM": "**Ich besitze keine Berechtigungen, Benachrichtigungen in diesen Kanal zu senden!** \nBitte überprüfe ob der Bot diese Berechtigungen in diesem Kanal hat: `Kanal anzeigen`, `Nachrichten senden`, `Links einbetten`, `Externe Emojis verwenden`. Versuche `/notify test` danach.",
+        "FAILED_SEND_NOTIFY": "Fehler beim senden der Benachrichtigung, bitte versuche es erneut",
+        "PLEASE_ALLOW_DM_MESSAGE": "Bitte lasse Direktnachrichten in deinen Privatsphäreeinstellungen zu."
+      },
+      "notify_send": {
+        "RESPONSE_SPECIFIED": "{emoji} **{name}** ist in deimen täglichen Shop!\nVerbleibend {duration}",
+        "RESPONSE_ALL": "Täglicher Shop für **{username}** | Verbleibend {duration}"
+      },
+      "notify_channel": {
+        "NAME": "kanal",
+        "DESCRIPTION": "Ändere den Benachrichtigungs-Kanal",
+        "DESCRIBE": {
+          "channel": "Wähle den Kanal zum Ändern aus"
+        },
+        "SUCCESS": "Benachrichtigungs-Kanal zu **{channel}** geändert"
+      },
+      "bundle": {
+        "NAME": "Paket",
+        "DESCRIPTION": "Inspiziere ein bestimmtes Paket",
+        "DESCRIBE": {
+          "bundle": "Der Paketnamen zum Inspizieren"
+        },
+        "TITLE": "Sammlung",
+        "DROPDOWN_CHOICE_TITLE": "Wähle ein Paket:",
+        "NOT_FOUND_BUNDLE": "Paket nicht gefunden"
+      },
+      "bundles": {
+        "NAME": "pakete",
+        "DESCRIPTION": "Vorgestellte Pakete im Shop ansehen",
+        "TITLE": "Vorgestellte Pakete: {bundle} Sammlung",
+        "DURATION": "Läuft {duration} ab",
+        "DROPDOWN_CHOICE_TITLE": "Wähle ein Paket:"
+      },
+      "debug": {
+        "NAME": "debug",
+        "DESCRIPTION": "Der Debug-Befehl für den Bot",
+        "DESCRIBE": {
+          "bug": "Der Fehler zum beheben",
+          "choice": {
+            "skin_price_not_loading": "Skinpreis lädt nicht",
+            "emoji_price_not_loading": "Emoji lädt nicht",
+            "cache_price_not_loading": "Cache lädt nicht"
+          }
+        },
+        "SUCCESS": "**{bug}** erfolgreich behoben"
+      },
+      "cookies": {
+        "NAME": "cookies",
+        "DESCRIPTION": "Melde dich bei deinem Riot Konto mit Browser-Cookies an",
+        "DESCRIBE": {
+          "cookie": "Dein Cookie"
+        },
+        "SUCCESS": "Erfolgreich abgemeldet!",
+        "FAILED": "Unzulässiger Cookie"
+      }
+    },
+    "errors": {
+      "UNKNOW_ERROR": "Ein unbekannter Fehler ist aufgetreten",
+      "AUTH": {
+        "INVALID_PASSWORD": "Dein Benutzername oder Passwort ist nicht korrekt.",
+        "RATELIMIT": "Bitte warte ein paar Minuten, bevor du es erneut versuchst.",
+        "COOKIES_EXPIRED": "Cookie ist abgelaufen, bitte melde dich erneut mit `/login` an.",
+        "NO_NAME_TAG": "Dieser Benutzer hat noch keinen Namen oder Tagline erstellt.",
+        "REGION_NOT_FOUND": "Ein unbekannter Fehler ist aufgetreten, bitte melde dich erneut mit `/login` an.",
+        "LOGIN_COOKIE_FAILED": "Anmelden mit Cookies fehlgeschlagen.",
+        "INPUT_2FA_CODE": "2FA Code eingeben!",
+        "2FA_ENABLE": "Du hast 2FA aktiviert!",
+        "2FA_TO_EMAIL": "Riot hat einen Code gesentet an: ",
+        "2FA_INVALID_CODE": "Code ist ungültig. Bitte melde dich erneut mit `/login` an.",
+        "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA nicht unterstützt, bitte melde dich erneut mit `/login` an, nutze aber einen Befehl ohne Benutzername und Passwort."
+      },
+      "DATABASE": {
+        "NOT_LOGIN": "Du bist nicht registriert! Bitte nutze `/login` zum Registrieren!",
+        "LOGIN_ERROR": "Anmeldung fehlgeschlagen, bitte versuche es erneut!",
+        "LOGOUT_ERROR": "Ich kann dich nicht abmelden, wenn du nicht angemeldet bist.",
+        "LOGOUT_EXCEPT": "Ein Fehler beim Abmelden ist aufgetreten."
+      },
+      "API": {
+        "FAILED_ACTIVE": "Fehler beim aktivieren der API",
+        "REQUEST_FAILED": "API-Antwort fehlgeschlagen"
+      },
+      "SETUP_EMOJI": {
+        "MISSING_PERM": "Ich besitze keine Berechtigung Emojis zu erstellen!",
+        "FAILED_CREATE_EMOJI": "Ich kann keine Emojis erstellen, bitte versuche es erneut"
+      }
+    }
+  }
