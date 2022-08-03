@@ -1,117 +1,81 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import sys
 import traceback
 
 import aiohttp
 import discord
-from datetime import datetime
-from discord import utils
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
 from dotenv import load_dotenv
 
-from utils.i18n import Translator
+from utils import locale_v2
+from utils.valorant.cache import get_cache
 
 load_dotenv()
+
+initial_extensions = [
+    'cogs.admin',
+    'cogs.errors',
+    'cogs.notify',
+    'cogs.valorant'
+]
+
+# intents required
+intents = discord.Intents.default()
+intents.message_content = True
+
+BOT_PREFIX = '-'
+
+# todo claer white space
+
 class ValorantBot(commands.Bot):
+    debug: bool
     bot_app_info: discord.AppInfo
-
-    # intents required
-
-
+    
     def __init__(self) -> None:
-
-        # intents
-        intents = discord.Intents.default()
-
-        # allowed_mentions
-        allowed_mentions = discord.AllowedMentions(roles=False, everyone=False, users=True)
-
-
-        super().__init__(
-            command_prefix=[],
-            help_command=None,
-            case_insensitive=True,
-            intents=intents,
-            allowed_mentions=allowed_mentions,
-        )
-
-        # bot stuff
-        self.launch_time = f'<t:{round(datetime.now().timestamp())}:R>'
-        self.version = '4.0.0a'
-
-        # bot theme
-        self.theme_primacy = 0xffffff
-        self.theme_secondary = 0x111111
-
-        # bot invite link
-        self.invite_permission = 280576
-        self.invite_url = discord.utils.oauth_url(
-            self.application_id,
-            permissions=discord.Permissions(self.invite_permission),
-        )
-
-        # i18n stuff
-        self.translator: Translator = utils.MISSING
-
-        # http session stuff
-        self.session: aiohttp.ClientSession = utils.MISSING
-
-        # extensions
-        self.initial_extensions = [
-            'cogs.admin',
-            'cogs.errors',
-            'cogs.valorant'
-        ]
-
-
-
+        super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
+        self.session: aiohttp.ClientSession = None
+        self.bot_version = '3.3.5'
+        self.tree.interaction_check = self.interaction_check
+    
+    @staticmethod
+    async def interaction_check(interaction: discord.Interaction) -> bool:
+        locale_v2.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update
+        locale_v2.set_valorant_locale(interaction.locale)  # valorant localized
+        return True
+    
     @property
     def owner(self) -> discord.User:
         return self.bot_app_info.owner
-
+    
     async def on_ready(self) -> None:
-
-        print(f"Logged in as: {self.user}", end='\n')
-        print(f"Version: {self.version}", end='\n')
-
+        await self.tree.sync()
+        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
+        print(f"Version: {self.bot_version}")
+        
         # bot presence
-        activity_text = f"valorant v{self.version}"
-        await self.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.listening,
-                name=activity_text,
-            )
-        )
-
+        activity_type = discord.ActivityType.listening
+        await self.change_presence(activity=discord.Activity(type=activity_type, name="(╯•﹏•╰)"))
+    
     async def setup_hook(self) -> None:
-
-        # session
-        if self.session is utils.MISSING:
+        if self.session is None:
             self.session = aiohttp.ClientSession()
-
-        # i18n
-        if self.translator is utils.MISSING:
-            self.translator = Translator()
-            await self.tree.set_translator(self.translator)
-
-        # bot info
+        
         try:
             self.owner_id = int(os.getenv('OWNER_ID'))
         except ValueError:
             self.bot_app_info = await self.application_info()
             self.owner_id = self.bot_app_info.owner.id
-
-        # load cogs
+        
+        self.setup_cache()
         await self.load_cogs()
-
-        # tree sync application commands
-        await self.tree.sync()
-
+        # await self.tree.sync()
+    
     async def load_cogs(self) -> None:
-        for ext in self.initial_extensions:
+        for ext in initial_extensions:
             try:
                 await self.load_extension(ext)
             except (
@@ -122,9 +86,26 @@ class ValorantBot(commands.Bot):
                 print(f'Failed to load extension {ext}.', file=sys.stderr)
                 traceback.print_exc()
 
+    @staticmethod
+    def setup_cache() -> None:
+        try:
+            open('data/cache.json')
+        except FileNotFoundError:
+            get_cache()
+
     async def close(self) -> None:
         await self.session.close()
         await super().close()
 
-    async def start(self) -> None:
+    async def start(self, debug: bool = False) -> None:
+        self.debug = debug
         return await super().start(os.getenv('TOKEN'), reconnect=True)
+
+
+def run_bot() -> None:
+    bot = ValorantBot()
+    asyncio.run(bot.start())
+
+
+if __name__ == '__main__':
+    run_bot()
