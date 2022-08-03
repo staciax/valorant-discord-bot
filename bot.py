@@ -18,9 +18,6 @@ load_dotenv()
 class ValorantBot(commands.Bot):
     bot_app_info: discord.AppInfo
 
-    # intents required
-
-
     def __init__(self) -> None:
 
         # intents
@@ -65,8 +62,6 @@ class ValorantBot(commands.Bot):
             'cogs.errors',
             'cogs.valorant'
         ]
-
-
 
     @property
     def owner(self) -> discord.User:
