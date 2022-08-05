@@ -76,7 +76,9 @@ docker pull marchingon12/valorant-bot
 
 If using Docker Desktop (GUI), run using environmental variables under "Optional Settings". Put in your TOKEN and OWNER_ID.
 
-![image](/resources/docker_Container.png)
+<p align="center">
+  <img src="https://github.com/marchingon12/Valorant-DiscordBot/blob/master/resources/docker_Container.png?raw=true" width=450px >
+</p>
 
 If using Docker-CLI, you have to manually put in your env vars in a single line like this:
 
