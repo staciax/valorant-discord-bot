@@ -66,12 +66,27 @@ If you need help regarding Valorant Discord Bot, please join the [support server
 
 - [Youtube Tutorial][Tutorial]
 
-<!-- 
-
-TODO: Add docker command after pushing to docker hub using github actions
-
 ## Docker
- -->
+
+To simply install the latest stable version, run
+
+```
+docker pull marchingon12/valorant-bot
+```
+
+If using Docker Desktop (GUI), run using environmental variables under "Optional Settings". Put in your TOKEN and OWNER_ID.
+
+![image](/resources/docker_Container.png)
+
+If using Docker-CLI, you have to manually put in your env vars in a single line like this:
+
+```
+docker run -e TOKEN=<YOUR_BOT_TOKEN> -e OWNER_ID=<YOUR_OWNER_ID> marchingon12/valorant-bot
+```
+
+or use `--env-file` to point to the path you stored your env file. Read more info on how to do so [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
+
+DockerHub https://hub.docker.com/r/marchingon12/valorant-bot
 
 
 ## Screenshots
