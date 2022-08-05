@@ -86,7 +86,7 @@ docker run -e TOKEN=<YOUR_BOT_TOKEN> -e OWNER_ID=<YOUR_OWNER_ID> marchingon12/va
 
 or use `--env-file` to point to the path you stored your env file. Read more info on how to do so [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
 
-DockerHub https://hub.docker.com/r/marchingon12/valorant-bot
+View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valorant-bot).
 
 
 ## Screenshots
