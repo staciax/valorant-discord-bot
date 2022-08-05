@@ -3,11 +3,10 @@ name: Docker Image Release CI
 # on:
 #   release:
 #     types: ["published"]
+
 # only pushes when there is a tag in commit
 on:
   push:
-    branches: 
-      - 'master'
     tags: 
       - 'v*'
 
