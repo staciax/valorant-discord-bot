@@ -1,9 +1,16 @@
-FROM python
+# syntax=docker/dockerfile:1
 
-COPY . ./Valorant-Store
+FROM ubuntu:latest
+RUN apt-get -y update
+RUN apt-get -y install git
+RUN apt-get -y install python3 python3-pip
 
-WORKDIR ./Valorant-Store
+WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY requirements.txt requirements.txt
 
-CMD ["python", "./bot.py"]
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD [ "python3", "./bot.py"]
