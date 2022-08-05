@@ -32,5 +32,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/valorant-bot:latest
+          cache: enabled
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/valorant-bot:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/valorant-bot:buildcache,mode=max
