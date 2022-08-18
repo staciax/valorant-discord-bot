@@ -3,26 +3,26 @@
   "commands": {
     "login": {
       "NAME": "login",
-      "DESCRIPTION": "Log in with your Riot acoount",
+      "DESCRIPTION": "Log in with your Riot account",
       "DESCRIBE": {
-        "username": "Input username!",
-        "password": "Input password!"
+        "username": "Input username",
+        "password": "Input password"
       },
       "SUCCESS": "Successfully logged in",
       "FAILED": "Failed to log in, please try again"
     },
     "logout": {
       "NAME": "logout",
-      "DESCRIPTION": "Logout and delete your account from database",
-      "SUCCESS": "Successfully logged out!",
-      "FAILED": "Failed to logout, please try again!"
+      "DESCRIPTION": "Log out and delete your account from database",
+      "SUCCESS": "Successfully logged out",
+      "FAILED": "Failed to log out, please try again"
     },
     "store": {
       "NAME": "store",
-      "DESCRIPTION": "Shows your daily store in your accounts",
+      "DESCRIPTION": "Shows your daily store for your accounts",
       "DESCRIBE": {
-        "username": "Input username! (temporary login)",
-        "password": "Input password! (temporary login)"
+        "username": "Input username (temporary login)",
+        "password": "Input password (temporary login)"
       },
       "RESPONSE": "Daily store for **{username}** \nResets {duration}"
     },
@@ -44,9 +44,9 @@
     },
     "nightmarket": {
       "NAME": "nightmarket",
-      "DESCRIPTION": "Show skin offers on the nightmarket",
-      "RESPONSE": "NightMarket for **{username}** | Expires {duration}",
-      "NIGMARKET_HAS_END": "**NightMarket** has been ended"
+      "DESCRIPTION": "Show skin offers on the Night Market",
+      "RESPONSE": "Night Market for **{username}** | Expires {duration}",
+      "NIGMARKET_HAS_END": "**Night Market** has ended"
     },
     "battlepass": {
       "NAME": "battlepass",
@@ -55,29 +55,29 @@
       "TIER": "TIER",
       "PLAYER_CARD": "Player Card",
       "SPRAY": "Spray",
-      "BUDDY": "Buddie",
+      "BUDDY": "Buddy",
       "POINT": "Point",
       "PLAYER_TITLE": "Title",
       "SKIN": "Skin"
     },
     "notify_add": {
       "NAME": "add",
-      "DESCRIPTION": "Set a notification when a specific skin is available on your store",
+      "DESCRIPTION": "Set a notification for when a specific skin is available in your store",
       "DESCRIBE": {
-        "skin": "The name of the skin you want to notify"
+        "skin": "The name of the skin you want to be notified of"
       },
-      "SUCCESS": "Successfully set an notify for the {emoji} **{skin}**",
+      "SUCCESS": "Successfully set a notififcation for the {emoji} **{skin}**",
       "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** is already added to your notification list",
-      "NOT_FOUND": "Skin is not found",
-      "REMOVE_NOTIFY": "Remove Notify",
-      "REMOVED_NOTIFY": "**{skin}** has been removed from notify"
+      "NOT_FOUND": "Skin was not found",
+      "REMOVE_NOTIFY": "Remove Notification",
+      "REMOVED_NOTIFY": "**{skin}** has been removed from your notification list"
     },
     "notify_list": {
       "NAME": "list",
-      "DESCRIPTION": "View skins you have set a notification for.",
-      "TITLE": "Your Notify List",
+      "DESCRIPTION": "View skins you have set a notification for",
+      "TITLE": "Your Notification List",
       "DONT_HAVE_NOTIFY": "You don't have any notifications",
-      "REMOVE_NOTIFY": "Click button to remove from notify list"
+      "REMOVE_NOTIFY": "Click the button to remove from notification list"
     },
     "notify_mode": {
       "NAME": "mode",
@@ -86,35 +86,35 @@
         "mode": "The mode you want to change to"
       },
       "SUCCESS": "Successfully changed your notification mode to **{mode}**",
-      "TURN_OFF": "Turn off notification mode"
+      "TURN_OFF": "Turn off notifications"
     },
     "notify_test": {
       "NAME": "test",
       "DESCRIPTION": "Testing notification",
-      "NOTIFY_IS_WORKING": "Notification is working",
+      "NOTIFY_IS_WORKING": "Notifications are working",
       "NOTIFY_TURN_OFF": "You've not turned on notification mode",
-      "EMPTY_LIST": "Notify list is empty",
-      "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel!** \nplease check permission the bot can `View channel`, `Send messages`, `Embed links` and `Use external emoji`. in this channel, then try `/notify test`.",
+      "EMPTY_LIST": "Notification list is empty",
+      "BOT_MISSING_PERM": "**I don't have permission to send notifications in this channel.** \nPlease check the permissions so that I can `View channel`, `Send messages`, `Embed links` and `Use external emoji` in this channel. Afterwards, try `/notify test` again.",
       "FAILED_SEND_NOTIFY": "Failed to send notification, please try again",
-      "PLEASE_ALLOW_DM_MESSAGE": "Please allow DM message in your privacy settings"
+      "PLEASE_ALLOW_DM_MESSAGE": "Please allow DM messages from server members in your privacy settings"
     },
     "notify_send": {
-      "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store!\nRemaining {duration}",
-      "RESPONSE_ALL": "Daily store for **{username}** | Remaining {duration}"
+      "RESPONSE_SPECIFIED": "{emoji} **{name}** is in your daily store.\nLeaves {duration}",
+      "RESPONSE_ALL": "Daily store for **{username}** | Leaves {duration}"
     },
     "notify_channel": {
       "NAME": "channel",
       "DESCRIPTION": "Change notification channel.",
       "DESCRIBE": {
-        "channel": "Select the channel you want to change."
+        "channel": "Select the channel you want to be notified in."
       },
-      "SUCCESS": "Notify channel changed to: **{channel}**"
+      "SUCCESS": "Notification channel changed to: **{channel}**"
     },
     "bundle": {
       "NAME": "bundle",
       "DESCRIPTION": "Inspect a specific bundle",
       "DESCRIBE": {
-        "bundle": "The name of the bundle you want to inspect!"
+        "bundle": "The name of the bundle you want to inspect."
       },
       "TITLE": "Collection",
       "DROPDOWN_CHOICE_TITLE": "Select a bundle:",
@@ -129,7 +129,7 @@
     },
     "debug": {
       "NAME": "debug",
-      "DESCRIPTION": "The command debug for the bot",
+      "DESCRIPTION": "The debug command for the bot",
       "DESCRIBE": {
         "bug": "The bug you want to fix.",
         "choice": {
@@ -142,7 +142,7 @@
     },
     "cookies": {
       "NAME": "cookies",
-      "DESCRIPTION": "Log into your riot account with a browser cookie",
+      "DESCRIPTION": "Log into your Riot account with a browser cookie",
       "DESCRIBE": {
         "cookie": "Your cookie"
       },
@@ -153,31 +153,31 @@
   "errors": {
     "UNKNOW_ERROR": "An unknown error occurred.",
     "AUTH": {
-      "INVALID_PASSWORD": "Your username or password may be incorrect!",
+      "INVALID_PASSWORD": "Your username or password may be incorrect.",
       "RATELIMIT": "Please wait a few minutes and try again.",
-      "COOKIES_EXPIRED": "Cookies has expired, please `/login` again!",
+      "COOKIES_EXPIRED": "Cookies has expired, please `/login` again.",
       "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
-      "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again",
+      "REGION_NOT_FOUND": "An unknown error occurred, please `/login` again.",
       "LOGIN_COOKIE_FAILED": "Login with cookies failed.",
-      "INPUT_2FA_CODE": "Input 2FA code!",
-      "2FA_ENABLE": "You have 2FA enabled!",
+      "INPUT_2FA_CODE": "Input 2FA code.",
+      "2FA_ENABLE": "You have 2FA enabled.",
       "2FA_TO_EMAIL": "Riot sent a code to",
-      "2FA_INVALID_CODE": "Code is Invalid. Please `/login` again",
-      "TEMP_LOGIN_NOT_SUPPORT_2FA": "Not supported 2FA, Please use `/login` and use other cmd without username, password."
+      "2FA_INVALID_CODE": "Code is invalid. Please use `/login` again.",
+      "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA is unsupported, please use `/cookies` to log in."
     },
     "DATABASE": {
-      "NOT_LOGIN": "You're not registered!, please `/login` to register!",
-      "LOGIN_ERROR": "Fail to login, please try again!",
-      "LOGOUT_ERROR": "I can't logout you if you're not registered!",
+      "NOT_LOGIN": "You're not registered., please `/login` to register.",
+      "LOGIN_ERROR": "Failed to log in, please try again.",
+      "LOGOUT_ERROR": "I can't log you out if you're not registered.",
       "LOGOUT_EXCEPT": "An error occurred while logging out."
     },
     "API": {
       "FAILED_ACTIVE": "Failed to activate API",
-      "REQUEST_FAILED": "API Response Failed !"
+      "REQUEST_FAILED": "API response failed."
     },
     "SETUP_EMOJI": {
-      "MISSING_PERM": "I don't have permission to create emojis!",
-      "FAILED_CREATE_EMOJI": "I can't create emojis, please try again"
+      "MISSING_PERM": "I don't have permission to create emojis.",
+      "FAILED_CREATE_EMOJI": "I couldn't create emojis, please try again."
     }
   }
 }
