@@ -1,4 +1,4 @@
-discord.py @ git+https://github.com/Rapptz/discord.py.git@master
+discord.py~=2.0.0
 requests~=2.27.1
 python-dotenv~=0.19.2
 aiohttp~=3.8.1
