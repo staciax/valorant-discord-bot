@@ -109,8 +109,6 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 
 * [Python 3.8+](https://www.python.org/downloads/)
 
-* [Git](https://git-scm.com/downloads)
-
 * Install requirements
 
 * **Create** the [discord bot][DiscordBotDocs]

@@ -73,9 +73,7 @@
 ## วิธีติดตั่ง
 
 * ดาวน์โหลด [Python 3.8+](https://www.python.org/downloads/)
-
-* ดาวน์โหลด [Git](https://git-scm.com/downloads)
-
+  
 * [**สร้างบอทดิสคอร์ด**](https://discord.com/developers/applications) และ เปิดใช้งาน **Privileged Gateway
   Intents** [`MESSAGE CONTENT INTENT`](https://i.imgur.com/TiiaYR9.png) จากนั้นเชิญบอทไปที่เซิร์ฟเวอร์ด้วย
   scope [`applications.commands`](https://cdn.discordapp.com/attachments/939097458288496682/950613059150417970/IMG_3279.png)
