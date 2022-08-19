@@ -13,7 +13,7 @@
     },
     "logout": {
       "NAME": "登出",
-      "DESCRIPTION": "登出並從數據庫中刪除您的帳號",
+      "DESCRIPTION": "登出並從資料庫中刪除您的帳號",
       "SUCCESS": "成功登出！",
       "FAILED": "登出失敗，請再試一次！"
     },
@@ -66,7 +66,7 @@
       "DESCRIBE": {
         "skin": "您想要通知的造型名稱"
       },
-      "SUCCESS": "成功為 {emoji} **{skin} 設定通知**",
+      "SUCCESS": "成功為 {emoji} **{skin}** 設定通知",
       "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** 已經添加到您的通知清單",
       "NOT_FOUND": "沒有找到造型",
       "REMOVE_NOTIFY": "移除通知",
@@ -108,7 +108,7 @@
       "DESCRIBE": {
         "channel": "選擇您想設定通知的頻道"
       },
-      "SUCCESS": "通知频道更改為: **{channel}**"
+      "SUCCESS": "通知頻道更改為: **{channel}**"
     },
     "bundle": {
       "NAME": "系列造型",
