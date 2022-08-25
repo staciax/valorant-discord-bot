@@ -151,13 +151,13 @@ class Notify(commands.Cog):
         skin_data = self.db.read_cache()
         
         # find skin
-        skin_list = [skin_data['skins'][x]['names'][str(VLR_locale)] for x in skin_data['skins']]  # get skin list
+        skin_list = sum([list(skin_data['skins'][x]['names'].values()) for x in skin_data['skins']],[])  # get skin list with multilingual names
         skin_name = get_close_matches(skin, skin_list, 1)  # get skin close match
         
         if skin_name:
             notify_data = JSON.read('notifys')
             
-            find_skin = [x for x in skin_data['skins'] if skin_data['skins'][x]['names'][str(VLR_locale)] == skin_name[0]]
+            find_skin = [x for x in skin_data['skins'] if skin_name[0] in skin_data['skins'][x]['names'].values()]
             skin_uuid = find_skin[0]
             skin_source = skin_data['skins'][skin_uuid]
             
