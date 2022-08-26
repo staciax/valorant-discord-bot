@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 from datetime import datetime, timezone
 import json
+from dotenv import load_dotenv
 import os
 from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 import uuid
@@ -12,6 +13,10 @@ import discord
 from .resources import get_item_type, points as points_emoji, tiers as tiers_resources
 from ..errors import ValorantBotError
 from ..locale_v2 import ValorantTranslator
+
+load_dotenv()
+global on_replit
+on_replit = True if os.getenv('ON_REPLIT') else False
 
 VLR_locale = ValorantTranslator()
 
@@ -102,9 +107,13 @@ class JSON:
     def read(filename: str, force: bool = True) -> Dict:
         """Read json file"""
         try:
-            with open("data/" + filename + ".json", "r", encoding='utf-8') as json_file:
-                data = json.load(json_file)
-        except FileNotFoundError:
+            if on_replit:
+                from replit import db
+                data = db[filename]
+            else:
+                with open("data/" + filename + ".json", "r", encoding='utf-8') as json_file:
+                    data = json.load(json_file)
+        except (FileNotFoundError, KeyError):
             from .cache import create_json
             if force:
                 create_json(filename, {})
@@ -114,9 +123,13 @@ class JSON:
     def save(filename: str, data: Dict) -> None:
         """Save data to json file"""
         try:
-            with open("data/" + filename + ".json", 'w', encoding='utf-8') as json_file:
-                json.dump(data, json_file, indent=2, ensure_ascii=False)
-        except FileNotFoundError:
+            if on_replit:
+                from replit import db
+                db[filename] = data
+            else:
+                with open("data/" + filename + ".json", 'w', encoding='utf-8') as json_file:
+                    json.dump(data, json_file, indent=2, ensure_ascii=False)
+        except (FileNotFoundError, KeyError):
             from .cache import create_json
             create_json(filename, {})
             return JSON.save(filename, data)

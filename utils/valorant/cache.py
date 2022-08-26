@@ -8,18 +8,21 @@ from typing import Dict, Optional
 import requests
 
 # Local
-from .useful import JSON
-
+from .useful import JSON, on_replit
 
 def create_json(filename: str, formats: Dict) -> None:
     """ Create a json file """
     
-    file_path = f"data/" + filename + ".json"
-    file_dir = os.path.dirname(file_path)
-    os.makedirs(file_dir, exist_ok=True)
-    if not os.path.exists(file_path):
-        with open(file_path, "w") as fp:
-            json.dump(formats, fp, indent=2)
+    if on_replit:
+        from replit import db
+        db[filename] = formats
+    else:
+        file_path = f"data/" + filename + ".json"
+        file_dir = os.path.dirname(file_path)
+        os.makedirs(file_dir, exist_ok=True)
+        if not os.path.exists(file_path):
+            with open(file_path, "w") as fp:
+                json.dump(formats, fp, indent=2)
 
 
 def get_valorant_version() -> Optional[str]:
