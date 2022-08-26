@@ -46,8 +46,8 @@
 <!-- Inspired by Red Discord Bot -->
 <!-- https://github.com/Cog-Creators/Red-DiscordBot -->
 
-# Note ⚠️
-- will not receive updates until The new version will be finished. sorry 😭
+## Note ⚠️
+- will not receive updates until v4.0.0 will be finished. sorry 😭
 - `
 I'm a student and I have to divide my study time with this project.`
 
@@ -59,11 +59,10 @@ written using Python and the [Discord.py][DiscordPy] library <br>
 If you need help regarding Valorant Discord Bot, please join the [support server][Support]
 
 ## Heroku
-
+- [ ⚠️ Heroku announces plans to eliminate free plans][Heroku_announce]
 > Important: Please note that dynos will have be restarted every **24 hours**. All changes to the local filesystem will be deleted, which means you'll have to relogin using `/login` once the 24-hour limit is reached. Read more about automatic dyno restarts [here][Heroku].
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
 - [Youtube Tutorial][Tutorial]
 
 ## Repl.it
@@ -285,3 +284,4 @@ This project wouldn't have happened without.
 <!-- Other -->
 [Heroku]: https://devcenter.heroku.com/articles/dynos#automatic-dyno-restarts
 [Crowdin]: (https://crowdin.com/project/discord-bot-valorant)
+[Heroku_announce]: https://blog.heroku.com/next-chapter
