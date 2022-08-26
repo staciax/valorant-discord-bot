@@ -66,6 +66,13 @@ If you need help regarding Valorant Discord Bot, please join the [support server
 
 - [Youtube Tutorial][Tutorial]
 
+## Repl.it
+
+> Important: All projects under the Repl.it free plan are public. To solve the privacy problem, all data is stored in the Repl.it Database, but the Repl.it Database is slow to read and it takes time to execute commands. (Cache system to be updated)
+
+[![Run on Repl.it](https://replit.com/badge/github/staciax/Valorant-DiscordBot)](https://replit.com/new/github/staciax/Valorant-DiscordBot)
+
+P.S. need to add 2 secrets: `TOKEN` and `OWNER_ID`
 ## Docker
 
 To simply install the latest stable version, run
