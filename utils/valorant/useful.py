@@ -15,6 +15,8 @@ from ..errors import ValorantBotError
 from ..locale_v2 import ValorantTranslator
 
 load_dotenv()
+global on_replit
+on_replit = True if os.getenv('ON_REPLIT') else False
 
 VLR_locale = ValorantTranslator()
 
@@ -101,8 +103,6 @@ def data_folder() -> None:
 
 
 class JSON:
-    global on_replit
-    on_replit = True if os.getenv('ON_REPLIT') else False
 
     def read(filename: str, force: bool = True) -> Dict:
         """Read json file"""
