@@ -29,12 +29,12 @@ class share_button(ui.View):
     
     async def on_timeout(self) -> None:
         """ Called when the view times out """
-        await self.interaction.edit_original_message(view=None)
+        await self.interaction.edit_original_response(view=None)
     
     @ui.button(label='Share to friends', style=ButtonStyle.primary)
     async def button_callback(self, interaction: Interaction, button: ui.Button):
         await interaction.channel.send(embeds=self.embeds)
-        await self.interaction.edit_original_message(content='\u200b', embed=None, view=None)
+        await self.interaction.edit_original_response(content='\u200b', embed=None, view=None)
 
 
 class NotifyView(discord.ui.View):
@@ -57,7 +57,7 @@ class NotifyView(discord.ui.View):
         
         with contextlib.suppress(Exception):
             self.remve_notify.disabled = True
-            await self.message.edit_original_message(view=self)
+            await self.message.edit_original_response(view=self)
     
     @discord.ui.button(label='Remove Notify', emoji='✖️', style=ButtonStyle.red)
     async def remove_notify(self, interaction: Interaction, button: ui.Button):
@@ -100,7 +100,7 @@ class _NotifyListButton(ui.Button):
         del self.view.skin_source[self.custom_id]
         self.view.update_button()
         embed = self.view.main_embed()
-        await self.view.interaction.edit_original_message(embed=embed, view=self.view)
+        await self.view.interaction.edit_original_response(embed=embed, view=self.view)
 
 
 class NotifyViewList(ui.View):
@@ -116,7 +116,7 @@ class NotifyViewList(ui.View):
     async def on_timeout(self) -> None:
         """ Called when the view times out. """
         embed = discord.Embed(color=0x2F3136, description='🕙 Timeout')
-        await self.interaction.edit_original_message(embed=embed, view=None)
+        await self.interaction.edit_original_response(embed=embed, view=None)
     
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user == self.interaction.user:
