@@ -10,11 +10,13 @@ import requests
 # Local
 from .useful import JSON, on_replit
 
+
 def create_json(filename: str, formats: Dict) -> None:
-    """ Create a json file """
-    
+    """Create a json file"""
+
     if on_replit:
         from replit import db
+
         db[filename] = formats
     else:
         file_path = f"data/" + filename + ".json"
@@ -26,20 +28,20 @@ def create_json(filename: str, formats: Dict) -> None:
 
 
 def get_valorant_version() -> Optional[str]:
-    """ Get the valorant version from valorant-api.com """
-    
+    """Get the valorant version from valorant-api.com"""
+
     print('Fetching Valorant version !')
-    
+
     resp = requests.get('https://valorant-api.com/v1/version')
-    
+
     return resp.json()['data']['manifestId']
 
 
 def fetch_skin() -> None:
-    """ Fetch the skin from valorant-api.com """
-    
+    """Fetch the skin from valorant-api.com"""
+
     data = JSON.read('cache')
-    
+
     print('Fetching weapons skin !')
     resp = requests.get(f'https://valorant-api.com/v1/weapons/skins?language=all')
     if resp.status_code == 200:
@@ -50,18 +52,18 @@ def fetch_skin() -> None:
                 'uuid': skinone['uuid'],
                 'names': skin['displayName'],
                 'icon': skinone['displayIcon'],
-                'tier': skin['contentTierUuid']
+                'tier': skin['contentTierUuid'],
             }
         data['skins'] = json
         JSON.save('cache', data)
 
 
 def fetch_tier() -> None:
-    """ Fetch the skin tier from valorant-api.com """
-    
+    """Fetch the skin tier from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching tier skin !')
-    
+
     resp = requests.get('https://valorant-api.com/v1/contenttiers/')
     if resp.status_code == 200:
         json = {}
@@ -76,7 +78,7 @@ def fetch_tier() -> None:
 
 
 def pre_fetch_price() -> None:
-    """ Pre-fetch the price of all skins """
+    """Pre-fetch the price of all skins"""
     try:
         data = JSON.read('cache')
         pre_json = {'is_price': False}
@@ -88,11 +90,11 @@ def pre_fetch_price() -> None:
 
 
 def fetch_mission() -> None:
-    """ Fetch the mission from valorant-api.com """
-    
+    """Fetch the mission from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching mission !')
-    
+
     resp = requests.get(f'https://valorant-api.com/v1/missions?language=all')
     if resp.status_code == 200:
         json = {}
@@ -110,8 +112,8 @@ def fetch_mission() -> None:
 
 
 def fetch_playercard() -> None:
-    """ Fetch the player card from valorant-api.com """
-    
+    """Fetch the player card from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching Player cards !')
     resp = requests.get(f'https://valorant-api.com/v1/playercards?language=all')
@@ -126,34 +128,30 @@ def fetch_playercard() -> None:
                     'small': card['smallArt'],
                     'wide': card['wideArt'],
                     'large': card['largeArt'],
-                }
+                },
             }
         data['playercards'] = payload
         JSON.save('cache', data)
 
 
 def fetch_titles() -> None:
-    """ Fetch the player titles from valorant-api.com """
-    
+    """Fetch the player titles from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching Player titles !')
-    
+
     resp = requests.get(f'https://valorant-api.com/v1/playertitles?language=all')
     if resp.status_code == 200:
         payload = {}
         for title in resp.json()['data']:
-            payload[title['uuid']] = {
-                'uuid': title['uuid'],
-                'names': title['displayName'],
-                'text': title['titleText']
-            }
+            payload[title['uuid']] = {'uuid': title['uuid'], 'names': title['displayName'], 'text': title['titleText']}
         data['titles'] = payload
         JSON.save('cache', data)
 
 
 def fetch_spray() -> None:
-    """ Fetch the spray from valorant-api.com"""
-    
+    """Fetch the spray from valorant-api.com"""
+
     data = JSON.read('cache')
     session = requests.session()
     print('Fetching Sprays !')
@@ -164,15 +162,15 @@ def fetch_spray() -> None:
             payload[spray['uuid']] = {
                 'uuid': spray['uuid'],
                 'names': spray['displayName'],
-                'icon': spray['fullTransparentIcon'] or spray['displayIcon']
+                'icon': spray['fullTransparentIcon'] or spray['displayIcon'],
             }
         data['sprays'] = payload
         JSON.save('cache', data)
 
 
 def fetch_bundles() -> None:
-    """ Fetch all bundles from valorant-api.com and https://docs.valtracker.gg/bundles"""
-    
+    """Fetch all bundles from valorant-api.com and https://docs.valtracker.gg/bundles"""
+
     data = JSON.read('cache')
     print('Fetching bundles !')
     resp = requests.get(f'https://valorant-api.com/v1/bundles?language=all')
@@ -190,57 +188,65 @@ def fetch_bundles() -> None:
                 'basePrice': None,
                 'expires': None,
             }
-        
+
         resp2 = requests.get(f'https://api.valtracker.gg/bundles')
-        
+
         for bundle2 in resp2.json()['data']:
             if bundle2['uuid'] in bundles:
                 bundle = bundles[bundle2.get('uuid')]
                 items = []
                 default = {'amount': 1, 'discount': 0}
                 for weapon in bundle2['weapons']:
-                    items.append({
-                        'uuid': weapon['levels'][0]['uuid'],
-                        'type': 'e7c63390-eda7-46e0-bb7a-a6abdacd2433',
-                        'price': weapon.get('price'),
-                        **default,
-                    })
+                    items.append(
+                        {
+                            'uuid': weapon['levels'][0]['uuid'],
+                            'type': 'e7c63390-eda7-46e0-bb7a-a6abdacd2433',
+                            'price': weapon.get('price'),
+                            **default,
+                        }
+                    )
                 for buddy in bundle2['buddies']:  #
-                    items.append({
-                        'uuid': buddy['levels'][0]['uuid'],
-                        'type': 'dd3bf334-87f3-40bd-b043-682a57a8dc3a',
-                        'price': buddy.get('price'),
-                        **default,
-                    })
+                    items.append(
+                        {
+                            'uuid': buddy['levels'][0]['uuid'],
+                            'type': 'dd3bf334-87f3-40bd-b043-682a57a8dc3a',
+                            'price': buddy.get('price'),
+                            **default,
+                        }
+                    )
                 for card in bundle2['cards']:  #
-                    items.append({
-                        'uuid': card['uuid'],
-                        'type': '3f296c07-64c3-494c-923b-fe692a4fa1bd',
-                        'price': card.get('price'),
-                        **default,
-                    })
+                    items.append(
+                        {
+                            'uuid': card['uuid'],
+                            'type': '3f296c07-64c3-494c-923b-fe692a4fa1bd',
+                            'price': card.get('price'),
+                            **default,
+                        }
+                    )
                 for spray in bundle2['sprays']:
-                    items.append({
-                        'uuid': spray['uuid'],
-                        'type': 'd5f120f8-ff8c-4aac-92ea-f2b5acbe9475',
-                        'price': spray.get('price'),
-                        **default,
-                    })
-                
+                    items.append(
+                        {
+                            'uuid': spray['uuid'],
+                            'type': 'd5f120f8-ff8c-4aac-92ea-f2b5acbe9475',
+                            'price': spray.get('price'),
+                            **default,
+                        }
+                    )
+
                 bundle['items'] = items
                 bundle['price'] = bundle2['price']
-        
+
         data['bundles'] = bundles
         JSON.save('cache', data)
 
 
 def fetch_contracts() -> None:
-    """ Fetch contracts from valorant-api.com """
-    
+    """Fetch contracts from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching Contracts !')
     resp = requests.get(f'https://valorant-api.com/v1/contracts?language=all')
-    
+
     # IGNOR OLD BATTLE_PASS
     ignor_contract = [
         '7b06d4ce-e09a-48d5-8215-df9901376fa7',  # BP EP 1 ACT 1
@@ -252,11 +258,10 @@ def fetch_contracts() -> None:
         'de37c775-4017-177a-8c64-a8bb414dae1f',  # BP EP 3 ACT 1
         'b0bd7062-4d62-1ff1-7920-b39622ee926b',  # BP EP 3 ACT 2
         'be540721-4d60-0675-a586-ecb14adcb5f7',  # BP EP 3 ACT 3
-        '60f2e13a-4834-0a18-5f7b-02b1a97b7adb'  # BP EP 4 ACT 1
-        '60f2e13a-4834-0a18-5f7b-02b1a97b7adb'  # BP EP 4 ACT 1
+        '60f2e13a-4834-0a18-5f7b-02b1a97b7adb' '60f2e13a-4834-0a18-5f7b-02b1a97b7adb'  # BP EP 4 ACT 1  # BP EP 4 ACT 1
         # 'c1cd8895-4bd2-466d-e7ff-b489e3bc3775', # BP EP 4 ACT 2
     ]
-    
+
     if resp.status_code == 200:
         json = {}
         for contract in resp.json()['data']:
@@ -266,7 +271,7 @@ def fetch_contracts() -> None:
                     'free': contract['shipIt'],
                     'names': contract['displayName'],
                     'icon': contract['displayIcon'],
-                    'reward': contract['content']
+                    'reward': contract['content'],
                 }
         data['contracts'] = json
         JSON.save('cache', data)
@@ -295,9 +300,10 @@ def fetch_contracts() -> None:
 #         JSON.save('cache', data)
 #     session.close()
 
+
 def fetch_currencies() -> None:
-    """ Fetch currencies from valorant-api.com """
-    
+    """Fetch currencies from valorant-api.com"""
+
     data = JSON.read('cache')
     print('Fetching currencies !')
     resp = requests.get(f'https://valorant-api.com/v1/currencies?language=all')
@@ -307,19 +313,19 @@ def fetch_currencies() -> None:
             payload[currencie['uuid']] = {
                 'uuid': currencie['uuid'],
                 'names': currencie['displayName'],
-                'icon': currencie['displayIcon']
+                'icon': currencie['displayIcon'],
             }
         data['currencies'] = payload
         JSON.save('cache', data)
 
 
 def fetch_buddies() -> None:
-    """ Fetch all buddies from valorant-api.com """
-    
+    """Fetch all buddies from valorant-api.com"""
+
     data = JSON.read('cache')
-    
+
     print('Fetching buddies !')
-    
+
     resp = requests.get(f'https://valorant-api.com/v1/buddies?language=all')
     if resp.status_code == 200:
         payload = {}
@@ -328,20 +334,20 @@ def fetch_buddies() -> None:
             payload[buddy_one['uuid']] = {
                 'uuid': buddy_one['uuid'],
                 'names': buddy['displayName'],
-                'icon': buddy_one['displayIcon']
+                'icon': buddy_one['displayIcon'],
             }
         data['buddies'] = payload
         JSON.save('cache', data)
 
 
 def fetch_price(data_price: Dict) -> None:
-    """ Fetch the price of a skin """
-    
+    """Fetch the price of a skin"""
+
     data = JSON.read('cache')
     payload = {}
     for skin in data_price['Offers']:
         if skin["OfferID"] in data['skins']:
-            *cost, = skin["Cost"].values()
+            (*cost,) = skin["Cost"].values()
             payload[skin['OfferID']] = cost[0]
     # prices['is_price'] = True
     data['prices'] = payload
@@ -377,11 +383,12 @@ def fetch_price(data_price: Dict) -> None:
 
 #     session.close()
 
+
 def get_cache() -> None:
-    """ Get all cache from valorant-api.com """
-    
+    """Get all cache from valorant-api.com"""
+
     create_json('cache', {"valorant_version": get_valorant_version()})
-    
+
     fetch_skin()
     fetch_tier()
     pre_fetch_price()
@@ -394,5 +401,5 @@ def get_cache() -> None:
     fetch_mission()
     fetch_contracts()
     # fetch_skinchromas() # next update
-    
+
     print('Loaded Cache')

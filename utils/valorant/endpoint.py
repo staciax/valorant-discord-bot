@@ -9,17 +9,16 @@ from typing import Any, Dict, Mapping
 import requests
 import urllib3
 
-from .local import LocalErrorResponse
-# Local
-from .resources import (base_endpoint, base_endpoint_glz, base_endpoint_shared, region_shard_override,
-                        shard_region_override)
 from ..errors import HandshakeError, ResponseError
+from .local import LocalErrorResponse
+
+# Local
+from .resources import base_endpoint, base_endpoint_glz, base_endpoint_shared, region_shard_override, shard_region_override
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class API_ENDPOINT:
-
     def __init__(self) -> None:
         from .auth import Auth
 
@@ -69,7 +68,7 @@ class API_ENDPOINT:
     # self.__build_headers()
 
     def fetch(self, endpoint: str = '/', url: str = 'pd', errors: Dict = {}) -> Dict:
-        """ fetch data from the api """
+        """fetch data from the api"""
 
         self.locale_response()
 
@@ -94,7 +93,7 @@ class API_ENDPOINT:
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
     def put(self, endpoint: str = "/", url: str = 'pd', data: Dict = {}, errors: Dict = {}) -> Dict:
-        """ put data to the api """
+        """put data to the api"""
 
         self.locale_response()
 
@@ -281,14 +280,14 @@ class API_ENDPOINT:
         self.glz = base_endpoint_glz.format(region=self.region, shard=self.shard)
 
     def __build_headers(self, headers: Mapping) -> Mapping[str, Any]:
-        """ build headers """
+        """build headers"""
 
         headers['X-Riot-ClientPlatform'] = self.client_platform
         headers['X-Riot-ClientVersion'] = self._get_client_version()
         return headers
 
     def __format_region(self) -> None:
-        """ Format region to match from user input """
+        """Format region to match from user input"""
 
         self.shard = self.region
         if self.region in region_shard_override.keys():
@@ -297,13 +296,13 @@ class API_ENDPOINT:
             self.region = shard_region_override[self.shard]
 
     def _get_client_version(self) -> str:
-        """ Get the client version """
+        """Get the client version"""
         r = requests.get('https://valorant-api.com/v1/version')
         data = r.json()['data']
         return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}"  # return formatted version string
 
     def _get_valorant_version(self) -> str:
-        """ Get the valorant version """
+        """Get the valorant version"""
         r = requests.get('https://valorant-api.com/v1/version')
         if r.status != 200:
             return None

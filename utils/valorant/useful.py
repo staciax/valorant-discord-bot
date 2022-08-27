@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import contextlib
-from datetime import datetime, timezone
 import json
-from dotenv import load_dotenv
 import os
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 import uuid
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 import discord
+from dotenv import load_dotenv
 
-from .resources import get_item_type, points as points_emoji, tiers as tiers_resources
 from ..errors import ValorantBotError
 from ..locale_v2 import ValorantTranslator
+from .resources import get_item_type, points as points_emoji, tiers as tiers_resources
 
 load_dotenv()
 global on_replit
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
 current_season_id = '99ac9283-4dd3-5248-2e01-8baf778affb4'
 current_season_end = datetime(2022, 8, 24, 17, 0, 0)
+
 
 def is_valid_uuid(value: str) -> bool:
     """
@@ -39,6 +40,7 @@ def is_valid_uuid(value: str) -> bool:
 
 # ---------- ACT SEASON ---------- #
 
+
 def get_season_by_content(content: Dict) -> Tuple[str, str]:
     """Get season id by content"""
 
@@ -48,7 +50,7 @@ def get_season_by_content(content: Dict) -> Tuple[str, str]:
         season_end = iso_to_time(season_data[0]['EndTime'])
 
     except (IndexError, KeyError, TypeError):
-        season_id =  current_season_id
+        season_id = current_season_id
         season_end = current_season_end
 
     return {'id': season_id, 'end': season_end}
@@ -67,6 +69,7 @@ def calculate_level_xp(level: int) -> int:  # https://github.com/giorgi-o
 
 
 # ---------- TIME UTILS ---------- #
+
 
 def iso_to_time(iso: datetime) -> datetime:
     """Convert ISO time to datetime"""
@@ -87,14 +90,15 @@ def format_dt(dt: datetime, style: str = None) -> str:  # style 'R' or 'd'
 
 
 def format_relative(dt: datetime) -> str:
-    """ datatime to relative time format """
+    """datatime to relative time format"""
     return format_dt(dt, 'R')
 
 
 # ---------- JSON LOADER ---------- #
 
+
 def data_folder() -> None:
-    """ Get the data folder """
+    """Get the data folder"""
     # create data folder
     current_directory = os.getcwd()
     final_directory = os.path.join(current_directory, r'data')
@@ -103,18 +107,19 @@ def data_folder() -> None:
 
 
 class JSON:
-
     def read(filename: str, force: bool = True) -> Dict:
         """Read json file"""
         try:
             if on_replit:
                 from replit import db
+
                 data = db[filename]
             else:
                 with open("data/" + filename + ".json", "r", encoding='utf-8') as json_file:
                     data = json.load(json_file)
         except (FileNotFoundError, KeyError):
             from .cache import create_json
+
             if force:
                 create_json(filename, {})
                 return JSON.read(filename, False)
@@ -125,23 +130,25 @@ class JSON:
         try:
             if on_replit:
                 from replit import db
+
                 db[filename] = data
             else:
                 with open("data/" + filename + ".json", 'w', encoding='utf-8') as json_file:
                     json.dump(data, json_file, indent=2, ensure_ascii=False)
         except (FileNotFoundError, KeyError):
             from .cache import create_json
+
             create_json(filename, {})
             return JSON.save(filename, data)
 
 
 # ---------- GET DATA ---------- #
 
-class GetItems:
 
+class GetItems:
     @classmethod
     def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict[str, Any]:
-        """ Get item by type """
+        """Get item by type"""
 
         item_type = get_item_type(Itemtype)
         if item_type == 'Agents':
@@ -239,7 +246,7 @@ class GetItems:
         return skin
 
     def get_tier_name(skin_uuid: str) -> Optional[str]:
-        """ Get tier name by skin uuid """
+        """Get tier name by skin uuid"""
 
         try:
             data = JSON.read('cache')
@@ -250,7 +257,7 @@ class GetItems:
         return name
 
     def get_contract(uuid: str) -> Dict[str, Any]:
-        """ Get contract by uuid """
+        """Get contract by uuid"""
 
         data = JSON.read('cache')
         contract = None
@@ -259,7 +266,7 @@ class GetItems:
         return contract
 
     def get_bundle(uuid: str) -> Dict[str, Any]:
-        """ Get bundle by uuid """
+        """Get bundle by uuid"""
 
         data = JSON.read('cache')
         bundle = None
@@ -270,10 +277,10 @@ class GetItems:
 
 # ---------- GET EMOJI ---------- #
 
-class GetEmoji:
 
+class GetEmoji:
     def tier(skin_uuid: str) -> discord.Emoji:
-        """ Get tier emoji """
+        """Get tier emoji"""
 
         data = JSON.read('cache')
         uuid = data['skins'][skin_uuid]['tier']
@@ -283,7 +290,7 @@ class GetEmoji:
 
     @classmethod
     def tier_by_bot(cls, skin_uuid: str, bot: ValorantBot) -> discord.Emoji:
-        """ Get tier emoji from bot """
+        """Get tier emoji from bot"""
 
         emoji = discord.utils.get(bot.emojis, name=GetItems.get_tier_name(skin_uuid) + 'Tier')
         if emoji is None:
@@ -291,7 +298,7 @@ class GetEmoji:
         return emoji
 
     def point_by_bot(point: str, bot: ValorantBot) -> discord.Emoji:
-        """ Get point emoji from bot"""
+        """Get point emoji from bot"""
 
         emoji = discord.utils.get(bot.emojis, name=point)
         if emoji is None:
@@ -301,8 +308,8 @@ class GetEmoji:
 
 # ---------- UTILS FOR STORE EMBED ---------- #
 
-class GetFormat:
 
+class GetFormat:
     def offer_format(data: Dict) -> Dict:
         """Get skins list"""
 
@@ -329,13 +336,7 @@ class GetFormat:
                 skin4 = dict(name=name, icon=icon, price=price, tier=tier_icon, uuid=uuid)
             skin_count += 1
 
-        skin_source = {
-            'skin1': skin1,
-            'skin2': skin2,
-            'skin3': skin3,
-            'skin4': skin4,
-            'duration': duration
-        }
+        skin_source = {'skin1': skin1, 'skin2': skin2, 'skin3': skin3, 'skin4': skin4, 'duration': duration}
 
         return skin_source
 
@@ -362,7 +363,7 @@ class GetFormat:
 
         for m in mission:
             mission = get_mission_by_id(m['ID'])
-            *complete, = m['Objectives'].values()
+            (*complete,) = m['Objectives'].values()
             title = mission['titles'][str(VLR_locale)]
             progress = mission['progress']
             xp = mission['xp']
@@ -395,8 +396,8 @@ class GetFormat:
         count = 0
         for x in night_offer:
             count += 1
-            price = *x['Offer']['Cost'].values(),
-            Disprice = *x['DiscountCosts'].values(),
+            price = (*x['Offer']['Cost'].values(),)
+            Disprice = (*x['DiscountCosts'].values(),)
 
             uuid = x['Offer']['OfferID']
             skin = GetItems.get_skin(uuid)
@@ -410,12 +411,9 @@ class GetFormat:
                 'tier': tier,
                 'icon': icon,
                 'price': price[0],
-                'disprice': Disprice[0]
+                'disprice': Disprice[0],
             }
-        data = {
-            'nightmarket': night_market,
-            'duration': duration
-        }
+        data = {'nightmarket': night_market, 'duration': duration}
         return data
 
     # ---------- UTILS FOR BATTLEPASS EMBED ---------- #
@@ -478,7 +476,8 @@ class GetFormat:
                 data[count] = rw['reward']
 
         next_reward = tier + 1
-        if tier == 55: next_reward = 55
+        if tier == 55:
+            next_reward = 55
         current_reward = data[next_reward]
 
         return current_reward
@@ -486,7 +485,9 @@ class GetFormat:
     def __get_contracts_by_season_id(contracts: Dict, data_contracts: Dict, season_id: str) -> Dict[str, Any]:
         """Get battle pass info"""
 
-        contracts_uuid = [x for x in data_contracts['contracts'] if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id]
+        contracts_uuid = [
+            x for x in data_contracts['contracts'] if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id
+        ]
         if contracts_uuid:
             battlepass = [x for x in contracts if x['ContractDefinitionID'] == contracts_uuid[0]]
             TIER = battlepass[0]['ProgressionLevelReached']
@@ -500,7 +501,7 @@ class GetFormat:
 
     @classmethod
     def battlepass_format(cls, data: Dict, season: str, response: Dict) -> Dict[str, Any]:
-        """ Get battle pass format """
+        """Get battle pass format"""
 
         data = data['Contracts']
         contracts = JSON.read('cache')
@@ -520,6 +521,17 @@ class GetFormat:
             item_type = item['data']['type']
             item_icon = item['data']['icon']
 
-            return dict(data=dict(tier=tier, act=act, xp=xp, reward=item_name, type=item_type, icon=item_icon, end=season_end, original_type=item_reward['type']))
+            return dict(
+                data=dict(
+                    tier=tier,
+                    act=act,
+                    xp=xp,
+                    reward=item_name,
+                    type=item_type,
+                    icon=item_icon,
+                    end=season_end,
+                    original_type=item_reward['type'],
+                )
+            )
 
         raise ValorantBotError(f"Failed to get battlepass info")

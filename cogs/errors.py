@@ -5,11 +5,25 @@ from typing import TYPE_CHECKING, Union
 
 import discord
 from discord import Interaction
-from discord.app_commands import (AppCommandError, BotMissingPermissions, CommandNotFound as AppCommandNotFound, CommandOnCooldown, MissingPermissions)
+from discord.app_commands import (
+    AppCommandError,
+    BotMissingPermissions,
+    CommandNotFound as AppCommandNotFound,
+    CommandOnCooldown,
+    MissingPermissions,
+)
 from discord.ext import commands
-from discord.ext.commands import (BadLiteralArgument, CheckFailure, CommandNotFound, MissingRequiredArgument)
+from discord.ext.commands import BadLiteralArgument, CheckFailure, CommandNotFound, MissingRequiredArgument
 
-from utils.errors import (AuthenticationError, BadArgument, DatabaseError, HandshakeError, NotOwner, ResponseError, ValorantBotError)
+from utils.errors import (
+    AuthenticationError,
+    BadArgument,
+    DatabaseError,
+    HandshakeError,
+    NotOwner,
+    ResponseError,
+    ValorantBotError,
+)
 
 if TYPE_CHECKING:
     from bot import ValorantBot
@@ -19,17 +33,17 @@ app_cmd_scope = 'https://cdn.discordapp.com/attachments/934041100048535563/97941
 
 class ErrorHandler(commands.Cog):
     """Error handler"""
-    
+
     def __init__(self, bot: ValorantBot) -> None:
         self.bot: ValorantBot = bot
         bot.tree.on_error = self.on_app_command_error
-    
+
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError) -> None:
-        """ Handles errors for all application commands."""
-        
+        """Handles errors for all application commands."""
+
         if self.bot.debug is True:
             traceback.print_exception(type(error), error, error.__traceback__)
-        
+
         # if isinstance(error, CommandInvokeError):
         #     error = error.original
         if isinstance(error, NotOwner):
@@ -49,16 +63,16 @@ class ErrorHandler(commands.Cog):
         else:
             error = f"An unknown error occurred, sorry"
             traceback.print_exception(type(error), error)
-        
-        embed = discord.Embed(description=f'{str(error)[:2000]}', color=0xfe676e)
+
+        embed = discord.Embed(description=f'{str(error)[:2000]}', color=0xFE676E)
         if interaction.response.is_done():
             return await interaction.followup.send(embed=embed, ephemeral=True)
         await interaction.response.send_message(embed=embed, ephemeral=True)
-    
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception) -> None:
-        embed = discord.Embed(color=0xfe676e)
-        
+        embed = discord.Embed(color=0xFE676E)
+
         if isinstance(error, CommandNotFound):
             return
         elif isinstance(error, CheckFailure):
@@ -80,7 +94,7 @@ class ErrorHandler(commands.Cog):
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
             cm_error = f"An unknown error occurred, sorry"
-        
+
         embed.description = cm_error
         await ctx.send(embed=embed, delete_after=30, ephemeral=True)
 

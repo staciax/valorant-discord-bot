@@ -3,8 +3,8 @@ DEMO TRANSLATION
 """
 from __future__ import annotations
 
-from contextvars import ContextVar
 import os
+from contextvars import ContextVar
 from typing import Optional
 
 discord_locale = [
@@ -64,24 +64,24 @@ _valorant_current_locale = ContextVar("_valorant_current_locale", default="en-US
 
 
 def get_interaction_locale() -> str:
-    """ Get the bot locale """
+    """Get the bot locale"""
     return str(_current_locale.get())
 
 
 def set_interaction_locale(locale: Optional[str]) -> None:
-    """ Set the locale for bot """
+    """Set the locale for bot"""
     _current_locale.set(locale)
 
 
 def get_valorant_locale() -> str:
-    """ Get the locale for valorant api """
+    """Get the locale for valorant api"""
     valorant_locale = valorant_locale_overwrite.get(str(_valorant_current_locale.get()), "en-US")
     return valorant_locale
 
 
 def set_valorant_locale(locale: Optional[str]) -> None:
-    """ Set the locale for valorant api """
-    
+    """Set the locale for valorant api"""
+
     language_files = os.listdir('languages')
     locale_json = str(locale) + '.json'
     if locale_json not in language_files:
@@ -89,9 +89,9 @@ def set_valorant_locale(locale: Optional[str]) -> None:
     _valorant_current_locale.set(locale)
 
 
-class ValorantTranslator():
+class ValorantTranslator:
     """Translate valorant item name"""
-    
+
     def __str__(self) -> str:
         locale = get_valorant_locale()
         return locale
@@ -100,13 +100,14 @@ class ValorantTranslator():
         locale = get_valorant_locale()
         return locale.lower()
 
-class Translator():
+
+class Translator:
     """Translate valorant item name"""
-    
+
     def __str__(self) -> str:
         locale = get_interaction_locale()
         return locale
-    
+
     def lower(self) -> str:
         locale = get_interaction_locale()
         return locale.lower()
