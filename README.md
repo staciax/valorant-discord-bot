@@ -71,7 +71,7 @@ If you need help regarding Valorant Discord Bot, please join the [support server
 
 [![Run on Repl.it](https://replit.com/badge/github/staciax/Valorant-DiscordBot)](https://replit.com/new/github/staciax/Valorant-DiscordBot)
 
-P.S. need to add 2 secrets: `TOKEN` and `OWNER_ID`
+P.S. need to add 2 secrets: `TOKEN` and `OWNER_ID`, need to use [Uptimerobot](https://uptimerobot.com/) or other services to keep the bot alive.
 ## Docker
 
 To simply install the latest stable version, run
