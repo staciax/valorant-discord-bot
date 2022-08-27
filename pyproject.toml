@@ -7,3 +7,26 @@ profile = "black"
 combine_as_imports = true
 combine_star = true
 line_length = 125
+
+[tool.poetry]
+name = "repl_nix_Valorant-DiscordBot"
+version = "0.1.0"
+description = ""
+authors = ["Replit user <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = "^3.8.1"
+discord = "^2.0.0"
+multidict = "^6.0.2"
+python-dotenv = "^0.20.0"
+requests = "^2.28.1"
+urllib3 = "^1.26.12"
+replit = "^3.2.4"
+Flask = "^2.2.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
