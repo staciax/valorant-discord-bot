@@ -78,10 +78,10 @@ class Auth:
     def __init__(self) -> None:
         self._headers: Dict = {
             'Content-Type': 'application/json',
-            'User-Agent': RIOT_CLIENT_USER_AGENT,
+            'User-Agent': Auth.RIOT_CLIENT_USER_AGENT,
             'Accept': 'application/json, text/plain, */*',
         }
-        self.user_agent = RIOT_CLIENT_USER_AGENT
+        self.user_agent = Auth.RIOT_CLIENT_USER_AGENT
 
         self.locale_code = 'en-US'  # default language
         self.response = {}  # prepare response for local response
