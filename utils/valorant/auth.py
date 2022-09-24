@@ -73,13 +73,15 @@ class ClientSession(aiohttp.ClientSession):
 
 
 class Auth:
+    RIOT_CLIENT_USER_AGENT = "RiotClient/56.0.0.4578455.4552318 rso-auth (Windows;10;;Professional, x64)"
+    
     def __init__(self) -> None:
         self._headers: Dict = {
             'Content-Type': 'application/json',
-            'User-Agent': 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)',
+            'User-Agent': Auth.RIOT_CLIENT_USER_AGENT,
             'Accept': 'application/json, text/plain, */*',
         }
-        self.user_agent = 'RiotClient/51.0.0.4429735.4381201 rso-auth (Windows;10;;Professional, x64)'
+        self.user_agent = Auth.RIOT_CLIENT_USER_AGENT
 
         self.locale_code = 'en-US'  # default language
         self.response = {}  # prepare response for local response
