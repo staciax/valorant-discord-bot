@@ -142,9 +142,10 @@ class GetEmbed:
 
         uuid, name, icon, price, dpice = skins['uuid'], skins['name'], skins['icon'], skins['price'], skins['disprice']
 
+        emoji = GetEmoji.tier_by_bot(uuid, bot)
         vp_emoji = GetEmoji.point_by_bot('ValorantPointIcon', bot)
 
-        embed = Embed(f"{GetEmoji.tier(uuid)} **{name}**\n{vp_emoji} {dpice} ~~{price}~~", color=0x0F1923)
+        embed = Embed(f"{emoji} **{name}**\n{vp_emoji} {dpice} ~~{price}~~", color=0x0F1923)
         embed.set_thumbnail(url=icon)
         return embed
 
