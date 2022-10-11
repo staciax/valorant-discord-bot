@@ -2,182 +2,182 @@
   "translation_by": "Arthur Morgan#9999 @mustafa383",
   "commands": {
     "login": {
-      "NAME": "giriş",
-      "DESCRIPTION": "Riot hesabınızla oturum açın",
+      "NAME": "giriÅŸ",
+      "DESCRIPTION": "Riot hesabÄ±nÄ±zla oturum aÃ§Ä±n",
       "DESCRIBE": {
-        "username": "Kullanıcı adını girin",
-        "password": "Giriş şifresi"
+        "username": "KullanÄ±cÄ± adÄ±nÄ± girin",
+        "password": "GiriÅŸ ÅŸifresi"
       },
-      "SUCCESS": "Başarıyla oturum açıldı",
-      "FAILED": "Oturum açılamadı, lütfen tekrar deneyiniz"
+      "SUCCESS": "BaÅŸarÄ±yla oturum aÃ§Ä±ldÄ±",
+      "FAILED": "Oturum aÃ§Ä±lamadÄ±, lÃ¼tfen tekrar deneyiniz"
     },
     "logout": {
-      "NAME": "çıkış",
-      "DESCRIPTION": "Oturumu kapat ve hesabını veritabanından kaldır",
-      "SUCCESS": "Oturum başarıyla kapatıldı",
-      "FAILED": "Oturum kapatılamadı, lütfen tekrar deneyiniz"
+      "NAME": "Ã§Ä±kÄ±ÅŸ",
+      "DESCRIPTION": "Oturumu kapat ve hesabÄ±nÄ± veritabanÄ±ndan kaldÄ±r",
+      "SUCCESS": "Oturum baÅŸarÄ±yla kapatÄ±ldÄ±",
+      "FAILED": "Oturum kapatÄ±lamadÄ±, lÃ¼tfen tekrar deneyiniz"
     },
     "store": {
-      "NAME": "mağaza",
-      "DESCRIPTION": "Hesaplarınız için günlük mağazanızı gösterir",
+      "NAME": "maÄŸaza",
+      "DESCRIPTION": "HesaplarÄ±nÄ±z iÃ§in gÃ¼nlÃ¼k maÄŸazanÄ±zÄ± gÃ¶sterir",
       "DESCRIBE": {
-        "username": "Kullanıcı adını girin (geçici oturum açma)",
-        "password": "Giriş şifresi (geçici oturum açma)"
+        "username": "KullanÄ±cÄ± adÄ±nÄ± girin (geÃ§ici oturum aÃ§ma)",
+        "password": "GiriÅŸ ÅŸifresi (geÃ§ici oturum aÃ§ma)"
       },
-      "RESPONSE": "**{username}** için mağaza \nSıfırlanma {duration}"
+      "RESPONSE": "**{username}** iÃ§in maÄŸaza \nSÄ±fÄ±rlanma {duration}"
     },
     "point": {
       "NAME": "puan",
-      "DESCRIPTION": "Sahip olduğunuz Valorant ve Radyanit Puanlarınızı görüntüleyin (VP/RP)",
+      "DESCRIPTION": "Sahip olduÄŸunuz Valorant ve Radyanit PuanlarÄ±nÄ±zÄ± gÃ¶rÃ¼ntÃ¼leyin (VP/RP)",
       "POINT": "Puanlar"
     },
     "mission": {
-      "NAME": "görev",
-      "DESCRIPTION": "Günlük/haftalık görev ilerlemenizi görüntüleyin",
-      "TITLE": "Görev",
-      "DAILY": "Günlük",
-      "WEEKLY": "Haftalık",
+      "NAME": "gÃ¶rev",
+      "DESCRIPTION": "GÃ¼nlÃ¼k/haftalÄ±k gÃ¶rev ilerlemenizi gÃ¶rÃ¼ntÃ¼leyin",
+      "TITLE": "GÃ¶rev",
+      "DAILY": "GÃ¼nlÃ¼k",
+      "WEEKLY": "HaftalÄ±k",
       "NEWPLAYER": "Yeni Oyuncu",
-      "NO_MISSION": "Görev yok",
-      "DAILY_RESET": "Sıfırlanma {duration}",
+      "NO_MISSION": "GÃ¶rev yok",
+      "DAILY_RESET": "SÄ±fÄ±rlanma {duration}",
       "REFILLS": "Refills {duration}"
     },
     "nightmarket": {
-      "NAME": "gecepazarı",
-      "DESCRIPTION": "Gece Pazarındaki skin tekliflerini göster",
-      "RESPONSE": "**{username}** için Gece Pazarı | {duration} sona eriyor",
-      "NIGMARKET_HAS_END": "**Gece Pazarı** sona erdi"
+      "NAME": "gecepazarÄ±",
+      "DESCRIPTION": "Gece PazarÄ±ndaki skin tekliflerini gÃ¶ster",
+      "RESPONSE": "**{username}** iÃ§in Gece PazarÄ± | {duration} sona eriyor",
+      "NIGMARKET_HAS_END": "**Gece PazarÄ±** sona erdi"
     },
     "battlepass": {
-      "NAME": "savaşbileti",
-      "DESCRIPTION": "Savaşbiletinde mevcut seviyeni gösterir",
-      "RESPONSE": "**Sonraki Ödül:** {next}\n**Type:** {type}\n**XP:** {xp}\n**SEZON SONU:** {end}",
-      "TIER": "SEVİYE",
-      "PLAYER_CARD": "Oyuncu Kartı",
+      "NAME": "savaÅŸbileti",
+      "DESCRIPTION": "SavaÅŸbiletinde mevcut seviyeni gÃ¶sterir",
+      "RESPONSE": "**Sonraki Ã–dÃ¼l:** {next}\n**Type:** {type}\n**XP:** {xp}\n**SEZON SONU:** {end}",
+      "TIER": "SEVÄ°YE",
+      "PLAYER_CARD": "Oyuncu KartÄ±",
       "SPRAY": "Sprey",
-      "BUDDY": "Silah Uğuru",
+      "BUDDY": "Silah UÄŸuru",
       "POINT": "Puan",
       "PLAYER_TITLE": "Unvan",
       "SKIN": "Kaplama"
     },
     "notify_add": {
       "NAME": "ekle",
-      "DESCRIPTION": "Mağazanızda belirli bir kaplama mevcut olduğunda bir bildirim alın",
+      "DESCRIPTION": "MaÄŸazanÄ±zda belirli bir kaplama mevcut olduÄŸunda bir bildirim alÄ±n",
       "DESCRIBE": {
-        "skin": "Bildirimini almak istediğiniz kaplamanın adı"
+        "skin": "Bildirimini almak istediÄŸiniz kaplamanÄ±n adÄ±"
       },
-      "SUCCESS": "{emoji} **{skin}** için bildirim başarıyla ayarlandı",
+      "SUCCESS": "{emoji} **{skin}** iÃ§in bildirim baÅŸarÄ±yla ayarlandÄ±",
       "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** bildirim listenize zaten eklendi",
-      "NOT_FOUND": "Kaplama bulunamadı",
-      "REMOVE_NOTIFY": "Bildirimi kaldır",
-      "REMOVED_NOTIFY": "**{skin}** bildirim listenizden kaldırıldı"
+      "NOT_FOUND": "Kaplama bulunamadÄ±",
+      "REMOVE_NOTIFY": "Bildirimi kaldÄ±r",
+      "REMOVED_NOTIFY": "**{skin}** bildirim listenizden kaldÄ±rÄ±ldÄ±"
     },
     "notify_list": {
       "NAME": "liste",
-      "DESCRIPTION": "Bildirim ayarladığınız kaplamaları görüntüleyin",
+      "DESCRIPTION": "Bildirim ayarladÄ±ÄŸÄ±nÄ±z kaplamalarÄ± gÃ¶rÃ¼ntÃ¼leyin",
       "TITLE": "Bildirim Listeniz",
-      "DONT_HAVE_NOTIFY": "Hiç bildiriminiz yok",
-      "REMOVE_NOTIFY": "Bildirim listesinden çıkarmak için düğmeye tıklayın"
+      "DONT_HAVE_NOTIFY": "HiÃ§ bildiriminiz yok",
+      "REMOVE_NOTIFY": "Bildirim listesinden Ã§Ä±karmak iÃ§in dÃ¼ÄŸmeye tÄ±klayÄ±n"
     },
     "notify_mode": {
       "NAME": "mod",
-      "DESCRIPTION": "Bildirim modunu değiştir",
+      "DESCRIPTION": "Bildirim modunu deÄŸiÅŸtir",
       "DESCRIBE": {
-        "mode": "Değiştirmek istediğiniz mod"
+        "mode": "DeÄŸiÅŸtirmek istediÄŸiniz mod"
       },
-      "SUCCESS": "Bildirim modunuz başarıyla değiştirdi **{mode}**",
+      "SUCCESS": "Bildirim modunuz baÅŸarÄ±yla deÄŸiÅŸtirdi **{mode}**",
       "TURN_OFF": "Bildirimleri kapat"
     },
     "notify_test": {
       "NAME": "test",
       "DESCRIPTION": "Bildirim testi",
-      "NOTIFY_IS_WORKING": "Bildirimler çalışıyor",
-      "NOTIFY_TURN_OFF": "Bildirim modunu açmadınız",
-      "EMPTY_LIST": "Bildirim listeniz boş",
-      "BOT_MISSING_PERM": "**Bu kanalda bildirim gönderme iznim yok.** \nBu kanalda yeterli izinlere sahip değilim lütfen bu izinlerin açık olduğundan emin olun `Kanalları Görüntüle`, `Mesaj Gönder`, `Bağlantı Yerleştir` ve `Harici Emoji Kullan`. Daha sonra `/notify test` komutunu tekrar deneyin.",
-      "FAILED_SEND_NOTIFY": "Bildirim gönderilemedi, lütfen tekrar deneyin",
-      "PLEASE_ALLOW_DM_MESSAGE": "Lütfen gizlilik ayarlarınızda sunucu üyelerinden gelen DM mesajlarına izin verin"
+      "NOTIFY_IS_WORKING": "Bildirimler Ã§alÄ±ÅŸÄ±yor",
+      "NOTIFY_TURN_OFF": "Bildirim modunu aÃ§madÄ±nÄ±z",
+      "EMPTY_LIST": "Bildirim listeniz boÅŸ",
+      "BOT_MISSING_PERM": "**Bu kanalda bildirim gÃ¶nderme iznim yok.** \nBu kanalda yeterli izinlere sahip deÄŸilim lÃ¼tfen bu izinlerin aÃ§Ä±k olduÄŸundan emin olun `KanallarÄ± GÃ¶rÃ¼ntÃ¼le`, `Mesaj GÃ¶nder`, `BaÄŸlantÄ± YerleÅŸtir` ve `Harici Emoji Kullan`. Daha sonra `/notify test` komutunu tekrar deneyin.",
+      "FAILED_SEND_NOTIFY": "Bildirim gÃ¶nderilemedi, lÃ¼tfen tekrar deneyin",
+      "PLEASE_ALLOW_DM_MESSAGE": "LÃ¼tfen gizlilik ayarlarÄ±nÄ±zda sunucu Ã¼yelerinden gelen DM mesajlarÄ±na izin verin"
     },
     "notify_send": {
-      "RESPONSE_SPECIFIED": "{emoji} **{name}** şuanda günlük mağazanızda.\n{duration} sonra yenileniyor",
-      "RESPONSE_ALL": "**{username}** için günlük mağaza | {duration} sonra yenileniyor"
+      "RESPONSE_SPECIFIED": "{emoji} **{name}** ÅŸuanda gÃ¼nlÃ¼k maÄŸazanÄ±zda.\n{duration} sonra yenileniyor",
+      "RESPONSE_ALL": "**{username}** iÃ§in gÃ¼nlÃ¼k maÄŸaza | {duration} sonra yenileniyor"
     },
     "notify_channel": {
       "NAME": "kanal",
-      "DESCRIPTION": "Bildirim kanalını değiştirin.",
+      "DESCRIPTION": "Bildirim kanalÄ±nÄ± deÄŸiÅŸtirin.",
       "DESCRIBE": {
-        "channel": "Bildirim almak istediğiniz kanalı değiştirin."
+        "channel": "Bildirim almak istediÄŸiniz kanalÄ± deÄŸiÅŸtirin."
       },
-      "SUCCESS": "Bildirim kanalı değiştirildi: **{channel}**"
+      "SUCCESS": "Bildirim kanalÄ± deÄŸiÅŸtirildi: **{channel}**"
     },
     "bundle": {
       "NAME": "koleksiyonlar",
       "DESCRIPTION": "Belirli bir koleksiyonu inceleyin",
       "DESCRIBE": {
-        "bundle": "İncelemek istediğiniz koleksiyonun adı."
+        "bundle": "Ä°ncelemek istediÄŸiniz koleksiyonun adÄ±."
       },
       "TITLE": "Koleksiyon",
-      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seç:",
-      "NOT_FOUND_BUNDLE": "Koleksiyon bulunamadı"
+      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seÃ§:",
+      "NOT_FOUND_BUNDLE": "Koleksiyon bulunamadÄ±"
     },
     "bundles": {
       "NAME": "koleksiyon",
-      "DESCRIPTION": "Mağazada bulunan koleksiyonu inceleyin",
-      "TITLE": "Öne çıkan koleksiyon: {bundle} Koleksiyonu",
+      "DESCRIPTION": "MaÄŸazada bulunan koleksiyonu inceleyin",
+      "TITLE": "Ã–ne Ã§Ä±kan koleksiyon: {bundle} Koleksiyonu",
       "DURATION": "{duration} sona eriyor",
-      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seç:"
+      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seÃ§:"
     },
     "debug": {
       "NAME": "debug",
-      "DESCRIPTION": "Bot için hata ayıklama komutu",
+      "DESCRIPTION": "Bot iÃ§in hata ayÄ±klama komutu",
       "DESCRIBE": {
-        "bug": "Düzeltmek istediğiniz hata.",
+        "bug": "DÃ¼zeltmek istediÄŸiniz hata.",
         "choice": {
-          "skin_price_not_loading": "Kaplama fiyatları yüklenmiyor",
-          "emoji_price_not_loading": "Emojiler yüklenmiyor",
-          "cache_price_not_loading": "Önbellek yüklenmiyor"
+          "skin_price_not_loading": "Kaplama fiyatlarÄ± yÃ¼klenmiyor",
+          "emoji_price_not_loading": "Emojiler yÃ¼klenmiyor",
+          "cache_price_not_loading": "Ã–nbellek yÃ¼klenmiyor"
         }
       },
-      "SUCCESS": "Başarıyla hata ayıklandı: **{bug}**"
+      "SUCCESS": "BaÅŸarÄ±yla hata ayÄ±klandÄ±: **{bug}**"
     },
     "cookies": {
       "NAME": "cookies",
-      "DESCRIPTION": "Riot hesabınıa tarayıcı çereziyle giriş yap",
+      "DESCRIPTION": "Riot hesabÄ±nÄ±a tarayÄ±cÄ± Ã§ereziyle giriÅŸ yap",
       "DESCRIBE": {
-        "cookie": "Çereziniz"
+        "cookie": "Ã‡ereziniz"
       },
-      "SUCCESS": "Başarıyla giriş yapıldı",
-      "FAILED": "Geçersiz çerez"
+      "SUCCESS": "BaÅŸarÄ±yla giriÅŸ yapÄ±ldÄ±",
+      "FAILED": "GeÃ§ersiz Ã§erez"
     }
   },
   "errors": {
-    "UNKNOW_ERROR": "Bilinmeyen bir hata oluştu.",
+    "UNKNOW_ERROR": "Bilinmeyen bir hata oluÅŸtu.",
     "AUTH": {
-      "INVALID_PASSWORD": "Kullanıcı adınız veya şifreniz yanlış olabilir.",
-      "RATELIMIT": "Birkaç dakika sonra tekrar deneyin.",
-      "COOKIES_EXPIRED": "Çerezlerin süresi doldu, lütfen tekrar giriş yapın.",
+      "INVALID_PASSWORD": "KullanÄ±cÄ± adÄ±nÄ±z veya ÅŸifreniz yanlÄ±ÅŸ olabilir.",
+      "RATELIMIT": "BirkaÃ§ dakika sonra tekrar deneyin.",
+      "COOKIES_EXPIRED": "Ã‡erezlerin sÃ¼resi doldu, lÃ¼tfen tekrar giriÅŸ yapÄ±n.",
       "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
-      "REGION_NOT_FOUND": "Bilinmeyen bir hata oluştu, lütfen tekrar giriş yapın.",
-      "LOGIN_COOKIE_FAILED": "Çerezle giriş başarısız oldu.",
+      "REGION_NOT_FOUND": "Bilinmeyen bir hata oluÅŸtu, lÃ¼tfen tekrar giriÅŸ yapÄ±n.",
+      "LOGIN_COOKIE_FAILED": "Ã‡erezle giriÅŸ baÅŸarÄ±sÄ±z oldu.",
       "INPUT_2FA_CODE": "Input 2FA code.",
       "2FA_ENABLE": "You have 2FA enabled.",
       "2FA_TO_EMAIL": "Riot sent a code to",
-      "2FA_INVALID_CODE": "Kod geçersiz. Lütfen tekrar giriş yapın.",
-      "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA desteklenmiyor, Lütfen çerezle giriş yapın."
+      "2FA_INVALID_CODE": "Kod geÃ§ersiz. LÃ¼tfen tekrar giriÅŸ yapÄ±n.",
+      "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA desteklenmiyor, LÃ¼tfen Ã§erezle giriÅŸ yapÄ±n."
     },
     "DATABASE": {
-      "NOT_LOGIN": "Kayıtlı değilsin. Lütfen giriş için `/login` kullanın.",
-      "LOGIN_ERROR": "Giriş başarısız, Lütfen tekrar deneyin.",
-      "LOGOUT_ERROR": "Oturum kapatılamadı çünkü giriş yapmadınız.",
-      "LOGOUT_EXCEPT": "Çıkış yapılırken bir hata oluştu."
+      "NOT_LOGIN": "KayÄ±tlÄ± deÄŸilsin. LÃ¼tfen giriÅŸ iÃ§in `/login` kullanÄ±n.",
+      "LOGIN_ERROR": "GiriÅŸ baÅŸarÄ±sÄ±z, LÃ¼tfen tekrar deneyin.",
+      "LOGOUT_ERROR": "Oturum kapatÄ±lamadÄ± Ã§Ã¼nkÃ¼ giriÅŸ yapmadÄ±nÄ±z.",
+      "LOGOUT_EXCEPT": "Ã‡Ä±kÄ±ÅŸ yapÄ±lÄ±rken bir hata oluÅŸtu."
     },
     "API": {
-      "FAILED_ACTIVE": "API etkinleştirilemedi",
-      "REQUEST_FAILED": "API yanıtı başarısız oldu."
+      "FAILED_ACTIVE": "API etkinleÅŸtirilemedi",
+      "REQUEST_FAILED": "API yanÄ±tÄ± baÅŸarÄ±sÄ±z oldu."
     },
     "SETUP_EMOJI": {
-      "MISSING_PERM": "Emoji oluşturma iznim yok.",
-      "FAILED_CREATE_EMOJI": "Emoji oluşturamadım, lütfen tekrar deneyin."
+      "MISSING_PERM": "Emoji oluÅŸturma iznim yok.",
+      "FAILED_CREATE_EMOJI": "Emoji oluÅŸturamadÄ±m, lÃ¼tfen tekrar deneyin."
     }
   }
 }
