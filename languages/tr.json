@@ -1,0 +1,183 @@
+{
+  "translation_by": "Arthur Morgan#9999 @mustafa383",
+  "commands": {
+    "login": {
+      "NAME": "giriş",
+      "DESCRIPTION": "Riot hesabınızla oturum açın",
+      "DESCRIBE": {
+        "username": "Kullanıcı adını girin",
+        "password": "Giriş şifresi"
+      },
+      "SUCCESS": "Başarıyla oturum açıldı",
+      "FAILED": "Oturum açılamadı, lütfen tekrar deneyiniz"
+    },
+    "logout": {
+      "NAME": "çıkış",
+      "DESCRIPTION": "Oturumu kapat ve hesabını veritabanından kaldır",
+      "SUCCESS": "Oturum başarıyla kapatıldı",
+      "FAILED": "Oturum kapatılamadı, lütfen tekrar deneyiniz"
+    },
+    "store": {
+      "NAME": "mağaza",
+      "DESCRIPTION": "Hesaplarınız için günlük mağazanızı gösterir",
+      "DESCRIBE": {
+        "username": "Kullanıcı adını girin (geçici oturum açma)",
+        "password": "Giriş şifresi (geçici oturum açma)"
+      },
+      "RESPONSE": "**{username}** için mağaza \nSıfırlanma {duration}"
+    },
+    "point": {
+      "NAME": "puan",
+      "DESCRIPTION": "Sahip olduğunuz Valorant ve Radyanit Puanlarınızı görüntüleyin (VP/RP)",
+      "POINT": "Puanlar"
+    },
+    "mission": {
+      "NAME": "görev",
+      "DESCRIPTION": "Günlük/haftalık görev ilerlemenizi görüntüleyin",
+      "TITLE": "Görev",
+      "DAILY": "Günlük",
+      "WEEKLY": "Haftalık",
+      "NEWPLAYER": "Yeni Oyuncu",
+      "NO_MISSION": "Görev yok",
+      "DAILY_RESET": "Sıfırlanma {duration}",
+      "REFILLS": "Refills {duration}"
+    },
+    "nightmarket": {
+      "NAME": "gecepazarı",
+      "DESCRIPTION": "Gece Pazarındaki skin tekliflerini göster",
+      "RESPONSE": "**{username}** için Gece Pazarı | {duration} sona eriyor",
+      "NIGMARKET_HAS_END": "**Gece Pazarı** sona erdi"
+    },
+    "battlepass": {
+      "NAME": "savaşbileti",
+      "DESCRIPTION": "Savaşbiletinde mevcut seviyeni gösterir",
+      "RESPONSE": "**Sonraki Ödül:** {next}\n**Type:** {type}\n**XP:** {xp}\n**SEZON SONU:** {end}",
+      "TIER": "SEVİYE",
+      "PLAYER_CARD": "Oyuncu Kartı",
+      "SPRAY": "Sprey",
+      "BUDDY": "Silah Uğuru",
+      "POINT": "Puan",
+      "PLAYER_TITLE": "Unvan",
+      "SKIN": "Kaplama"
+    },
+    "notify_add": {
+      "NAME": "ekle",
+      "DESCRIPTION": "Mağazanızda belirli bir kaplama mevcut olduğunda bir bildirim alın",
+      "DESCRIBE": {
+        "skin": "Bildirimini almak istediğiniz kaplamanın adı"
+      },
+      "SUCCESS": "{emoji} **{skin}** için bildirim başarıyla ayarlandı",
+      "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** bildirim listenize zaten eklendi",
+      "NOT_FOUND": "Kaplama bulunamadı",
+      "REMOVE_NOTIFY": "Bildirimi kaldır",
+      "REMOVED_NOTIFY": "**{skin}** bildirim listenizden kaldırıldı"
+    },
+    "notify_list": {
+      "NAME": "liste",
+      "DESCRIPTION": "Bildirim ayarladığınız kaplamaları görüntüleyin",
+      "TITLE": "Bildirim Listeniz",
+      "DONT_HAVE_NOTIFY": "Hiç bildiriminiz yok",
+      "REMOVE_NOTIFY": "Bildirim listesinden çıkarmak için düğmeye tıklayın"
+    },
+    "notify_mode": {
+      "NAME": "mod",
+      "DESCRIPTION": "Bildirim modunu değiştir",
+      "DESCRIBE": {
+        "mode": "Değiştirmek istediğiniz mod"
+      },
+      "SUCCESS": "Bildirim modunuz başarıyla değiştirdi **{mode}**",
+      "TURN_OFF": "Bildirimleri kapat"
+    },
+    "notify_test": {
+      "NAME": "test",
+      "DESCRIPTION": "Bildirim testi",
+      "NOTIFY_IS_WORKING": "Bildirimler çalışıyor",
+      "NOTIFY_TURN_OFF": "Bildirim modunu açmadınız",
+      "EMPTY_LIST": "Bildirim listeniz boş",
+      "BOT_MISSING_PERM": "**Bu kanalda bildirim gönderme iznim yok.** \nBu kanalda yeterli izinlere sahip değilim lütfen bu izinlerin açık olduğundan emin olun `Kanalları Görüntüle`, `Mesaj Gönder`, `Bağlantı Yerleştir` ve `Harici Emoji Kullan`. Daha sonra `/notify test` komutunu tekrar deneyin.",
+      "FAILED_SEND_NOTIFY": "Bildirim gönderilemedi, lütfen tekrar deneyin",
+      "PLEASE_ALLOW_DM_MESSAGE": "Lütfen gizlilik ayarlarınızda sunucu üyelerinden gelen DM mesajlarına izin verin"
+    },
+    "notify_send": {
+      "RESPONSE_SPECIFIED": "{emoji} **{name}** şuanda günlük mağazanızda.\n{duration} yenileniyor",
+      "RESPONSE_ALL": "**{username}** için günlük mağaza | {duration} yenileniyor"
+    },
+    "notify_channel": {
+      "NAME": "kanal",
+      "DESCRIPTION": "Bildirim kanalını değiştirin.",
+      "DESCRIBE": {
+        "channel": "Bildirim almak istediğiniz kanalı değiştirin."
+      },
+      "SUCCESS": "Bildirim kanalı değiştirildi: **{channel}**"
+    },
+    "bundle": {
+      "NAME": "koleksiyonlar",
+      "DESCRIPTION": "Belirli bir koleksiyonu inceleyin",
+      "DESCRIBE": {
+        "bundle": "İncelemek istediğiniz koleksiyonun adı."
+      },
+      "TITLE": "Koleksiyonu",
+      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seç:",
+      "NOT_FOUND_BUNDLE": "Koleksiyon bulunamadı"
+    },
+    "bundles": {
+      "NAME": "koleksiyon",
+      "DESCRIPTION": "Mağazada bulunan koleksiyonu inceleyin",
+      "TITLE": "Öne çıkan koleksiyon: {bundle} Koleksiyonu",
+      "DURATION": "{duration} sona eriyor",
+      "DROPDOWN_CHOICE_TITLE": "Koleksiyon seç:"
+    },
+    "debug": {
+      "NAME": "debug",
+      "DESCRIPTION": "Bot için hata ayıklama komutu",
+      "DESCRIBE": {
+        "bug": "Düzeltmek istediğiniz hata.",
+        "choice": {
+          "skin_price_not_loading": "Kaplama fiyatları yüklenmiyor",
+          "emoji_price_not_loading": "Emojiler yüklenmiyor",
+          "cache_price_not_loading": "Önbellek yüklenmiyor"
+        }
+      },
+      "SUCCESS": "Başarıyla hata ayıklandı: **{bug}**"
+    },
+    "cookies": {
+      "NAME": "cookies",
+      "DESCRIPTION": "Riot hesabınıa tarayıcı çereziyle giriş yap",
+      "DESCRIBE": {
+        "cookie": "Çereziniz"
+      },
+      "SUCCESS": "Başarıyla giriş yapıldı",
+      "FAILED": "Geçersiz çerez"
+    }
+  },
+  "errors": {
+    "UNKNOW_ERROR": "Bilinmeyen bir hata oluştu.",
+    "AUTH": {
+      "INVALID_PASSWORD": "Kullanıcı adınız veya şifreniz yanlış olabilir.",
+      "RATELIMIT": "Birkaç dakika sonra tekrar deneyin.",
+      "COOKIES_EXPIRED": "Çerezlerin süresi doldu, lütfen tekrar giriş yapın.",
+      "NO_NAME_TAG": "Bu kullanıcı ismini veya tagline henüz oluşturmadı.",
+      "REGION_NOT_FOUND": "Bilinmeyen bir hata oluştu, lütfen tekrar giriş yapın.",
+      "LOGIN_COOKIE_FAILED": "Çerezle giriş başarısız oldu.",
+      "INPUT_2FA_CODE": "'2FA kodunu girin.",
+      "2FA_ENABLE": "2FA etkinleştirilmiş.",
+      "2FA_TO_EMAIL": "Riot kodu şuraya gönderdi",
+      "2FA_INVALID_CODE": "Kod geçersiz. Lütfen tekrar giriş yapın.",
+      "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA desteklenmiyor, Lütfen çerezle giriş yapın."
+    },
+    "DATABASE": {
+      "NOT_LOGIN": "Kayıtlı değilsin. Lütfen giriş için `/login` kullanın.",
+      "LOGIN_ERROR": "Giriş başarısız, Lütfen tekrar deneyin.",
+      "LOGOUT_ERROR": "Oturum kapatılamadı çünkü giriş yapmadınız.",
+      "LOGOUT_EXCEPT": "Çıkış yapılırken bir hata oluştu."
+    },
+    "API": {
+      "FAILED_ACTIVE": "API etkinleştirilemedi",
+      "REQUEST_FAILED": "API yanıtı başarısız oldu."
+    },
+    "SETUP_EMOJI": {
+      "MISSING_PERM": "Emoji oluşturma iznim yok.",
+      "FAILED_CREATE_EMOJI": "Emoji oluşturamadım, lütfen tekrar deneyin."
+    }
+  }
+}
