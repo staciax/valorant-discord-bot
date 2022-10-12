@@ -99,8 +99,8 @@
       "PLEASE_ALLOW_DM_MESSAGE": "Lütfen gizlilik ayarlarınızda sunucu üyelerinden gelen DM mesajlarına izin verin"
     },
     "notify_send": {
-      "RESPONSE_SPECIFIED": "{emoji} **{name}** şuanda günlük mağazanızda.\n{duration} sonra yenileniyor",
-      "RESPONSE_ALL": "**{username}** için günlük mağaza | {duration} sonra yenileniyor"
+      "RESPONSE_SPECIFIED": "{emoji} **{name}** şuanda günlük mağazanızda.\n{duration} yenileniyor",
+      "RESPONSE_ALL": "**{username}** için günlük mağaza | {duration} yenileniyor"
     },
     "notify_channel": {
       "NAME": "kanal",
@@ -156,12 +156,12 @@
       "INVALID_PASSWORD": "Kullanıcı adınız veya şifreniz yanlış olabilir.",
       "RATELIMIT": "Birkaç dakika sonra tekrar deneyin.",
       "COOKIES_EXPIRED": "Çerezlerin süresi doldu, lütfen tekrar giriş yapın.",
-      "NO_NAME_TAG": "This user hasn't created a name or tagline yet.",
+      "NO_NAME_TAG": "Bu kullanıcı ismini veya tagline henüz oluşturmadı.",
       "REGION_NOT_FOUND": "Bilinmeyen bir hata oluştu, lütfen tekrar giriş yapın.",
       "LOGIN_COOKIE_FAILED": "Çerezle giriş başarısız oldu.",
-      "INPUT_2FA_CODE": "Input 2FA code.",
-      "2FA_ENABLE": "You have 2FA enabled.",
-      "2FA_TO_EMAIL": "Riot sent a code to",
+      "INPUT_2FA_CODE": "'2FA kodunu girin.",
+      "2FA_ENABLE": "2FA etkinleştirilmiş.",
+      "2FA_TO_EMAIL": "Riot kodu şuraya gönderdi",
       "2FA_INVALID_CODE": "Kod geçersiz. Lütfen tekrar giriş yapın.",
       "TEMP_LOGIN_NOT_SUPPORT_2FA": "2FA desteklenmiyor, Lütfen çerezle giriş yapın."
     },
