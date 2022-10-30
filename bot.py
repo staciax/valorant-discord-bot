@@ -16,6 +16,7 @@ from utils.i18n import Translator
 
 load_dotenv()
 class ValorantBot(commands.Bot):
+    """ Discord bot that shows your infomation and more without opening VALORANT by using the (kind-of-private-)game API. """
     bot_app_info: discord.AppInfo
 
     def __init__(self) -> None:
