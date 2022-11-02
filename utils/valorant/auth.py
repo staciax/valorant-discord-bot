@@ -73,7 +73,7 @@ class ClientSession(aiohttp.ClientSession):
 
 
 class Auth:
-    RIOT_CLIENT_USER_AGENT = "RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)"
+    RIOT_CLIENT_USER_AGENT = "RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)"
     
     def __init__(self) -> None:
         self._headers: Dict = {
