@@ -1,41 +1,24 @@
-from __future__ import annotations
+from datetime import datetime, time
+from typing import TYPE_CHECKING, Literal
 
-import traceback
-from datetime import datetime, time, timedelta
-from typing import TYPE_CHECKING, Any, Literal, Tuple
-
-import discord
-from discord import Forbidden, HTTPException, Interaction, app_commands
+from discord import Interaction, app_commands
 from discord.ext import commands, tasks
 
 from utils.checks import owner_only, cooldown_5s
 from discord.app_commands.checks import dynamic_cooldown
 
-if TYPE_CHECKING:
-    from bot import ValorantBot
+from ._abc import MixinMeta
 
 
-class Notify(commands.Cog):
-    def __init__(self, bot: ValorantBot) -> None:
-        self.bot: ValorantBot = bot
-
-    async def cog_unload(self) -> None:
-        self.notifys.cancel()
-
-    async def cog_load(self) -> None:
-        self.notifys.start()
-
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
-        ...
+class Notify(MixinMeta):
 
     @tasks.loop(time=time(hour=0, minute=0, second=10))  # utc 00:00:15
-    async def notifys(self) -> None:
+    async def notify_task(self) -> None:
         __verify_time = datetime.utcnow()
         if __verify_time.hour == 0:
             ...
 
-    @notifys.before_loop
+    @notify_task.before_loop
     async def before_daily_send(self) -> None:
         await self.bot.wait_until_ready()
         print('Checking new store skins for notifys...')
@@ -61,7 +44,6 @@ class Notify(commands.Cog):
     async def notify_mode(self, interaction: Interaction, mode: Literal['Specified Skin', 'All Skin', 'Off']) -> None:
         ...
 
-
     @notify.command(name='channel', description='Change notification channel.')
     @app_commands.describe(channel='Select the channel you want to change.')
     @dynamic_cooldown(cooldown_5s)
@@ -78,6 +60,3 @@ class Notify(commands.Cog):
     # async def notify_manage(self, interaction: Interaction) -> None:
     #     ...
 
-
-async def setup(bot: ValorantBot) -> None:
-    await bot.add_cog(Notify(bot))

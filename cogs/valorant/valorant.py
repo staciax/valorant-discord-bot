@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 from discord import Interaction, app_commands, ui
@@ -11,22 +12,36 @@ from utils.errors import ValorantBotError
 from discord.app_commands.checks import dynamic_cooldown
 from discord.app_commands import locale_str as T_
 
+from .notify import Notify
+
 if TYPE_CHECKING:
     from bot import ValorantBot
 
 
-class ValorantCog(commands.Cog, name='Valorant'):
+class CompositeMetaClass(type(commands.Cog), type(ABC)):
+    """
+    This allows the metaclass used for proper type detection to
+    coexist with discord.py's metaclass
+    """
+
+    pass
+
+
+class Valorant(Notify, commands.Cog, metaclass=CompositeMetaClass):
     """Valorant API Commands"""
 
     def __init__(self, bot: ValorantBot) -> None:
+        super().__init__()
         self.bot: ValorantBot = bot
         self.db: Optional[Any] = None
 
-    async def cog_unload(self) -> None:
-        self.reload_cache_task.cancel()
-
     async def cog_load(self) -> None:
         self.reload_cache_task.start()
+        self.notify_task.start()
+
+    async def cog_unload(self) -> None:
+        self.reload_cache_task.cancel()
+        self.notify_task.cancel()
 
     def reload_cache(self, force=False) -> None:
         ...
@@ -118,4 +133,4 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
 
 async def setup(bot: ValorantBot) -> None:
-    await bot.add_cog(ValorantCog(bot))
+    await bot.add_cog(Valorant(bot))
