@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextlib
-from typing import TYPE_CHECKING, Literal  # noqa: F401
+from typing import TYPE_CHECKING, Literal
 
 from discord import Interaction, app_commands, ui
 from discord.ext import commands, tasks
@@ -30,12 +30,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
         self.bot: ValorantBot = bot
         self.endpoint: API_ENDPOINT = None
         self.db: DATABASE = None
-        self.reload_cache.start()
+        self.reload_cache_task.start()
 
     def cog_unload(self) -> None:
-        self.reload_cache.cancel()
+        self.reload_cache_task.cancel()
 
-    def funtion_reload_cache(self, force=False) -> None:
+    def reload_cache(self, force=False) -> None:
         """Reload the cache"""
         with contextlib.suppress(Exception):
             cache = self.db.read_cache()
@@ -48,11 +48,11 @@ class ValorantCog(commands.Cog, name='Valorant'):
                 print('Updated cache')
 
     @tasks.loop(minutes=30)
-    async def reload_cache(self) -> None:
+    async def reload_cache_task(self) -> None:
         """Reload the cache every 30 minutes"""
-        self.funtion_reload_cache()
+        self.reload_cache()
 
-    @reload_cache.before_loop
+    @reload_cache_task.before_loop
     async def before_reload_cache(self) -> None:
         """Wait for the bot to be ready before reloading the cache"""
         await self.bot.wait_until_ready()
@@ -337,22 +337,6 @@ class ValorantCog(commands.Cog, name='Valorant'):
         view.add_item(ui.Button(label="Tutorial", emoji="🔗", url="https://youtu.be/cFMNHEHEp2A"))
         await interaction.followup.send(f"{response.get('FAILURE')}", view=view, ephemeral=True)
 
-    # ---------- ROAD MAP ---------- #
-
-    # @app_commands.command()
-    # async def contract(self, interaction: Interaction) -> None:
-    #     # change agent contract
-
-    # @app_commands.command()
-    # async def party(self, interaction: Interaction) -> None:
-    #     # curren party
-    #     # pick agent
-    #     # current map
-
-    # @app_commands.command()
-    # async def career(self, interaction: Interaction) -> None:
-    #     # match history
-
     # ---------- DEBUGs ---------- #
 
     @app_commands.command(description='The command debug for the bot')
@@ -379,7 +363,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
             await setup_emoji(self.bot, interaction.guild, interaction.locale, force=True)
 
         elif bug == 'Cache not loading':
-            self.funtion_reload_cache(force=True)
+            self.reload_cache(force=True)
 
         success = response.get('SUCCESS')
         await interaction.followup.send(embed=Embed(success.format(bug=bug)))
