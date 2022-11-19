@@ -14,7 +14,7 @@ class Admin(commands.Cog):
     """Error handler"""
 
     def __init__(self, bot: ValorantBot) -> None:
-        self.bot: ValorantBot = bot
+        self.bot = bot
 
     @commands.command()
     @commands.is_owner()
@@ -42,10 +42,11 @@ class Admin(commands.Cog):
                 await self.bot.tree.sync(guild=ctx.guild)
                 await ctx.reply(f"Un-Synced guild !")
                 return
-
-            self.bot.tree.clear_commands()
-            await self.bot.tree.sync()
-            await ctx.reply(f"Un-Synced global !")
+            else:
+                for guild in self.bot.guilds:
+                    self.bot.tree.clear_commands(guild=guild)
+                await self.bot.tree.sync()
+                await ctx.reply(f"Un-Synced global !")
 
     @app_commands.command(description='Shows basic information about the bot.')
     async def about(self, interaction: Interaction) -> None:

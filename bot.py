@@ -83,10 +83,12 @@ class ValorantBot(commands.Bot):
         else:
             raise ValueError('No token provided.')
 
+
 async def run_bot() -> None:
     bot = ValorantBot()
     async with bot:
         await bot.start()
+
 
 if __name__ == '__main__':
     asyncio.run(run_bot())
