@@ -53,7 +53,7 @@ I'm a student and I have to divide my study time with this project.`
 
 # About
 
-Discord bot that shows your infomation and more without open the VALORANT by using
+Discord bot that shows your information and more without opening VALORANT by using
 the [In-game API.][ValorantClientAPI]
 written using Python and the [Discord.py][DiscordPy] library <br>
 If you need help regarding Valorant Discord Bot, please join the [support server][Support]
@@ -173,8 +173,8 @@ python bot.py
 | :---------------------------- | :--------------------------------------------------------------------------------------------------------- |
 | `/store`  | Shows your daily store |
 | `/point`  | Shows your valorant point |
-| `/login`  | Log in with your Riot acoount |
-| `/logout`  | Logout your Riot acoount |
+| `/login`  | Log in with your Riot account |
+| `/logout`  | Log out of your Riot account |
 | `/misson`  | View your daily/weekly mission progress |
 | `/nightmarket`  | Shows your nightmarket |
 | `/battlepass`  | View your battlepass' current tier |
