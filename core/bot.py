@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
 
@@ -55,6 +56,14 @@ class Bot(commands.Bot):
             )
         )
 
+        log.info('Ready: %s (ID: %s)', self.user, self.user.id)
+
+    async def on_message(self, message: discord.Message, /) -> None:
+        if message.author == self.user:
+            return
+
+        await self.process_commands(message)
+
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
         self.bot_app_info = await self.application_info()
@@ -64,8 +73,38 @@ class Bot(commands.Bot):
 
         # await self.tree.sync()
 
-    async def load_cogs(self) -> None:
-        ...
+    async def cogs_load(self) -> None:
+        await asyncio.gather(*[self.load_extension(extension) for extension in INITIAL_EXTENSIONS])
+
+    async def cogs_unload(self) -> None:
+        await asyncio.gather(*[self.unload_extension(extension) for extension in INITIAL_EXTENSIONS])
+
+    async def load_extension(self, name: str, *, package: str | None = None) -> None:
+        try:
+            await super().load_extension(name, package=package)
+        except Exception as e:
+            log.error('failed to load extension %s', name, exc_info=e)
+            raise e
+        else:
+            log.info('loaded extension %s', name)
+
+    async def unload_extension(self, name: str, *, package: str | None = None) -> None:
+        try:
+            await super().unload_extension(name, package=package)
+        except Exception as e:
+            log.error('failed to unload extension %s', name, exc_info=e)
+            raise e
+        else:
+            log.info('unloaded extension %s', name)
+
+    async def reload_extension(self, name: str, *, package: str | None = None) -> None:
+        try:
+            await super().reload_extension(name, package=package)
+        except Exception as e:
+            log.error('failed to reload extension %s', name, exc_info=e)
+            raise e
+        else:
+            log.info('reloaded extension %s', name)
 
     async def close(self) -> None:
         await self.session.close()
