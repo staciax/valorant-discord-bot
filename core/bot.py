@@ -46,6 +46,7 @@ class Bot(commands.Bot):
             help_command=None,
             tree_cls=Tree,
         )
+        self.support_guild_id = 0
 
     @property
     def owner(self) -> discord.User:
