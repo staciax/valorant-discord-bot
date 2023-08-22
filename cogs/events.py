@@ -7,6 +7,8 @@ import discord
 from discord.ext import commands
 
 if TYPE_CHECKING:
+    from discord.app_commands import Command, ContextMenu
+
     from core.bot import Bot
 
 log = logging.getLogger(__name__)
@@ -15,6 +17,23 @@ log = logging.getLogger(__name__)
 class Events(commands.Cog, name='events'):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_app_command_completion(
+        self,
+        interaction: discord.Interaction[Bot],
+        app_command: Command | ContextMenu,
+    ) -> None:
+        if await self.bot.is_owner(interaction.user):
+            return
+
+        destination = None
+        if interaction.guild is None:
+            destination = 'Private Message'
+        else:
+            destination = f'#{interaction.channel} ({interaction.guild})'
+
+        log.info(f'{interaction.created_at}: {interaction.user} in {destination}: /{app_command.qualified_name})')
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
