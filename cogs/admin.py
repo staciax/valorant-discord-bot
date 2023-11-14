@@ -65,7 +65,7 @@ class Admin(commands.Cog):
             "[KANATAISGOD](https://github.com/KANATAISGOD)\n"
             "[TMADZ2007](https://github.com/KANATAISGOD')\n"
             "[sevzin](https://github.com/sevzin)\n"
-            "[miigoxyz](https://github.com/miigoxyz)\n"
+            "[MIIGØ](https://github.com/miigo-dev)\n"
             "[Connor](https://github.com/ConnorDoesDev)\n"
             "[KohanaSann](https://github.com/KohanaSann)\n"
             "[RyugaXhypeR](https://github.com/RyugaXhypeR)\n"
