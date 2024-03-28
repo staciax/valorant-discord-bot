@@ -1,5 +1,23 @@
-*.pyc
-.vscode
+# Python
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.env.prod
+.venv
+env/
 venv/
-data/
-.idea/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+logs
+*.log
+
+# Editor directories and files
+!.vscode/extensions.json
