@@ -378,6 +378,7 @@ class BaseBundle(ui.View):
 
     @ui.select(placeholder='Select a bundle:')
     async def select_bundle(self, interaction: Interaction, select: ui.Select):
+        # TODO: fix freeze
         self.build_embeds(int(select.values[0]))
         self.fill_items()
         self.update_button()

@@ -189,52 +189,52 @@ def fetch_bundles() -> None:
                 'expires': None,
             }
 
-        resp2 = requests.get(f'https://api.valtracker.gg/bundles')
+        #resp2 = requests.get(f'https://api.valtracker.gg/bundles')
 
-        for bundle2 in resp2.json()['data']:
-            if bundle2['uuid'] in bundles:
-                bundle = bundles[bundle2.get('uuid')]
-                items = []
-                default = {'amount': 1, 'discount': 0}
-                for weapon in bundle2['weapons']:
-                    items.append(
-                        {
-                            'uuid': weapon['levels'][0]['uuid'],
-                            'type': 'e7c63390-eda7-46e0-bb7a-a6abdacd2433',
-                            'price': weapon.get('price'),
-                            **default,
-                        }
-                    )
-                for buddy in bundle2['buddies']:  #
-                    items.append(
-                        {
-                            'uuid': buddy['levels'][0]['uuid'],
-                            'type': 'dd3bf334-87f3-40bd-b043-682a57a8dc3a',
-                            'price': buddy.get('price'),
-                            **default,
-                        }
-                    )
-                for card in bundle2['cards']:  #
-                    items.append(
-                        {
-                            'uuid': card['uuid'],
-                            'type': '3f296c07-64c3-494c-923b-fe692a4fa1bd',
-                            'price': card.get('price'),
-                            **default,
-                        }
-                    )
-                for spray in bundle2['sprays']:
-                    items.append(
-                        {
-                            'uuid': spray['uuid'],
-                            'type': 'd5f120f8-ff8c-4aac-92ea-f2b5acbe9475',
-                            'price': spray.get('price'),
-                            **default,
-                        }
-                    )
+        #for bundle2 in resp2.json()['data']:
+        #    if bundle2['uuid'] in bundles:
+        #        bundle = bundles[bundle2.get('uuid')]
+        #        items = []
+        #        default = {'amount': 1, 'discount': 0}
+        #        for weapon in bundle2['weapons']:
+        #            items.append(
+        #                {
+        #                    'uuid': weapon['levels'][0]['uuid'],
+        #                    'type': 'e7c63390-eda7-46e0-bb7a-a6abdacd2433',
+        #                    'price': weapon.get('price'),
+        #                    **default,
+        #                }
+        #            )
+        #        for buddy in bundle2['buddies']:  #
+        #            items.append(
+        #                {
+        #                    'uuid': buddy['levels'][0]['uuid'],
+        #                    'type': 'dd3bf334-87f3-40bd-b043-682a57a8dc3a',
+        #                    'price': buddy.get('price'),
+        #                    **default,
+        #                }
+        #            )
+        #        for card in bundle2['cards']:  #
+        #            items.append(
+        #                {
+        #                    'uuid': card['uuid'],
+        #                    'type': '3f296c07-64c3-494c-923b-fe692a4fa1bd',
+        #                    'price': card.get('price'),
+        #                    **default,
+        #                }
+        #            )
+        #        for spray in bundle2['sprays']:
+        #            items.append(
+        #                {
+        #                    'uuid': spray['uuid'],
+        #                    'type': 'd5f120f8-ff8c-4aac-92ea-f2b5acbe9475',
+        #                    'price': spray.get('price'),
+        #                    **default,
+        #                }
+        #            )
 
-                bundle['items'] = items
-                bundle['price'] = bundle2['price']
+        #        bundle['items'] = items
+        #        bundle['price'] = bundle2['price']
 
         data['bundles'] = bundles
         JSON.save('cache', data)

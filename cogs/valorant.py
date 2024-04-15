@@ -138,6 +138,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         await interaction.response.defer(ephemeral=is_private_message)
 
+        if not interaction.guild:
+            raise ValorantBotError('This command can only be used in a server')
+
         # setup emoji
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
@@ -166,6 +169,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
         await interaction.response.defer(ephemeral=is_private_message)
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
+
+        if not interaction.guild:
+            raise ValorantBotError('This command can only be used in a server')
 
         # setup emoji
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
@@ -204,6 +210,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
         )
 
     @app_commands.command(description='Show skin offers on the nightmarket')
+    @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def nightmarket(self, interaction: Interaction, username: str = None, password: str = None) -> None:
 
@@ -211,6 +218,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
         is_private_message = True if username is not None or password is not None else False
 
         await interaction.response.defer(ephemeral=is_private_message)
+
+        if not interaction.guild:
+            raise ValorantBotError('This command can only be used in a server')
 
         # setup emoji
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
@@ -269,6 +279,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
+        if not interaction.guild:
+            raise ValorantBotError('This command can only be used in a server')
+
         # setup emoji
         await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
@@ -289,7 +302,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
             for i in cache['bundles']
             if bundle.lower() in cache['bundles'][i]['names'][str(VLR_locale)].lower()
         ]
-        find_bundle = find_bundle_en_US if len(find_bundle_en_US) > 0 else find_bundle_locale
+        find_bundle = (find_bundle_en_US if len(find_bundle_en_US) > 0 else find_bundle_locale)[:25]
 
         # bundle view
         view = View.BaseBundle(interaction, find_bundle, response)
@@ -297,12 +310,19 @@ class ValorantCog(commands.Cog, name='Valorant'):
 
     # inspired by https://github.com/giorgi-o
     @app_commands.command(description="Show the current featured bundles")
+    @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def bundles(self, interaction: Interaction) -> None:
 
         await interaction.response.defer()
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
+
+        if not interaction.guild:
+            raise ValorantBotError('This command can only be used in a server')
+
+        # setup emoji
+        await setup_emoji(self.bot, interaction.guild, interaction.locale)
 
         # endpoint
         endpoint = await self.get_endpoint(interaction.user.id, interaction.locale)
@@ -376,6 +396,9 @@ class ValorantCog(commands.Cog, name='Valorant'):
             self.db.insert_skin_price(skin_price, force=True)
 
         elif bug == 'Emoji not loading':
+            if not interaction.guild:
+                raise ValorantBotError('This command can only be used in a server')
+
             await setup_emoji(self.bot, interaction.guild, interaction.locale, force=True)
 
         elif bug == 'Cache not loading':
