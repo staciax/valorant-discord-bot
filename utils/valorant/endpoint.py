@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # Standard
 import json
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, List, Mapping, Optional, Union
 
 import requests
 import urllib3
@@ -13,7 +13,13 @@ from ..errors import HandshakeError, ResponseError
 from .local import LocalErrorResponse
 
 # Local
-from .resources import base_endpoint, base_endpoint_glz, base_endpoint_shared, region_shard_override, shard_region_override
+from .resources import (
+    base_endpoint,
+    base_endpoint_glz,
+    base_endpoint_shared,
+    region_shard_override,
+    shard_region_override,
+)
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -54,7 +60,7 @@ class API_ENDPOINT:
             self.__build_urls()
         except Exception as e:
             print(e)
-            raise HandshakeError(self.locale_response().get('FAILED_ACTIVE'))
+            raise HandshakeError(self.locale_response().get('FAILED_ACTIVE')) from e
 
     def locale_response(self) -> LocalErrorResponse:
         """This function is used to check if the local response is enabled."""
@@ -67,7 +73,7 @@ class API_ENDPOINT:
 
     # self.__build_headers()
 
-    def fetch(self, endpoint: str = '/', url: str = 'pd', errors: Dict = {}) -> Dict:
+    def fetch(self, endpoint: str = '/', url: str = 'pd', errors: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """fetch data from the api"""
 
         self.locale_response()
@@ -78,37 +84,40 @@ class API_ENDPOINT:
 
         r = requests.get(f'{endpoint_url}{endpoint}', headers=self.headers)
 
-        try:
+        try:  # noqa: SIM105
             data = json.loads(r.text)
-        except:  # as no data is set, an exception will be raised later in the method
+        except Exception:
             pass
 
-        if "httpStatus" not in data:
+        if 'httpStatus' not in data:
             return data
 
-        if data["httpStatus"] == 400:
+        if data['httpStatus'] == 400:
             response = LocalErrorResponse('AUTH', self.locale_code)
             raise ResponseError(response.get('COOKIES_EXPIRED'))
             # await self.refresh_token()
             # return await self.fetch(endpoint=endpoint, url=url, errors=errors)
 
-    def put(self, endpoint: str = "/", url: str = 'pd', data: Dict = {}, errors: Dict = {}) -> Dict:
+    def put(
+        self,
+        endpoint: str = '/',
+        url: str = 'pd',
+        data: Optional[Union[Dict[str, Any], List[Any]]] = None,
+        errors: Optional[Dict[str, Any]] = None,
+    ) -> Any:
         """put data to the api"""
 
         self.locale_response()
 
-        data = data if type(data) is list else json.dumps(data)
-
         endpoint_url = getattr(self, url)
-        data = None
 
         r = requests.put(f'{endpoint_url}{endpoint}', headers=self.headers, data=data)
         data = json.loads(r.text)
 
-        if data is not None:
-            return data
-        else:
+        if data is None:
             raise ResponseError(self.response.get('REQUEST_FAILED'))
+
+        return data
 
     # contracts endpoints
 
@@ -225,7 +234,7 @@ class API_ENDPOINT:
         '3ad1b2b2-acdb-4524-852f-954a76ddae0a': 'Skins chroma',\n
         'de7caa6b-adf7-4588-bbd1-143831e786c6': 'Player titles',\n
         """
-        data = self.fetch(endpoint=f"/store/v1/entitlements/{self.puuid}/{item_type}", url="pd")
+        data = self.fetch(endpoint=f'/store/v1/entitlements/{self.puuid}/{item_type}', url='pd')
         return data
 
     # useful endpoints
@@ -235,7 +244,7 @@ class API_ENDPOINT:
         Get player daily/weekly missions
         """
         data = self.fetch_contracts()
-        mission = data["Missions"]
+        mission = data['Missions']
         return mission
 
     def get_player_level(self) -> Mapping[str, Any]:
@@ -253,7 +262,7 @@ class API_ENDPOINT:
         season_id = data['LatestCompetitiveUpdate']['SeasonID']
         if len(season_id) == 0:
             season_id = self.__get_live_season()
-        current_season = data["QueueSkills"]['competitive']['SeasonalInfoBySeasonID']
+        current_season = data['QueueSkills']['competitive']['SeasonalInfoBySeasonID']
         current_Tier = current_season[season_id]['CompetitiveTier']
         return current_Tier
 
@@ -262,9 +271,9 @@ class API_ENDPOINT:
     def __get_live_season(self) -> str:
         """Get the UUID of the live competitive season"""
         content = self.fetch_content()
-        season_id = [season["ID"] for season in content["Seasons"] if season["IsActive"] and season["Type"] == "act"]
+        season_id = [season['ID'] for season in content['Seasons'] if season['IsActive'] and season['Type'] == 'act']
         if not season_id:
-            return self.fetch_player_mmr()["LatestCompetitiveUpdate"]["SeasonID"]
+            return self.fetch_player_mmr()['LatestCompetitiveUpdate']['SeasonID']
         return season_id[0]
 
     def __check_puuid(self, puuid: str) -> str:
@@ -290,9 +299,9 @@ class API_ENDPOINT:
         """Format region to match from user input"""
 
         self.shard = self.region
-        if self.region in region_shard_override.keys():
+        if self.region in region_shard_override:
             self.shard = region_shard_override[self.region]
-        if self.shard in shard_region_override.keys():
+        if self.shard in shard_region_override:
             self.region = shard_region_override[self.shard]
 
     def _get_client_version(self) -> str:

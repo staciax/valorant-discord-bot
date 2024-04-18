@@ -51,7 +51,9 @@ class NotifyView(discord.ui.View):
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user.id == int(self.user_id):
             return True
-        await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
+        await interaction.response.send_message(
+            'This pagination menu cannot be controlled by you, sorry!', ephemeral=True
+        )
         return False
 
     async def on_timeout(self) -> None:
@@ -84,7 +86,6 @@ class _NotifyListButton(ui.Button):
         super().__init__(label=label, style=ButtonStyle.red, custom_id=str(custom_id))
 
     async def callback(self, interaction: Interaction) -> None:
-
         await interaction.response.defer()
 
         data: list = JSON.read('notifys')
@@ -107,7 +108,7 @@ class NotifyViewList(ui.View):
     def __init__(self, interaction: Interaction, response: Dict) -> None:
         self.interaction: Interaction = interaction
         self.response = response
-        self.bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
+        self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
         self.default_language = 'en-US'
         super().__init__(timeout=600)
 
@@ -119,7 +120,9 @@ class NotifyViewList(ui.View):
     async def interaction_check(self, interaction: Interaction) -> bool:
         if interaction.user == self.interaction.user:
             return True
-        await interaction.response.send_message('This pagination menu cannot be controlled by you, sorry!', ephemeral=True)
+        await interaction.response.send_message(
+            'This pagination menu cannot be controlled by you, sorry!', ephemeral=True
+        )
         return False
 
     def update_button(self) -> None:
@@ -169,13 +172,12 @@ class NotifyViewList(ui.View):
             embed.set_footer(text=click_for_remove)
             count = 0
             text_format = []
-            for skin in skin_list:
+            for count, skin in enumerate(skin_list):
                 name = skin_list[skin]['name']
                 icon = skin_list[skin]['icon']
                 price = skin_list[skin]['price']
                 emoji = skin_list[skin]['emoji']
-                count += 1
-                text_format.append(f"**{count}.** {emoji} **{name}**\n{vp_emoji} {price}")
+                text_format.append(f'**{count + 1}.** {emoji} **{name}**\n{vp_emoji} {price}')
             else:
                 embed.description = '\n'.join(text_format)
                 if len(skin_list) == 1:
@@ -224,12 +226,11 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
                 await interaction.response.send_message(embed=embed, ephemeral=True)
 
             if not code.isdigit():
-                return await send_embed(f"`{code}` is not a number")
+                return await send_embed(f'`{code}` is not a number')
 
             auth = await auth.give2facode(code, cookie)
 
             if auth['auth'] == 'response':
-
                 login = await self.db.login(user_id, auth, self.interaction.locale)
                 if login['auth']:
                     return await send_embed(f"{self.response.get('SUCCESS')} **{login['player']}!**")
@@ -241,7 +242,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
         """Called when the user submits the modal with an error."""
-        print("TwoFA_UI:", error)
+        print('TwoFA_UI:', error)
         embed = discord.Embed(description='Oops! Something went wrong.', color=0xFD4554)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -253,7 +254,7 @@ class BaseBundle(ui.View):
         self.entries = entries
         self.response = response
         self.language = str(VLR_locale)
-        self.bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
+        self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
         self.current_page: int = 0
         self.embeds: List[List[discord.Embed]] = []
         self.page_format = {}
@@ -287,7 +288,7 @@ class BaseBundle(ui.View):
             if index == selected_bundle:
                 embeds.append(
                     discord.Embed(
-                        title=bundle['names'][self.language] + f" {collection_title}",
+                        title=bundle['names'][self.language] + f' {collection_title}',
                         description=f"{vp_emoji} {bundle['price']}",
                         color=0xFD4554,
                     ).set_image(url=bundle['icon'])
@@ -331,11 +332,13 @@ class BaseBundle(ui.View):
 
         bundle_price = bundle['price']
         bundle_base_price = bundle['base_price']
-        bundle_price_text = f"**{bundle_price}** {(f'~~{bundle_base_price}~~' if bundle_base_price != bundle_price else '')}"
+        bundle_price_text = (
+            f"**{bundle_price}** {(f'~~{bundle_base_price}~~' if bundle_base_price != bundle_price else '')}"
+        )
 
         embed = discord.Embed(
             title=featured_bundle_title.format(bundle=name),
-            description=f"{vp_emoji} {bundle_price_text}" f" ({duration_text})",
+            description=f'{vp_emoji} {bundle_price_text}' f' ({duration_text})',
             color=0xFD4554,
         )
         embed.set_image(url=bundle['icon'])
@@ -345,7 +348,6 @@ class BaseBundle(ui.View):
         embeds = [embed]
 
         for items in sorted(bundle['items'], reverse=True, key=lambda c: c['base_price']):
-
             item = GetItems.get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
             emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
@@ -357,7 +359,7 @@ class BaseBundle(ui.View):
             item_price_text = f"**{item_price}** {(f'~~{item_base_price}~~' if item_base_price != item_price else '')}"
 
             embed = self.base_embed(
-                f"{emoji} {item['names'][self.language]}", f"**{vp_emoji}** {item_price_text}", icon, color
+                f"{emoji} {item['names'][self.language]}", f'**{vp_emoji}** {item_price_text}', icon, color
             )
 
             embeds.append(embed)
@@ -436,14 +438,14 @@ class BaseBundle(ui.View):
         FBundle = self.entries['FeaturedBundle']['Bundles']
 
         for fbd in FBundle:
-            get_bundle = GetItems.get_bundle(fbd["DataAssetID"])
+            get_bundle = GetItems.get_bundle(fbd['DataAssetID'])
 
             bundle_payload = {
-                "uuid": fbd["DataAssetID"],
-                "icon": get_bundle['icon'],
-                "names": get_bundle['names'],
-                "duration": fbd["DurationRemainingInSeconds"],
-                "items": [],
+                'uuid': fbd['DataAssetID'],
+                'icon': get_bundle['icon'],
+                'names': get_bundle['names'],
+                'duration': fbd['DurationRemainingInSeconds'],
+                'items': [],
             }
 
             price = 0
@@ -451,16 +453,16 @@ class BaseBundle(ui.View):
 
             for items in fbd['Items']:
                 item_payload = {
-                    "uuid": items["Item"]["ItemID"],
-                    "type": items["Item"]["ItemTypeID"],
-                    "item": GetItems.get_item_by_type(items["Item"]["ItemTypeID"], items["Item"]["ItemID"]),
-                    "amount": items["Item"]["Amount"],
-                    "price": items["DiscountedPrice"],
-                    "base_price": items["BasePrice"],
-                    "discount": items["DiscountPercent"],
+                    'uuid': items['Item']['ItemID'],
+                    'type': items['Item']['ItemTypeID'],
+                    'item': GetItems.get_item_by_type(items['Item']['ItemTypeID'], items['Item']['ItemID']),
+                    'amount': items['Item']['Amount'],
+                    'price': items['DiscountedPrice'],
+                    'base_price': items['BasePrice'],
+                    'discount': items['DiscountPercent'],
                 }
-                price += int(items["DiscountedPrice"])
-                baseprice += int(items["BasePrice"])
+                price += int(items['DiscountedPrice'])
+                baseprice += int(items['BasePrice'])
                 bundle_payload['items'].append(item_payload)
 
             bundle_payload['price'] = price

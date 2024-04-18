@@ -72,7 +72,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
             auth.locale_code = locale_code
             data = await auth.temp_auth(username, password)
         elif username or password:
-            raise ValorantBotError(f"Please provide both username and password!")
+            raise ValorantBotError('Please provide both username and password!')
         else:
             data = await self.db.is_data(user_id, locale_code)
         data['locale_code'] = locale_code
@@ -84,7 +84,6 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.describe(username='Input username', password='Input password')
     # @dynamic_cooldown(cooldown_5s)
     async def login(self, interaction: Interaction, username: str, password: str) -> None:
-
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         user_id = interaction.user.id
@@ -112,7 +111,6 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='Logout and Delete your account from database')
     # @dynamic_cooldown(cooldown_5s)
     async def logout(self, interaction: Interaction) -> None:
-
         await interaction.response.defer(ephemeral=True)
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
@@ -124,17 +122,16 @@ class ValorantCog(commands.Cog, name='Valorant'):
                 return await interaction.followup.send(embed=embed, ephemeral=True)
             raise ValorantBotError(response.get('FAILED'))
 
-    @app_commands.command(description="Shows your daily store in your accounts")
+    @app_commands.command(description='Shows your daily store in your accounts')
     @app_commands.describe(username='Input username (without login)', password='password (without login)')
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def store(self, interaction: Interaction, username: str = None, password: str = None) -> None:
-
         # language
         response = ResponseLanguage(interaction.command.name, interaction.locale)
 
         # check if user is logged in
-        is_private_message = True if username is not None or password is not None else False
+        is_private_message = bool(username is not None or password is not None)
 
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -162,9 +159,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def point(self, interaction: Interaction, username: str = None, password: str = None) -> None:
-
         # check if user is logged in
-        is_private_message = True if username is not None or password is not None else False
+        is_private_message = bool(username is not None or password is not None)
 
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -190,9 +186,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='View your daily/weekly mission progress')
     # @dynamic_cooldown(cooldown_5s)
     async def mission(self, interaction: Interaction, username: str = None, password: str = None) -> None:
-
         # check if user is logged in
-        is_private_message = True if username is not None or password is not None else False
+        is_private_message = bool(username is not None or password is not None)
 
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -213,9 +208,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def nightmarket(self, interaction: Interaction, username: str = None, password: str = None) -> None:
-
         # check if user is logged in
-        is_private_message = True if username is not None or password is not None else False
+        is_private_message = bool(username is not None or password is not None)
 
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -246,9 +240,8 @@ class ValorantCog(commands.Cog, name='Valorant'):
     @app_commands.command(description='View your battlepass current tier')
     # @dynamic_cooldown(cooldown_5s)
     async def battlepass(self, interaction: Interaction, username: str = None, password: str = None) -> None:
-
         # check if user is logged in
-        is_private_message = True if username is not None or password is not None else False
+        is_private_message = bool(username is not None or password is not None)
 
         await interaction.response.defer(ephemeral=is_private_message)
 
@@ -269,12 +262,11 @@ class ValorantCog(commands.Cog, name='Valorant'):
         )
 
     # inspired by https://github.com/giorgi-o
-    @app_commands.command(description="inspect a specific bundle")
-    @app_commands.describe(bundle="The name of the bundle you want to inspect!")
+    @app_commands.command(description='inspect a specific bundle')
+    @app_commands.describe(bundle='The name of the bundle you want to inspect!')
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def bundle(self, interaction: Interaction, bundle: str) -> None:
-
         await interaction.response.defer()
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
@@ -309,11 +301,10 @@ class ValorantCog(commands.Cog, name='Valorant'):
         await view.start()
 
     # inspired by https://github.com/giorgi-o
-    @app_commands.command(description="Show the current featured bundles")
+    @app_commands.command(description='Show the current featured bundles')
     @app_commands.guild_only()
     # @dynamic_cooldown(cooldown_5s)
     async def bundles(self, interaction: Interaction) -> None:
-
         await interaction.response.defer()
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)
@@ -337,7 +328,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
     # credit https://github.com/giorgi-o
     # https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies
     @app_commands.command()
-    @app_commands.describe(cookie="Your cookie")
+    @app_commands.describe(cookie='Your cookie')
     async def cookies(self, interaction: Interaction, cookie: str) -> None:
         """Login to your account with a cookie"""
 
@@ -354,7 +345,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
             return
 
         view = ui.View()
-        view.add_item(ui.Button(label="Tutorial", emoji="🔗", url="https://youtu.be/cFMNHEHEp2A"))
+        view.add_item(ui.Button(label='Tutorial', emoji='🔗', url='https://youtu.be/cFMNHEHEp2A'))
         await interaction.followup.send(f"{response.get('FAILURE')}", view=view, ephemeral=True)
 
     # ---------- ROAD MAP ---------- #
@@ -376,13 +367,12 @@ class ValorantCog(commands.Cog, name='Valorant'):
     # ---------- DEBUGs ---------- #
 
     @app_commands.command(description='The command debug for the bot')
-    @app_commands.describe(bug="The bug you want to fix")
+    @app_commands.describe(bug='The bug you want to fix')
     @app_commands.guild_only()
     @owner_only()
     async def debug(
         self, interaction: Interaction, bug: Literal['Skin price not loading', 'Emoji not loading', 'Cache not loading']
     ) -> None:
-
         await interaction.response.defer(ephemeral=True)
 
         response = ResponseLanguage(interaction.command.name, interaction.locale)

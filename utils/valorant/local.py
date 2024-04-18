@@ -37,7 +37,7 @@ def InteractionLanguage(local_code: str) -> Dict[str, Any]:
 def __LocalRead(filename: str) -> Dict:
     data = {}
     try:
-        with open(f"languages/{filename}.json", "r", encoding='utf-8') as json_file:
+        with open(f'languages/{filename}.json', encoding='utf-8') as json_file:
             data = json.load(json_file)
     except FileNotFoundError:
         return __LocalRead('en-US')

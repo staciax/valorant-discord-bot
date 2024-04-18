@@ -29,7 +29,7 @@ class GetEmbed:
 
         vp_emoji = GetEmoji.point_by_bot('ValorantPointIcon', bot)
 
-        embed = Embed(f"{emoji} **{name}**\n{vp_emoji} {price}", color=0x0F1923)
+        embed = Embed(f'{emoji} **{name}**\n{vp_emoji} {price}', color=0x0F1923)
         embed.set_thumbnail(url=icon)
         return embed
 
@@ -82,20 +82,20 @@ class GetEmbed:
 
         weekly_end_time = ''
         with contextlib.suppress(Exception):
-            weekly_end_time = f"{refill_in.format(duration=format_relative(iso_to_time(weekly_end)))}"
+            weekly_end_time = f'{refill_in.format(duration=format_relative(iso_to_time(weekly_end)))}'
 
-        embed = Embed(title=f"**{title_mission}**")
+        embed = Embed(title=f'**{title_mission}**')
         embed.set_footer(text=player)
         if len(daily) != 0:
             embed.add_field(
-                name=f"**{title_daily}**",
-                value=f"{daily}\n{reset_in.format(duration=format_relative(iso_to_time(daily_end)))}",
+                name=f'**{title_daily}**',
+                value=f'{daily}\n{reset_in.format(duration=format_relative(iso_to_time(daily_end)))}',
                 inline=False,
             )
         if len(weekly) != 0:
-            embed.add_field(name=f"**{title_weekly}**", value=f"{weekly}\n\n{weekly_end_time}", inline=False)
+            embed.add_field(name=f'**{title_weekly}**', value=f'{weekly}\n\n{weekly_end_time}', inline=False)
         if len(new_player) != 0:
-            embed.add_field(name=f"**{title_new_player}**", value=f"{new_player}", inline=False)
+            embed.add_field(name=f'**{title_new_player}**', value=f'{new_player}', inline=False)
         if len(embed.fields) == 0:
             embed.color = 0x77DD77
             embed.description = clear_all_mission
@@ -124,13 +124,13 @@ class GetEmbed:
         if vp == 'VP':
             vp = 'Valorant Points'
 
-        embed = Embed(title=f"{title_point}:")
+        embed = Embed(title=f'{title_point}:')
 
         vp_emoji = GetEmoji.point_by_bot('ValorantPointIcon', bot)
         rad_emoji = GetEmoji.point_by_bot('RadianitePointIcon', bot)
 
-        embed.add_field(name=vp, value=f"{vp_emoji} {valorant_point}")
-        embed.add_field(name=rad, value=f"{rad_emoji} {radiant_point}")
+        embed.add_field(name=vp, value=f'{vp_emoji} {valorant_point}')
+        embed.add_field(name=rad, value=f'{rad_emoji} {radiant_point}')
         embed.set_footer(text=player)
 
         return embed
@@ -145,7 +145,7 @@ class GetEmbed:
         emoji = GetEmoji.tier_by_bot(uuid, bot)
         vp_emoji = GetEmoji.point_by_bot('ValorantPointIcon', bot)
 
-        embed = Embed(f"{emoji} **{name}**\n{vp_emoji} {dpice} ~~{price}~~", color=0x0F1923)
+        embed = Embed(f'{emoji} **{name}**\n{vp_emoji} {dpice} ~~{price}~~', color=0x0F1923)
         embed.set_thumbnail(url=icon)
         return embed
 
@@ -199,7 +199,7 @@ class GetEmbed:
             end=format_relative(season_end),
         )
 
-        embed = Embed(description, title=f"BATTLEPASS")
+        embed = Embed(description, title='BATTLEPASS')
 
         if icon:
             if original_type in ['PlayerCard', 'EquippableSkinLevel']:
@@ -213,18 +213,16 @@ class GetEmbed:
         if tier == 55:
             embed.description = str(reward)
 
-        embed.set_footer(text=f"{MSG_TIER} {tier} | {act}\n{player}")
+        embed.set_footer(text=f'{MSG_TIER} {tier} | {act}\n{player}')
 
         return embed
 
     # ---------- NOTIFY EMBED ---------- #
 
-    def notify_specified_send(uuid: str) -> discord.Embed:
-        ...
+    def notify_specified_send(uuid: str) -> discord.Embed: ...
 
     @classmethod
     def notify_all_send(cls, player: str, offer: Dict, response: Dict, bot: ValorantBot) -> discord.Embed:
-
         description_format = response.get('RESPONSE_ALL')
 
         data = GetFormat.offer_format(offer)

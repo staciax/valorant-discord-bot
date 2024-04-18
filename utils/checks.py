@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 def _self_bot(interaction: Interaction) -> ValorantBot:
-    bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
+    bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
     return bot
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..errors import DatabaseError
 from .auth import Auth
@@ -10,7 +10,7 @@ from .local import LocalErrorResponse
 from .useful import JSON
 
 
-def timestamp_utc() -> datetime:
+def timestamp_utc() -> float:
     return datetime.timestamp(datetime.utcnow())
 
 
@@ -21,25 +21,25 @@ class DATABASE:
         """Initialize database"""
         self.auth = Auth()
 
-    def insert_user(self, data: Dict) -> None:
+    def insert_user(self, data: Dict[str, Any]) -> None:
         """Insert user"""
         JSON.save('users', data)
 
-    def read_db(self) -> Dict:
+    def read_db(self) -> Dict[str, Any]:
         """Read database"""
         data = JSON.read('users')
         return data
 
-    def read_cache(self) -> Dict:
+    def read_cache(self) -> Dict[str, Any]:
         """Read database"""
         data = JSON.read('cache')
         return data
 
-    def insert_cache(self, data: Dict) -> None:
+    def insert_cache(self, data: Dict[str, Any]) -> None:
         """Insert cache"""
         JSON.save('cache', data)
 
-    async def is_login(self, user_id: int, response: Dict) -> Optional[Dict[str, Any]]:
+    async def is_login(self, user_id: int, response: Dict[str, Any]) -> Optional[Dict[str, Any] | bool]:
         """Check if user is logged in"""
 
         db = self.read_db()
@@ -53,7 +53,7 @@ class DATABASE:
             return False
         return data
 
-    async def login(self, user_id: int, data: dict, locale_code: str) -> Optional[Dict[str, Any]]:
+    async def login(self, user_id: int, data: Dict[str, Any], locale_code: str) -> Optional[Dict[str, Any]]:
         """Login to database"""
 
         # language
@@ -75,18 +75,18 @@ class DATABASE:
 
             expiry_token = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
 
-            data = dict(
-                cookie=cookie,
-                access_token=access_token,
-                token_id=token_id,
-                emt=entitlements_token,
-                puuid=puuid,
-                username=player_name,
-                region=region,
-                expiry_token=expiry_token,
-                notify_mode=None,
-                DM_Message=True,
-            )
+            data = {
+                'cookie': cookie,
+                'access_token': access_token,
+                'token_id': token_id,
+                'emt': entitlements_token,
+                'puuid': puuid,
+                'username': player_name,
+                'region': region,
+                'expiry_token': expiry_token,
+                'notify_mode': None,
+                'DM_Message': True,
+            }
 
             db[str(user_id)] = data
 
@@ -94,7 +94,7 @@ class DATABASE:
 
         except Exception as e:
             print(e)
-            raise DatabaseError(response.get('LOGIN_ERROR'))
+            raise DatabaseError(response.get('LOGIN_ERROR')) from e
         else:
             return {'auth': True, 'player': player_name}
 
@@ -108,11 +108,11 @@ class DATABASE:
             db = self.read_db()
             del db[str(user_id)]
             self.insert_user(db)
-        except KeyError:
-            raise DatabaseError(response.get('LOGOUT_ERROR'))
+        except KeyError as e:
+            raise DatabaseError(response.get('LOGOUT_ERROR')) from e
         except Exception as e:
             print(e)
-            raise DatabaseError(response.get('LOGOUT_EXCEPT'))
+            raise DatabaseError(response.get('LOGOUT_EXCEPT')) from e
         else:
             return True
 
@@ -138,19 +138,19 @@ class DATABASE:
 
         headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
 
-        data = dict(
-            puuid=puuid,
-            region=region,
-            headers=headers,
-            player_name=username,
-            notify_mode=notify_mode,
-            cookie=cookie,
-            notify_channel=notify_channel,
-            dm_message=dm_message,
-        )
+        data = {
+            'puuid': puuid,
+            'region': region,
+            'headers': headers,
+            'player_name': username,
+            'notify_mode': notify_mode,
+            'cookie': cookie,
+            'notify_channel': notify_channel,
+            'dm_message': dm_message,
+        }
         return data
 
-    async def refresh_token(self, user_id: int, data: Dict) -> Optional[Dict]:
+    async def refresh_token(self, user_id: int, data: Dict[str, Any]) -> Tuple[str, str]:
         """Refresh token"""
 
         auth = self.auth
@@ -179,7 +179,7 @@ class DATABASE:
 
         self.insert_user(db)
 
-    def change_notify_channel(self, user_id: int, channel: str, channel_id: int = None) -> None:
+    def change_notify_channel(self, user_id: int, channel: str, channel_id: Optional[int] = None) -> None:
         """Change notify mode"""
 
         db = self.read_db()
@@ -199,14 +199,14 @@ class DATABASE:
         if len(notify_skin) == 0:
             raise DatabaseError("You're notification list is empty!")
 
-    def get_user_is_notify(self) -> Dict[str, Any]:
+    def get_user_is_notify(self) -> List[Any]:
         """Get user is notify"""
 
         database = JSON.read('users')
         notifys = [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
         return notifys
 
-    def insert_skin_price(self, skin_price: Dict, force=False) -> None:
+    def insert_skin_price(self, skin_price: Dict[str, Any], force: bool = False) -> None:
         """Insert skin price to cache"""
 
         cache = self.read_cache()
@@ -215,7 +215,7 @@ class DATABASE:
         if check_price is False or force:
             fetch_price(skin_price)
 
-    async def cookie_login(self, user_id: int, cookie: Optional[str], locale_code: str) -> Optional[Dict[str, Any]]:
+    async def cookie_login(self, user_id: int, cookie: Dict[str, Any], locale_code: str) -> Optional[Dict[str, Any]]:
         """Login with cookie"""
 
         db = self.read_db()
@@ -236,18 +236,18 @@ class DATABASE:
         expiry_token = datetime.timestamp(datetime.utcnow() + timedelta(minutes=59))
 
         try:
-            data = dict(
-                cookie=cookie,
-                access_token=access_token,
-                token_id=token_id,
-                emt=entitlements_token,
-                puuid=puuid,
-                username=player_name,
-                region=region,
-                expiry_token=expiry_token,
-                notify_mode=None,
-                DM_Message=True,
-            )
+            data = {
+                'cookie': cookie,
+                'access_token': access_token,
+                'token_id': token_id,
+                'emt': entitlements_token,
+                'puuid': puuid,
+                'username': player_name,
+                'region': region,
+                'expiry_token': expiry_token,
+                'notify_mode': None,
+                'DM_Message': True,
+            }
 
             db[str(user_id)] = data
             self.insert_user(db)

@@ -10,7 +10,6 @@ from typing import Any, Dict, Optional, Tuple
 # Third
 import aiohttp
 import urllib3
-from multidict import MultiDict
 
 from ..errors import AuthenticationError
 from ..locale_v2 import ValorantTranslator
@@ -27,18 +26,20 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def _extract_tokens(data: str) -> str:
     """Extract tokens from data"""
 
-    pattern = re.compile('access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)')
-    response = pattern.findall(data['response']['parameters']['uri'])[0]
+    pattern = re.compile(
+        r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)'
+    )
+    response = pattern.findall(data['response']['parameters']['uri'])[0]  # type: ignore
     return response
 
 
-def _extract_tokens_from_uri(url: str) -> Optional[Tuple[str, Any]]:
+def _extract_tokens_from_uri(url: str) -> Tuple[str, str]:
     try:
-        access_token = url.split("access_token=")[1].split("&scope")[0]
-        token_id = url.split("id_token=")[1].split("&")[0]
+        access_token = url.split('access_token=')[1].split('&scope')[0]
+        token_id = url.split('id_token=')[1].split('&')[0]
         return access_token, token_id
-    except IndexError:
-        raise AuthenticationError('Cookies Invalid')
+    except IndexError as e:
+        raise AuthenticationError('Cookies Invalid') from e
 
 
 # https://developers.cloudflare.com/ssl/ssl-tls/cipher-suites/
@@ -73,8 +74,8 @@ class ClientSession(aiohttp.ClientSession):
 
 
 class Auth:
-    RIOT_CLIENT_USER_AGENT = "RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)"
-    
+    RIOT_CLIENT_USER_AGENT = 'RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)'
+
     def __init__(self) -> None:
         self._headers: Dict = {
             'Content-Type': 'application/json',
@@ -100,10 +101,10 @@ class Auth:
         session = ClientSession()
 
         data = {
-            "client_id": "play-valorant-web-prod",
-            "nonce": "1",
-            "redirect_uri": "https://playvalorant.com/opt_in",
-            "response_type": "token id_token",
+            'client_id': 'play-valorant-web-prod',
+            'nonce': '1',
+            'redirect_uri': 'https://playvalorant.com/opt_in',
+            'response_type': 'token id_token',
             'scope': 'account openid',
         }
 
@@ -116,9 +117,11 @@ class Auth:
         for cookie in r.cookies.items():
             cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
 
-        data = {"type": "auth", "username": username, "password": password, "remember": True}
+        data = {'type': 'auth', 'username': username, 'password': password, 'remember': True}
 
-        async with session.put('https://auth.riotgames.com/api/v1/authorization', json=data, headers=self._headers) as r:
+        async with session.put(
+            'https://auth.riotgames.com/api/v1/authorization', json=data, headers=self._headers
+        ) as r:
             data = await r.json()
             for cookie in r.cookies.items():
                 cookies['cookie'][cookie[0]] = str(cookie).split('=')[1].split(';')[0]
@@ -139,17 +142,16 @@ class Auth:
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
 
         elif data['type'] == 'multifactor':
-
             if r.status == 429:
                 raise AuthenticationError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
 
             label_modal = local_response.get('INPUT_2FA_CODE')
-            WaitFor2FA = {"auth": "2fa", "cookie": cookies, 'label': label_modal}
+            WaitFor2FA = {'auth': '2fa', 'cookie': cookies, 'label': label_modal}
 
             if data['multifactor']['method'] == 'email':
-                WaitFor2FA[
-                    'message'
-                ] = f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                WaitFor2FA['message'] = (
+                    f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                )
                 return WaitFor2FA
 
             WaitFor2FA['message'] = local_response.get('2FA_ENABLE', 'You have 2FA enabled!')
@@ -173,8 +175,8 @@ class Auth:
         await session.close()
         try:
             entitlements_token = data['entitlements_token']
-        except KeyError:
-            raise AuthenticationError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!'))
+        except KeyError as e:
+            raise AuthenticationError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!')) from e
         else:
             return entitlements_token
 
@@ -196,8 +198,10 @@ class Auth:
             puuid = data['sub']
             name = data['acct']['game_name']
             tag = data['acct']['tag_line']
-        except KeyError:
-            raise AuthenticationError(local_response.get('NO_NAME_TAG', 'This user hasn\'t created a name or tagline yet.'))
+        except KeyError as e:
+            raise AuthenticationError(
+                local_response.get('NO_NAME_TAG', "This user hasn't created a name or tagline yet.")
+            ) from e
         else:
             return puuid, name, tag
 
@@ -211,7 +215,7 @@ class Auth:
 
         headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {access_token}'}
 
-        body = {"id_token": token_id}
+        body = {'id_token': token_id}
 
         async with session.put(
             'https://riot-geo.pas.si.riotgames.com/pas/v1/product/valorant', headers=headers, json=body
@@ -221,14 +225,14 @@ class Auth:
         await session.close()
         try:
             region = data['affinities']['live']
-        except KeyError:
+        except KeyError as e:
             raise AuthenticationError(
                 local_response.get('REGION_NOT_FOUND', 'An unknown error occurred, plz `/login` again')
-            )
+            ) from e
         else:
             return region
 
-    async def give2facode(self, code: str, cookies: Dict) -> Dict[str, Any]:
+    async def give2facode(self, code: str, cookies: Dict[str, Any]) -> Dict[str, Any]:
         """This function is used to give the 2FA code."""
 
         # language
@@ -238,10 +242,13 @@ class Auth:
 
         # headers = {'Content-Type': 'application/json', 'User-Agent': self.user_agent}
 
-        data = {"type": "multifactor", "code": code, "rememberDevice": True}
+        data = {'type': 'multifactor', 'code': code, 'rememberDevice': True}
 
         async with session.put(
-            'https://auth.riotgames.com/api/v1/authorization', headers=self._headers, json=data, cookies=cookies['cookie']
+            'https://auth.riotgames.com/api/v1/authorization',
+            headers=self._headers,
+            json=data,
+            cookies=cookies['cookie'],
         ) as r:
             data = await r.json()
 
@@ -273,8 +280,8 @@ class Auth:
             cookies = cookies['cookie']
 
         async with session.get(
-            "https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play"
-            "-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1",
+            'https://auth.riotgames.com/authorize?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in&client_id=play'
+            '-valorant-web-prod&response_type=token%20id_token&scope=account%20openid&nonce=1',
             cookies=cookies,
             allow_redirects=False,
         ) as r:
@@ -294,13 +301,12 @@ class Auth:
 
         await session.close()
 
-        accessToken, tokenId = _extract_tokens_from_uri(data)
-        entitlements_token = await self.get_entitlements_token(accessToken)
+        access_token, _token_id = _extract_tokens_from_uri(data)
+        entitlements_token = await self.get_entitlements_token(access_token)
 
-        return new_cookies, accessToken, entitlements_token
+        return new_cookies, access_token, entitlements_token
 
     async def temp_auth(self, username: str, password: str) -> Optional[Dict[str, Any]]:
-
         authenticate = await self.authenticate(username, password)
         if authenticate['auth'] == 'response':
             access_token = authenticate['data']['access_token']
@@ -323,7 +329,7 @@ class Auth:
 
     # next update
 
-    async def login_with_cookie(self, cookies: Dict) -> Dict[str, Any]:
+    async def login_with_cookie(self, cookies: Dict[str, Any]) -> Dict[str, Any]:
         """This function is used to log in with cookie."""
 
         # language
@@ -336,12 +342,12 @@ class Auth:
         session = ClientSession()
 
         r = await session.get(
-            "https://auth.riotgames.com/authorize"
-            "?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in"
-            "&client_id=play-valorant-web-prod"
-            "&response_type=token%20id_token"
-            "&scope=account%20openid"
-            "&nonce=1",
+            'https://auth.riotgames.com/authorize'
+            '?redirect_uri=https%3A%2F%2Fplayvalorant.com%2Fopt_in'
+            '&client_id=play-valorant-web-prod'
+            '&response_type=token%20id_token'
+            '&scope=account%20openid'
+            '&nonce=1',
             allow_redirects=False,
             headers=self._headers,
         )

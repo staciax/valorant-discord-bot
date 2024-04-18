@@ -49,12 +49,12 @@ class ValorantBot(commands.Bot):
 
     async def on_ready(self) -> None:
         await self.tree.sync()
-        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
-        print(f"Version: {self.bot_version}")
+        print(f'\nLogged in as: {self.user}\n\n BOT IS READY !')
+        print(f'Version: {self.bot_version}')
 
         # bot presence
         activity_type = discord.ActivityType.listening
-        await self.change_presence(activity=discord.Activity(type=activity_type, name="(╯•﹏•╰)"))
+        await self.change_presence(activity=discord.Activity(type=activity_type, name='(╯•﹏•╰)'))
 
     async def setup_hook(self) -> None:
         if self.session is None:
@@ -85,7 +85,8 @@ class ValorantBot(commands.Bot):
     @staticmethod
     def setup_cache() -> None:
         try:
-            open('data/cache.json')
+            with open('data/cache.json'):
+                ...
         except FileNotFoundError:
             get_cache()
 
@@ -95,7 +96,7 @@ class ValorantBot(commands.Bot):
 
     async def start(self, debug: bool = False) -> None:
         self.debug = debug
-        return await super().start(os.getenv('TOKEN'), reconnect=True)
+        return await super().start(os.getenv('TOKEN'), reconnect=True)  # type: ignore
 
 
 def run_bot() -> None:
