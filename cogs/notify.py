@@ -3,7 +3,7 @@ from __future__ import annotations
 import traceback
 from datetime import datetime, time, timedelta
 from difflib import get_close_matches
-from typing import TYPE_CHECKING, Any, Literal, Tuple
+from typing import TYPE_CHECKING, Any, Literal
 
 # Standard
 import discord
@@ -41,7 +41,7 @@ class Notify(commands.Cog):
         self.db = DATABASE()
         self.endpoint = API_ENDPOINT()
 
-    async def get_endpoint_and_data(self, user_id: int) -> Tuple[API_ENDPOINT, Any]:
+    async def get_endpoint_and_data(self, user_id: int) -> tuple[API_ENDPOINT, Any]:
         data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
         endpoint.activate(data)

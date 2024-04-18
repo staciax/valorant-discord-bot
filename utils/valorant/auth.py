@@ -5,11 +5,10 @@ import json
 import re
 import ssl
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 # Third
 import aiohttp
-import urllib3
 
 from ..errors import AuthenticationError
 from ..locale_v2 import ValorantTranslator
@@ -18,9 +17,6 @@ from ..locale_v2 import ValorantTranslator
 from .local import LocalErrorResponse, ResponseLanguage
 
 vlr_locale = ValorantTranslator()
-
-# disable urllib3 warnings that might arise from making requests to 127.0.0.1
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def _extract_tokens(data: str) -> str:
@@ -33,7 +29,7 @@ def _extract_tokens(data: str) -> str:
     return response
 
 
-def _extract_tokens_from_uri(url: str) -> Tuple[str, str]:
+def _extract_tokens_from_uri(url: str) -> tuple[str, str]:
     try:
         access_token = url.split('access_token=')[1].split('&scope')[0]
         token_id = url.split('id_token=')[1].split('&')[0]
@@ -66,7 +62,7 @@ FORCED_CIPHERS = [
 
 
 class ClientSession(aiohttp.ClientSession):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
         ctx.minimum_version = ssl.TLSVersion.TLSv1_3
         ctx.set_ciphers(':'.join(FORCED_CIPHERS))
@@ -77,7 +73,7 @@ class Auth:
     RIOT_CLIENT_USER_AGENT = 'RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)'
 
     def __init__(self) -> None:
-        self._headers: Dict = {
+        self._headers: dict = {
             'Content-Type': 'application/json',
             'User-Agent': Auth.RIOT_CLIENT_USER_AGENT,
             'Accept': 'application/json, text/plain, */*',
@@ -87,12 +83,12 @@ class Auth:
         self.locale_code = 'en-US'  # default language
         self.response = {}  # prepare response for local response
 
-    def local_response(self) -> LocalErrorResponse:
+    def local_response(self) -> dict[str, Any]:
         """This function is used to check if the local response is enabled."""
         self.response = LocalErrorResponse('AUTH', self.locale_code)
         return self.response
 
-    async def authenticate(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+    async def authenticate(self, username: str, password: str) -> dict[str, Any] | None:
         """This function is used to authenticate the user."""
 
         # language
@@ -137,7 +133,7 @@ class Auth:
             token_id = response[1]
 
             expiry_token = datetime.now() + timedelta(minutes=59)
-            cookies['expiry_token'] = int(datetime.timestamp(expiry_token))
+            cookies['expiry_token'] = int(datetime.timestamp(expiry_token))  # type: ignore
 
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
 
@@ -159,7 +155,7 @@ class Auth:
 
         raise AuthenticationError(local_response.get('INVALID_PASSWORD', 'Your username or password may be incorrect!'))
 
-    async def get_entitlements_token(self, access_token: str) -> Optional[str]:
+    async def get_entitlements_token(self, access_token: str) -> str:
         """This function is used to get the entitlements token."""
 
         # language
@@ -176,11 +172,13 @@ class Auth:
         try:
             entitlements_token = data['entitlements_token']
         except KeyError as e:
-            raise AuthenticationError(local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!')) from e
+            raise AuthenticationError(
+                local_response.get('COOKIES_EXPIRED', 'Cookies is expired, plz /login again!')
+            ) from e
         else:
             return entitlements_token
 
-    async def get_userinfo(self, access_token: str) -> Tuple[str, str, str]:
+    async def get_userinfo(self, access_token: str) -> tuple[str, str, str]:
         """This function is used to get the user info."""
 
         # language
@@ -232,7 +230,7 @@ class Auth:
         else:
             return region
 
-    async def give2facode(self, code: str, cookies: Dict[str, Any]) -> Dict[str, Any]:
+    async def give2facode(self, code: str, cookies: dict[str, Any]) -> dict[str, Any]:
         """This function is used to give the 2FA code."""
 
         # language
@@ -265,7 +263,7 @@ class Auth:
 
         return {'auth': 'failed', 'error': local_response.get('2FA_INVALID_CODE')}
 
-    async def redeem_cookies(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
+    async def redeem_cookies(self, cookies: dict) -> tuple[dict[str, Any], str, str]:
         """This function is used to redeem the cookies."""
 
         # language
@@ -306,11 +304,11 @@ class Auth:
 
         return new_cookies, access_token, entitlements_token
 
-    async def temp_auth(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+    async def temp_auth(self, username: str, password: str) -> dict[str, Any] | None:
         authenticate = await self.authenticate(username, password)
-        if authenticate['auth'] == 'response':
-            access_token = authenticate['data']['access_token']
-            token_id = authenticate['data']['token_id']
+        if authenticate['auth'] == 'response':  # type: ignore
+            access_token = authenticate['data']['access_token']  # type: ignore
+            token_id = authenticate['data']['token_id']  # type: ignore
 
             entitlements_token = await self.get_entitlements_token(access_token)
             puuid, name, tag = await self.get_userinfo(access_token)
@@ -329,13 +327,13 @@ class Auth:
 
     # next update
 
-    async def login_with_cookie(self, cookies: Dict[str, Any]) -> Dict[str, Any]:
+    async def login_with_cookie(self, cookies: dict[str, Any] | str) -> dict[str, Any]:
         """This function is used to log in with cookie."""
 
         # language
         local_response = ResponseLanguage('cookies', self.locale_code)
 
-        cookie_payload = f'ssid={cookies};' if cookies.startswith('e') else cookies
+        cookie_payload = f'ssid={cookies};' if isinstance(cookies, str) and cookies.startswith('e') else cookies
 
         self._headers['cookie'] = cookie_payload
 
@@ -371,5 +369,5 @@ class Auth:
         data = {'cookies': new_cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
         return data
 
-    async def refresh_token(self, cookies: Dict) -> Tuple[Dict[str, Any], str, str]:
+    async def refresh_token(self, cookies: dict) -> tuple[dict[str, Any], str, str]:
         return await self.redeem_cookies(cookies)

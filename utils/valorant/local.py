@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import contextlib
 import json
-from typing import Any, Dict
+from typing import Any
 
 # credit by /giorgi-o/
 
@@ -30,11 +30,11 @@ Locale = {
 }
 
 
-def InteractionLanguage(local_code: str) -> Dict[str, Any]:
+def InteractionLanguage(local_code: str) -> str:
     return Locale.get(str(local_code), 'en-US')
 
 
-def __LocalRead(filename: str) -> Dict:
+def __LocalRead(filename: str) -> dict:
     data = {}
     try:
         with open(f'languages/{filename}.json', encoding='utf-8') as json_file:
@@ -44,7 +44,7 @@ def __LocalRead(filename: str) -> Dict:
     return data
 
 
-def ResponseLanguage(command_name: str, local_code: str) -> Dict[str, Any]:
+def ResponseLanguage(command_name: str, local_code: str) -> dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
@@ -53,7 +53,7 @@ def ResponseLanguage(command_name: str, local_code: str) -> Dict[str, Any]:
     return local
 
 
-def LocalErrorResponse(value: str, local_code: str) -> Dict[str, Any]:
+def LocalErrorResponse(value: str, local_code: str) -> dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):

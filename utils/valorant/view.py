@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Awaitable, Dict, List, Union
+from typing import TYPE_CHECKING, Any
 
 # Standard
 import discord
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class share_button(ui.View):
-    def __init__(self, interaction: Interaction, embeds: List[discord.Embed]) -> None:
+    def __init__(self, interaction: Interaction, embeds: list[discord.Embed]) -> None:
         self.interaction: Interaction = interaction
         self.embeds = embeds
         super().__init__(timeout=300)
@@ -40,7 +40,7 @@ class share_button(ui.View):
 
 
 class NotifyView(discord.ui.View):
-    def __init__(self, user_id: int, uuid: str, name: str, response: Dict) -> None:
+    def __init__(self, user_id: int, uuid: str, name: str, response: dict) -> None:
         self.user_id = user_id
         self.uuid = uuid
         self.name = name
@@ -103,9 +103,9 @@ class _NotifyListButton(ui.Button):
 
 
 class NotifyViewList(ui.View):
-    skin_source: Dict
+    skin_source: dict
 
-    def __init__(self, interaction: Interaction, response: Dict[str, Any]) -> None:
+    def __init__(self, interaction: Interaction, response: dict[str, Any]) -> None:
         self.interaction: Interaction = interaction
         self.response = response
         self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
@@ -197,7 +197,13 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     """Modal for riot login with multifactorial authentication"""
 
     def __init__(
-        self, interaction: Interaction, db: DATABASE, cookie: Dict[str, Any], message: str, label: str, response: Dict[st, Any],
+        self,
+        interaction: Interaction,
+        db: DATABASE,
+        cookie: dict[str, Any],
+        message: str,
+        label: str,
+        response: dict[str, Any],
     ) -> None:
         super().__init__(timeout=600)
         self.interaction: Interaction = interaction
@@ -219,7 +225,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             auth = self.db.auth
             auth.locale_code = self.interaction.locale
 
-            async def send_embed(content: str) -> Awaitable[None]:
+            async def send_embed(content: str) -> None:
                 embed = discord.Embed(description=content, color=0xFD4554)
                 if interaction.response.is_done():
                     return await interaction.followup.send(embed=embed, ephemeral=True)
@@ -249,14 +255,14 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
 # inspired by https://github.com/giorgi-o
 class BaseBundle(ui.View):
-    def __init__(self, interaction: Interaction, entries: Dict[str, Any], response: Dict[str, Any]) -> None:
+    def __init__(self, interaction: Interaction, entries: dict[str, Any], response: dict[str, Any]) -> None:
         self.interaction: Interaction = interaction
         self.entries = entries
         self.response = response
         self.language = str(VLR_locale)
         self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
         self.current_page: int = 0
-        self.embeds: List[List[discord.Embed]] = []
+        self.embeds: list[list[discord.Embed]] = []
         self.page_format = {}
         super().__init__()
         self.clear_items()
@@ -316,7 +322,7 @@ class BaseBundle(ui.View):
 
         self.embeds = embeds_list
 
-    def build_featured_bundle(self, bundle: List[Dict]) -> List[discord.Embed]:
+    def build_featured_bundle(self, bundle: list[dict]) -> list[discord.Embed]:
         """Builds the featured bundle embeds"""
 
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
@@ -412,7 +418,7 @@ class BaseBundle(ui.View):
         await interaction.response.send_message('This menus cannot be controlled by you, sorry!', ephemeral=True)
         return False
 
-    async def start(self) -> Awaitable[None]:
+    async def start(self) -> None:
         """Starts the bundle view"""
 
         if len(self.entries) == 1:
@@ -420,13 +426,15 @@ class BaseBundle(ui.View):
             self.fill_items()
             self.update_button()
             embeds = self.embeds[0]
-            return await self.interaction.followup.send(embeds=embeds, view=self)
+            await self.interaction.followup.send(embeds=embeds, view=self)
+            return
         elif len(self.entries) != 0:
             self.add_item(self.select_bundle)
             placeholder = self.response.get('DROPDOWN_CHOICE_TITLE')
             self.select_bundle.placeholder = placeholder
             self.build_select()
-            return await self.interaction.followup.send('\u200b', view=self)
+            await self.interaction.followup.send('\u200b', view=self)
+            return
 
         not_found_bundle = self.response.get('NOT_FOUND_BUNDLE')
         raise ValorantBotError(not_found_bundle)
@@ -480,7 +488,7 @@ class BaseBundle(ui.View):
 
 
 class SelectionFeaturedBundleView(ui.View):
-    def __init__(self, bundles: Dict[str, Any], other_view: Union[ui.View, BaseBundle] = None):
+    def __init__(self, bundles: dict[str, Any], other_view: ui.View | BaseBundle = None):
         self.bundles = bundles
         self.other_view = other_view
         super().__init__(timeout=120)

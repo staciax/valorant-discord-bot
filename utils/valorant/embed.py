@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import TYPE_CHECKING, Any
 
 import discord
 
@@ -16,12 +16,13 @@ if TYPE_CHECKING:
 
 
 class Embed(discord.Embed):  # Custom Embed
-    def __init__(self, description: str = None, color: Union[discord.Color, int] = 0xFD4554, **kwargs: Any) -> None:
+    def __init__(self, description: str = None, color: discord.Color | int = 0xFD4554, **kwargs: Any) -> None:
         super().__init__(description=description, color=color, **kwargs)
 
 
 class GetEmbed:
-    def __giorgio_embed(skin: Dict, bot: ValorantBot) -> discord.Embed:
+    @staticmethod
+    def __giorgio_embed(skin: dict[str, Any], bot: ValorantBot) -> discord.Embed:
         """EMBED DESIGN Giorgio"""
 
         uuid, name, price, icon = skin['uuid'], skin['name'], skin['price'], skin['icon']
@@ -34,7 +35,9 @@ class GetEmbed:
         return embed
 
     @classmethod
-    def store(cls, player: str, offer: Dict, response: Dict, bot: ValorantBot) -> List[discord.Embed]:
+    def store(
+        cls, player: str, offer: dict[str, Any], response: dict[str, Any], bot: ValorantBot
+    ) -> list[discord.Embed]:
         """Embed Store"""
 
         store_esponse = response.get('RESPONSE')
@@ -55,7 +58,7 @@ class GetEmbed:
 
     # ---------- MISSION EMBED ---------- #
 
-    def mission(player: str, mission: Dict, response: Dict) -> discord.Embed:
+    def mission(player: str, mission: dict[str, Any], response: dict[str, Any]) -> discord.Embed:
         """Embed Mission"""
 
         # language
@@ -104,7 +107,8 @@ class GetEmbed:
 
     # ---------- POINT EMBED ---------- #
 
-    def point(player: str, wallet: Dict, response: Dict, bot: ValorantBot) -> discord.Embed:
+    @staticmethod
+    def point(player: str, wallet: dict[str, Any], response: dict[str, Any], bot: ValorantBot) -> discord.Embed:
         """Embed Point"""
 
         # language
@@ -137,7 +141,8 @@ class GetEmbed:
 
     # ---------- NIGHT MARKET EMBED ---------- #
 
-    def __nightmarket_embed(skins: Dict, bot: ValorantBot) -> discord.Embed:
+    @staticmethod
+    def __nightmarket_embed(skins: dict[str, Any], bot: ValorantBot) -> discord.Embed:
         """Generate Embed Night Market"""
 
         uuid, name, icon, price, dpice = skins['uuid'], skins['name'], skins['icon'], skins['price'], skins['disprice']
@@ -150,7 +155,9 @@ class GetEmbed:
         return embed
 
     @classmethod
-    def nightmarket(cls, player: str, offer: Dict, bot: ValorantBot, response: Dict) -> discord.Embed:
+    def nightmarket(
+        cls, player: str, offer: dict[str, Any], bot: ValorantBot, response: dict[str, Any]
+    ) -> discord.Embed:
         """Embed Night Market"""
 
         # language
@@ -173,7 +180,10 @@ class GetEmbed:
 
     # ---------- BATTLEPASS EMBED ---------- #
 
-    def battlepass(player: str, data: Dict, season: Dict, response: Dict) -> discord.Embed:
+    @staticmethod
+    def battlepass(
+        player: str, data: dict[str, Any], season: dict[str, Any], response: dict[str, Any]
+    ) -> discord.Embed:
         """Embed Battle-pass"""
 
         # language
@@ -219,10 +229,13 @@ class GetEmbed:
 
     # ---------- NOTIFY EMBED ---------- #
 
+    @staticmethod
     def notify_specified_send(uuid: str) -> discord.Embed: ...
 
     @classmethod
-    def notify_all_send(cls, player: str, offer: Dict, response: Dict, bot: ValorantBot) -> discord.Embed:
+    def notify_all_send(
+        cls, player: str, offer: dict[str, Any], response: dict[str, Any], bot: ValorantBot
+    ) -> discord.Embed:
         description_format = response.get('RESPONSE_ALL')
 
         data = GetFormat.offer_format(offer)

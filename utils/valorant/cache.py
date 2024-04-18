@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 
 from .useful import JSON, on_replit
 
 
-def create_json(filename: str, formats: Dict[str, Any]) -> None:
+def create_json(filename: str, formats: dict[str, Any]) -> None:
     """Create a json file"""
 
     if on_replit:
@@ -25,7 +25,7 @@ def create_json(filename: str, formats: Dict[str, Any]) -> None:
                 json.dump(formats, fp, indent=2)
 
 
-def get_valorant_version() -> Optional[str]:
+def get_valorant_version() -> str | None:
     """Get the valorant version from valorant-api.com"""
 
     print('Fetching Valorant version !')
@@ -337,7 +337,7 @@ def fetch_buddies() -> None:
         JSON.save('cache', data)
 
 
-def fetch_price(data_price: Dict) -> None:
+def fetch_price(data_price: dict) -> None:
     """Fetch the price of a skin"""
 
     data = JSON.read('cache')

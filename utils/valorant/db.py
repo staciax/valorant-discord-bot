@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from ..errors import DatabaseError
 from .auth import Auth
@@ -21,25 +21,25 @@ class DATABASE:
         """Initialize database"""
         self.auth = Auth()
 
-    def insert_user(self, data: Dict[str, Any]) -> None:
+    def insert_user(self, data: dict[str, Any]) -> None:
         """Insert user"""
         JSON.save('users', data)
 
-    def read_db(self) -> Dict[str, Any]:
+    def read_db(self) -> dict[str, Any]:
         """Read database"""
         data = JSON.read('users')
         return data
 
-    def read_cache(self) -> Dict[str, Any]:
+    def read_cache(self) -> dict[str, Any]:
         """Read database"""
         data = JSON.read('cache')
         return data
 
-    def insert_cache(self, data: Dict[str, Any]) -> None:
+    def insert_cache(self, data: dict[str, Any]) -> None:
         """Insert cache"""
         JSON.save('cache', data)
 
-    async def is_login(self, user_id: int, response: Dict[str, Any]) -> Optional[Dict[str, Any] | bool]:
+    async def is_login(self, user_id: int, response: dict[str, Any]) -> dict[str, Any] | bool | None:
         """Check if user is logged in"""
 
         db = self.read_db()
@@ -53,7 +53,7 @@ class DATABASE:
             return False
         return data
 
-    async def login(self, user_id: int, data: Dict[str, Any], locale_code: str) -> Optional[Dict[str, Any]]:
+    async def login(self, user_id: int, data: dict[str, Any], locale_code: str) -> dict[str, Any] | None:
         """Login to database"""
 
         # language
@@ -98,7 +98,7 @@ class DATABASE:
         else:
             return {'auth': True, 'player': player_name}
 
-    def logout(self, user_id: int, locale_code: str) -> Optional[bool]:
+    def logout(self, user_id: int, locale_code: str) -> bool | None:
         """Logout from database"""
 
         # language
@@ -116,7 +116,7 @@ class DATABASE:
         else:
             return True
 
-    async def is_data(self, user_id: int, locale_code: str = 'en-US') -> Optional[Dict[str, Any]]:
+    async def is_data(self, user_id: int, locale_code: str = 'en-US') -> dict[str, Any] | None:
         """Check if user is registered"""
 
         response = LocalErrorResponse('DATABASE', locale_code)
@@ -150,7 +150,7 @@ class DATABASE:
         }
         return data
 
-    async def refresh_token(self, user_id: int, data: Dict[str, Any]) -> Tuple[str, str]:
+    async def refresh_token(self, user_id: int, data: dict[str, Any]) -> tuple[str, str]:
         """Refresh token"""
 
         auth = self.auth
@@ -179,7 +179,7 @@ class DATABASE:
 
         self.insert_user(db)
 
-    def change_notify_channel(self, user_id: int, channel: str, channel_id: Optional[int] = None) -> None:
+    def change_notify_channel(self, user_id: int, channel: str, channel_id: int | None = None) -> None:
         """Change notify mode"""
 
         db = self.read_db()
@@ -199,14 +199,14 @@ class DATABASE:
         if len(notify_skin) == 0:
             raise DatabaseError("You're notification list is empty!")
 
-    def get_user_is_notify(self) -> List[Any]:
+    def get_user_is_notify(self) -> list[Any]:
         """Get user is notify"""
 
         database = JSON.read('users')
         notifys = [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
         return notifys
 
-    def insert_skin_price(self, skin_price: Dict[str, Any], force: bool = False) -> None:
+    def insert_skin_price(self, skin_price: dict[str, Any], force: bool = False) -> None:
         """Insert skin price to cache"""
 
         cache = self.read_cache()
@@ -215,7 +215,7 @@ class DATABASE:
         if check_price is False or force:
             fetch_price(skin_price)
 
-    async def cookie_login(self, user_id: int, cookie: Dict[str, Any], locale_code: str) -> Optional[Dict[str, Any]]:
+    async def cookie_login(self, user_id: int, cookie: dict[str, Any] | str, locale_code: str) -> dict[str, Any] | None:
         """Login with cookie"""
 
         db = self.read_db()

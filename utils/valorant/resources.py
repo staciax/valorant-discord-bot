@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import discord
 import requests
@@ -75,7 +75,7 @@ points = {
 }
 
 
-def get_item_type(uuid: str) -> Optional[str]:
+def get_item_type(uuid: str) -> str | None:
     """Get item type"""
     item_type = {
         '01bb38e1-da47-4e6a-9b3d-945fe4655707': 'Agents',
@@ -90,7 +90,7 @@ def get_item_type(uuid: str) -> Optional[str]:
     return item_type.get(uuid)
 
 
-def __url_to_image(url) -> Optional[bytes]:
+def __url_to_image(url: str) -> bytes | None:
     session = requests.session()
 
     r = session.get(url)
@@ -108,7 +108,7 @@ async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, f
         emoji = discord.utils.get(bot.emojis, name=name)
         if not emoji:
             try:
-                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))
+                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url)) # type: ignore
             except discord.Forbidden as e:
                 if force:
                     raise ValorantBotError(response.get('MISSING_PERM')) from e

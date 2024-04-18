@@ -4,10 +4,9 @@ from __future__ import annotations
 
 # Standard
 import json
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any
 
 import requests
-import urllib3
 
 from ..errors import HandshakeError, ResponseError
 from .local import LocalErrorResponse
@@ -20,8 +19,6 @@ from .resources import (
     region_shard_override,
     shard_region_override,
 )
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class API_ENDPOINT:
@@ -45,7 +42,7 @@ class API_ENDPOINT:
         # language
         self.locale_code = 'en-US'
 
-    def activate(self, auth: Mapping[str, Any]) -> None:
+    def activate(self, auth: dict[str, Any]) -> None:
         """activate api"""
 
         try:
@@ -62,7 +59,7 @@ class API_ENDPOINT:
             print(e)
             raise HandshakeError(self.locale_response().get('FAILED_ACTIVE')) from e
 
-    def locale_response(self) -> LocalErrorResponse:
+    def locale_response(self) -> dict[str, Any]:
         """This function is used to check if the local response is enabled."""
         self.response = LocalErrorResponse('API', self.locale_code)
         return self.response
@@ -73,7 +70,7 @@ class API_ENDPOINT:
 
     # self.__build_headers()
 
-    def fetch(self, endpoint: str = '/', url: str = 'pd', errors: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def fetch(self, endpoint: str = '/', url: str = 'pd', errors: dict[str, Any] | None = None) -> dict[str, Any]:
         """fetch data from the api"""
 
         self.locale_response()
@@ -102,8 +99,8 @@ class API_ENDPOINT:
         self,
         endpoint: str = '/',
         url: str = 'pd',
-        data: Optional[Union[Dict[str, Any], List[Any]]] = None,
-        errors: Optional[Dict[str, Any]] = None,
+        data: dict[str, Any] | list[Any] | None = None,
+        errors: dict[str, Any] | None = None,
     ) -> Any:
         """put data to the api"""
 
@@ -147,12 +144,12 @@ class API_ENDPOINT:
         data = self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
         return data
 
-    def fetch_player_mmr(self, puuid: str = None) -> Mapping[str, Any]:
+    def fetch_player_mmr(self, puuid: str | None = None) -> Mapping[str, Any]:
         puuid = self.__check_puuid(puuid)
         data = self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
         return data
 
-    def fetch_name_by_puuid(self, puuid: str = None) -> Mapping[str, Any]:
+    def fetch_name_by_puuid(self, puuid: str | None = None) -> Mapping[str, Any]:
         """
         Name_service
         get player name tag by puuid
@@ -254,7 +251,7 @@ class API_ENDPOINT:
         data = self.fetch_account_xp()['Progress']['Level']
         return data
 
-    def get_player_tier_rank(self, puuid: str = None) -> str:
+    def get_player_tier_rank(self, puuid: str | None = None) -> str:
         """
         get player current tier rank
         """
@@ -276,11 +273,11 @@ class API_ENDPOINT:
             return self.fetch_player_mmr()['LatestCompetitiveUpdate']['SeasonID']
         return season_id[0]
 
-    def __check_puuid(self, puuid: str) -> str:
+    def __check_puuid(self, puuid: str | None) -> str:
         """If puuid passed into method is None make it current user's puuid"""
         return self.puuid if puuid is None else puuid
 
-    def __build_urls(self) -> str:
+    def __build_urls(self) -> None:
         """
         generate URLs based on region/shard
         """
@@ -288,9 +285,8 @@ class API_ENDPOINT:
         self.shared = base_endpoint_shared.format(shard=self.shard)
         self.glz = base_endpoint_glz.format(region=self.region, shard=self.shard)
 
-    def __build_headers(self, headers: Mapping) -> Mapping[str, Any]:
+    def __build_headers(self, headers: dict[str, Any]) -> Mapping[str, Any]:
         """build headers"""
-
         headers['X-Riot-ClientPlatform'] = self.client_platform
         headers['X-Riot-ClientVersion'] = self._get_client_version()
         return headers
@@ -310,10 +306,10 @@ class API_ENDPOINT:
         data = r.json()['data']
         return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}"  # return formatted version string
 
-    def _get_valorant_version(self) -> str:
+    def _get_valorant_version(self) -> str | None:
         """Get the valorant version"""
         r = requests.get('https://valorant-api.com/v1/version')
-        if r.status != 200:
+        if r.status_code != 200:
             return None
         data = r.json()['data']
         return data['version']

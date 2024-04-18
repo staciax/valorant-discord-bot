@@ -4,8 +4,8 @@ import contextlib
 import json
 import os
 import uuid
-from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Any
 
 import discord
 from dotenv import load_dotenv
@@ -41,7 +41,7 @@ def is_valid_uuid(value: str) -> bool:
 # ---------- ACT SEASON ---------- #
 
 
-def get_season_by_content(content: Dict) -> Tuple[str, str]:
+def get_season_by_content(content: dict) -> tuple[str, str]:
     """Get season id by content"""
 
     try:
@@ -82,7 +82,7 @@ def format_dt(dt: datetime, style: str = None) -> str:  # style 'R' or 'd'
     """datatime to time format"""
 
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
 
     if style is None:
         return f'<t:{int(dt.timestamp())}>'
@@ -108,7 +108,7 @@ def data_folder() -> None:
 
 class JSON:
     @staticmethod
-    def read(filename: str, force: bool = True) -> Dict[str, Any]:
+    def read(filename: str, force: bool = True) -> dict[str, Any]:
         """Read json file"""
         try:
             if on_replit:
@@ -127,7 +127,7 @@ class JSON:
         return data
 
     @staticmethod
-    def save(filename: str, data: Dict[str, Any]) -> None:
+    def save(filename: str, data: dict[str, Any]) -> None:
         """Save data to json file"""
         try:
             if on_replit:
@@ -149,7 +149,7 @@ class JSON:
 
 class GetItems:
     @classmethod
-    def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict[str, Any]:  # type: ignore
+    def get_item_by_type(cls, Itemtype: str, uuid: str) -> dict[str, Any]:  # type: ignore
         """Get item by type"""
 
         item_type = get_item_type(Itemtype)
@@ -171,7 +171,7 @@ class GetItems:
             return cls.get_title(uuid)
 
     @staticmethod
-    def get_skin(uuid: str) -> Dict[str, Any]:
+    def get_skin(uuid: str) -> dict[str, Any]:
         """Get Skin data"""
         try:
             skin_data = JSON.read('cache')
@@ -202,7 +202,7 @@ class GetItems:
         return tier
 
     @staticmethod
-    def get_spray(uuid: str) -> Dict[str, Any]:
+    def get_spray(uuid: str) -> dict[str, Any]:
         """Get Spray"""
 
         data = JSON.read('cache')
@@ -210,9 +210,9 @@ class GetItems:
         with contextlib.suppress(Exception):
             spray = data['sprays'][uuid]
         return spray
-    
+
     @staticmethod
-    def get_title(uuid: str) -> Dict[str, Any]:
+    def get_title(uuid: str) -> dict[str, Any]:
         """Get Title"""
 
         data = JSON.read('cache')
@@ -222,7 +222,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_playercard(uuid: str) -> Dict[str, Any]:
+    def get_playercard(uuid: str) -> dict[str, Any]:
         """Get Player card"""
 
         data = JSON.read('cache')
@@ -232,7 +232,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_buddie(uuid: str) -> Dict[str, Any]:
+    def get_buddie(uuid: str) -> dict[str, Any]:
         """Get Buddie"""
 
         data = JSON.read('cache')
@@ -242,7 +242,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_skin_lvl_or_name(name: str, uuid: str) -> Dict[str, Any]:
+    def get_skin_lvl_or_name(name: str, uuid: str) -> dict[str, Any]:
         """Get Skin uuid by name"""
 
         data = JSON.read('cache')
@@ -255,7 +255,7 @@ class GetItems:
         return skin
 
     @staticmethod
-    def get_tier_name(skin_uuid: str) -> Optional[str]:
+    def get_tier_name(skin_uuid: str) -> str | None:
         """Get tier name by skin uuid"""
 
         try:
@@ -267,7 +267,7 @@ class GetItems:
         return name
 
     @staticmethod
-    def get_contract(uuid: str) -> Dict[str, Any]:
+    def get_contract(uuid: str) -> dict[str, Any]:
         """Get contract by uuid"""
 
         data = JSON.read('cache')
@@ -277,7 +277,7 @@ class GetItems:
         return contract
 
     @staticmethod
-    def get_bundle(uuid: str) -> Dict[str, Any]:
+    def get_bundle(uuid: str) -> dict[str, Any]:
         """Get bundle by uuid"""
 
         data = JSON.read('cache')
@@ -291,7 +291,6 @@ class GetItems:
 
 
 class GetEmoji:
-
     @staticmethod
     def tier(skin_uuid: str) -> discord.Emoji:
         """Get tier emoji"""
@@ -326,7 +325,7 @@ class GetEmoji:
 
 class GetFormat:
     @staticmethod
-    def offer_format(data: Dict[str, Any]) -> Dict[str, Any]:
+    def offer_format(data: dict[str, Any]) -> dict[str, Any]:
         """Get skins list"""
 
         offer_list = data['SkinsPanelLayout']['SingleItemOffers']
@@ -358,7 +357,7 @@ class GetFormat:
     # ---------- UTILS FOR MISSION EMBED ---------- #
 
     @staticmethod
-    def mission_format(data: Dict[str, Any]) -> Dict[str, Any]:
+    def mission_format(data: dict[str, Any]) -> dict[str, Any]:
         """Get mission format"""
 
         mission = data['Missions']
@@ -372,7 +371,7 @@ class GetFormat:
         except KeyError:
             weekly_end = ''
 
-        def get_mission_by_id(ID) -> Optional[str]:
+        def get_mission_by_id(ID) -> str | None:
             data = JSON.read('cache')
             mission = data['missions'][ID]
             return mission
@@ -406,7 +405,7 @@ class GetFormat:
     # ---------- UTILS FOR NIGHTMARKET EMBED ---------- #
 
     @staticmethod
-    def nightmarket_format(offer: Dict[str, Any], response: Dict[str, Any]) -> Dict[str, Any]:
+    def nightmarket_format(offer: dict[str, Any], response: dict[str, Any]) -> dict[str, Any]:
         """Get Nightmarket offers"""
 
         try:
@@ -441,7 +440,7 @@ class GetFormat:
     # ---------- UTILS FOR BATTLEPASS EMBED ---------- #
 
     @staticmethod
-    def __get_item_battlepass(type: str, uuid: str, response: Dict[str, Any]) -> Dict[str, Any]:
+    def __get_item_battlepass(type: str, uuid: str, response: dict[str, Any]) -> dict[str, Any]:
         """Get item battle pass by type and uuid"""
 
         if type == 'Currency':
@@ -488,7 +487,7 @@ class GetFormat:
         return {'success': False, 'error': f'Failed to get : {type}'}
 
     @staticmethod
-    def __get_contract_tier_reward(tier: int, reward: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def __get_contract_tier_reward(tier: int, reward: list[dict[str, Any]]) -> dict[str, Any]:
         """Get tier reward"""
 
         data = {}
@@ -508,8 +507,8 @@ class GetFormat:
 
     @staticmethod
     def __get_contracts_by_season_id(
-        contracts: Dict[str, Any], data_contracts: Dict[str, Any], season_id: str
-    ) -> Dict[str, Any]:
+        contracts: dict[str, Any], data_contracts: dict[str, Any], season_id: str
+    ) -> dict[str, Any]:
         """Get battle pass info"""
 
         contracts_uuid = [
@@ -529,7 +528,7 @@ class GetFormat:
         return {'success': False, 'error': 'Failed to get battlepass info'}
 
     @classmethod
-    def battlepass_format(cls, data: Dict[str, Any], season: str, response: Dict[str, Any]) -> Dict[str, Any]:
+    def battlepass_format(cls, data: dict[str, Any], season: str, response: dict[str, Any]) -> dict[str, Any]:
         """Get battle pass format"""
 
         data = data['Contracts']
