@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Awaitable, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Dict, List, Union
 
 # Standard
 import discord
@@ -105,7 +105,7 @@ class _NotifyListButton(ui.Button):
 class NotifyViewList(ui.View):
     skin_source: Dict
 
-    def __init__(self, interaction: Interaction, response: Dict) -> None:
+    def __init__(self, interaction: Interaction, response: Dict[str, Any]) -> None:
         self.interaction: Interaction = interaction
         self.response = response
         self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
@@ -185,7 +185,7 @@ class NotifyViewList(ui.View):
 
         return embed
 
-    async def start(self) -> Awaitable[None]:
+    async def start(self) -> None:
         """Starts the view."""
         self.get_data()
         self.create_button()
@@ -197,7 +197,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
     """Modal for riot login with multifactorial authentication"""
 
     def __init__(
-        self, interaction: Interaction, db: DATABASE, cookie: dict, message: str, label: str, response: Dict
+        self, interaction: Interaction, db: DATABASE, cookie: Dict[str, Any], message: str, label: str, response: Dict[st, Any],
     ) -> None:
         super().__init__(timeout=600)
         self.interaction: Interaction = interaction
@@ -249,7 +249,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
 # inspired by https://github.com/giorgi-o
 class BaseBundle(ui.View):
-    def __init__(self, interaction: Interaction, entries: Dict, response: Dict) -> None:
+    def __init__(self, interaction: Interaction, entries: Dict[str, Any], response: Dict[str, Any]) -> None:
         self.interaction: Interaction = interaction
         self.entries = entries
         self.response = response
@@ -431,7 +431,7 @@ class BaseBundle(ui.View):
         not_found_bundle = self.response.get('NOT_FOUND_BUNDLE')
         raise ValorantBotError(not_found_bundle)
 
-    async def start_furture(self) -> Awaitable[None]:
+    async def start_furture(self) -> None:
         """Starts the featured bundle view"""
 
         BUNDLES = []
@@ -480,7 +480,7 @@ class BaseBundle(ui.View):
 
 
 class SelectionFeaturedBundleView(ui.View):
-    def __init__(self, bundles: Dict, other_view: Union[ui.View, BaseBundle] = None):
+    def __init__(self, bundles: Dict[str, Any], other_view: Union[ui.View, BaseBundle] = None):
         self.bundles = bundles
         self.other_view = other_view
         super().__init__(timeout=120)

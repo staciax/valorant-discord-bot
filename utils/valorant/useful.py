@@ -149,7 +149,7 @@ class JSON:
 
 class GetItems:
     @classmethod
-    def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict[str, Any]:
+    def get_item_by_type(cls, Itemtype: str, uuid: str) -> Dict[str, Any]:  # type: ignore
         """Get item by type"""
 
         item_type = get_item_type(Itemtype)
@@ -170,6 +170,7 @@ class GetItems:
         elif item_type == 'Player titles':
             return cls.get_title(uuid)
 
+    @staticmethod
     def get_skin(uuid: str) -> Dict[str, Any]:
         """Get Skin data"""
         try:
@@ -191,6 +192,7 @@ class GetItems:
             cost = '-'
         return cost
 
+    @staticmethod
     def get_skin_tier_icon(skin: str) -> str:
         """Get Skin skin tier image"""
 
@@ -199,6 +201,7 @@ class GetItems:
         tier = skindata['tiers'][tier_uuid]['icon']
         return tier
 
+    @staticmethod
     def get_spray(uuid: str) -> Dict[str, Any]:
         """Get Spray"""
 
@@ -207,7 +210,8 @@ class GetItems:
         with contextlib.suppress(Exception):
             spray = data['sprays'][uuid]
         return spray
-
+    
+    @staticmethod
     def get_title(uuid: str) -> Dict[str, Any]:
         """Get Title"""
 
@@ -217,6 +221,7 @@ class GetItems:
             title = data['titles'][uuid]
         return title
 
+    @staticmethod
     def get_playercard(uuid: str) -> Dict[str, Any]:
         """Get Player card"""
 
