@@ -113,7 +113,7 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 
 ## Installation
 
-* [Python 3.8+](https://www.python.org/downloads/)
+* [Python 3.10+](https://www.python.org/downloads/)
 
 * Install requirements
 
@@ -129,13 +129,6 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 
 ```bash
 pip install -r requirements.txt
-```
-
-```bash
-# manual install package
-pip discord.py
-pip install requests
-pip install python-dotenv
 ```
 
 * Store discord bot token and owner ID under [.env](/.env)
