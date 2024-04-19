@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import discord
 import requests
@@ -15,16 +15,16 @@ if TYPE_CHECKING:
 # ------------------- #
 # credit https://github.com/colinhartigan/
 
-base_endpoint = "https://pd.{shard}.a.pvp.net"
-base_endpoint_glz = "https://glz-{region}-1.{shard}.a.pvp.net"
-base_endpoint_shared = "https://shared.{shard}.a.pvp.net"
+base_endpoint = 'https://pd.{shard}.a.pvp.net'
+base_endpoint_glz = 'https://glz-{region}-1.{shard}.a.pvp.net'
+base_endpoint_shared = 'https://shared.{shard}.a.pvp.net'
 
-regions: list = ["na", "eu", "latam", "br", "ap", "kr", "pbe"]
+regions: list = ['na', 'eu', 'latam', 'br', 'ap', 'kr', 'pbe']
 region_shard_override = {
-    "latam": "na",
-    "br": "na",
+    'latam': 'na',
+    'br': 'na',
 }
-shard_region_override = {"pbe": "na"}
+shard_region_override = {'pbe': 'na'}
 
 # ------------------- #
 
@@ -62,16 +62,20 @@ tiers = {
         'emoji': '<:Select:950376833982021662>',
         'color': 0x5A9FE2,
     },
-    '411e4a55-4e59-7757-41f0-86a53f101bb5': {'name': 'UltraTier', 'emoji': '<:Ultra:950376896745586719>', 'color': 0xEFEB65},
+    '411e4a55-4e59-7757-41f0-86a53f101bb5': {
+        'name': 'UltraTier',
+        'emoji': '<:Ultra:950376896745586719>',
+        'color': 0xEFEB65,
+    },
 }
 
 points = {
-    'ValorantPointIcon': f'<:ValorantPoint:950365917613817856>',
-    'RadianitePointIcon': f'<:RadianitePoint:950365909636235324>',
+    'ValorantPointIcon': '<:ValorantPoint:950365917613817856>',
+    'RadianitePointIcon': '<:RadianitePoint:950365909636235324>',
 }
 
 
-def get_item_type(uuid: str) -> Optional[str]:
+def get_item_type(uuid: str) -> str | None:
     """Get item type"""
     item_type = {
         '01bb38e1-da47-4e6a-9b3d-945fe4655707': 'Agents',
@@ -83,10 +87,10 @@ def get_item_type(uuid: str) -> Optional[str]:
         '3ad1b2b2-acdb-4524-852f-954a76ddae0a': 'Skins chroma',
         'de7caa6b-adf7-4588-bbd1-143831e786c6': 'Player titles',
     }
-    return item_type.get(uuid, None)
+    return item_type.get(uuid)
 
 
-def __url_to_image(url) -> Optional[bytes]:
+def __url_to_image(url: str) -> bytes | None:
     session = requests.session()
 
     r = session.get(url)
@@ -104,10 +108,10 @@ async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, f
         emoji = discord.utils.get(bot.emojis, name=name)
         if not emoji:
             try:
-                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))
-            except discord.Forbidden:
+                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))  # type: ignore
+            except discord.Forbidden as e:
                 if force:
-                    raise ValorantBotError(response.get('MISSING_PERM'))
+                    raise ValorantBotError(response.get('MISSING_PERM')) from e
                 continue
             except discord.HTTPException:
                 print(response.get('FAILED_CREATE_EMOJI'))

@@ -1,32 +1,40 @@
-[tool.black]
-line-length = 125
-skip-string-normalization = true
+[project]
+name = "valorant-discord-bot"
+requires-python = ">=3.12"
 
-[tool.isort]
-profile = "black"
-combine_as_imports = true
-combine_star = true
-line_length = 125
+[tool.pyright]
+include = ["cogs"]
+exclude = ["**/__pycache__", ".git", ".ruff_cache", ".venv"]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+reportUnnecessaryTypeIgnoreComment = "warning"
+reportMissingParameterType = "error"
+reportUnusedVariable = "warning"
 
-[tool.poetry]
-name = "repl_nix_Valorant-DiscordBot"
-version = "0.1.0"
-description = ""
-authors = ["Replit user <<>>"]
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+exclude = [".git", ".ruff_cache", ".venv"]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-aiohttp = "^3.8.1"
-discord = "^2.0.0"
-multidict = "^6.0.2"
-python-dotenv = "^0.20.0"
-requests = "^2.28.1"
-urllib3 = "^1.26.12"
-replit = "^3.2.4"
-Flask = "^2.2.2"
+[tool.ruff.lint]
+preview = true
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade,
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "TCH", # flake8-type-checking
+]
+ignore = [
+    "E501", # line-too-long
+]
 
-[tool.poetry.dev-dependencies]
+[tool.ruff.format]
+quote-style = "single"
+skip-magic-trailing-comma = false
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint.isort]
+combine-as-imports = true

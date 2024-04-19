@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import discord
 from discord import Interaction, app_commands
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 def _self_bot(interaction: Interaction) -> ValorantBot:
-    bot: ValorantBot = getattr(interaction, "client", interaction._state._get_client())
+    bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
     return bot
 
 
@@ -29,7 +29,7 @@ def owner_only() -> app_commands.check:
     return app_commands.check(predicate)
 
 
-def cooldown_5s(interaction: discord.Interaction) -> Optional[app_commands.Cooldown]:
+def cooldown_5s(interaction: discord.Interaction) -> app_commands.Cooldown | None:
     """
     Example cooldown:
         from discord.app_commands.checks import dynamic_cooldown

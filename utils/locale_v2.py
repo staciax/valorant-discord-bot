@@ -1,11 +1,11 @@
 """
 DEMO TRANSLATION
 """
+
 from __future__ import annotations
 
 import os
 from contextvars import ContextVar
-from typing import Optional
 
 discord_locale = [
     'da',  # Danish
@@ -59,8 +59,8 @@ valorant_locale_overwrite = {
     'vi': 'vi-VN',  # vietnamese
 }
 
-_current_locale = ContextVar("_current_locale", default="en-US")
-_valorant_current_locale = ContextVar("_valorant_current_locale", default="en-US")
+_current_locale = ContextVar('_current_locale', default='en-US')
+_valorant_current_locale = ContextVar('_valorant_current_locale', default='en-US')
 
 
 def get_interaction_locale() -> str:
@@ -68,24 +68,24 @@ def get_interaction_locale() -> str:
     return str(_current_locale.get())
 
 
-def set_interaction_locale(locale: Optional[str]) -> None:
+def set_interaction_locale(locale: str | None) -> None:
     """Set the locale for bot"""
     _current_locale.set(locale)
 
 
 def get_valorant_locale() -> str:
     """Get the locale for valorant api"""
-    valorant_locale = valorant_locale_overwrite.get(str(_valorant_current_locale.get()), "en-US")
+    valorant_locale = valorant_locale_overwrite.get(str(_valorant_current_locale.get()), 'en-US')
     return valorant_locale
 
 
-def set_valorant_locale(locale: Optional[str]) -> None:
+def set_valorant_locale(locale: str | None) -> None:
     """Set the locale for valorant api"""
 
     language_files = os.listdir('languages')
     locale_json = str(locale) + '.json'
     if locale_json not in language_files:
-        _valorant_current_locale.set("en-US")
+        _valorant_current_locale.set('en-US')
     _valorant_current_locale.set(locale)
 
 
