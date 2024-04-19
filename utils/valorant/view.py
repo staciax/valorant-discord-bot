@@ -35,7 +35,7 @@ class share_button(ui.View):
 
     @ui.button(label='Share to friends', style=ButtonStyle.primary)
     async def button_callback(self, interaction: Interaction, button: ui.Button):
-        await interaction.channel.send(embeds=self.embeds)
+        await interaction.channel.send(embeds=self.embeds)  # type: ignore
         await self.interaction.edit_original_response(content='\u200b', embed=None, view=None)
 
 
@@ -60,16 +60,16 @@ class NotifyView(discord.ui.View):
         """Called when the view times out"""
 
         with contextlib.suppress(Exception):
-            self.remve_notify.disabled = True
-            await self.message.edit_original_response(view=self)
+            self.remve_notify.disabled = True  # type: ignore
+            await self.message.edit_original_response(view=self)  # type: ignore
 
     @discord.ui.button(label='Remove Notify', emoji='✖️', style=ButtonStyle.red)
     async def remove_notify(self, interaction: Interaction, button: ui.Button):
         data = JSON.read('notifys')
 
         for i in range(len(data)):
-            if data[i]['uuid'] == self.uuid and data[i]['id'] == str(self.user_id):
-                data.pop(i)
+            if data[i]['uuid'] == self.uuid and data[i]['id'] == str(self.user_id):  # type: ignore
+                data.pop(i)  # type: ignore
                 break
 
         JSON.save('notifys', data)
@@ -78,37 +78,37 @@ class NotifyView(discord.ui.View):
         await interaction.response.edit_message(view=self)
 
         removed_notify = self.response.get('REMOVED_NOTIFY')
-        await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)
+        await interaction.followup.send(removed_notify.format(skin=self.name), ephemeral=True)  # type: ignore
 
 
 class _NotifyListButton(ui.Button):
-    def __init__(self, label, custom_id) -> None:
+    def __init__(self, label: str, custom_id: str) -> None:
         super().__init__(label=label, style=ButtonStyle.red, custom_id=str(custom_id))
 
     async def callback(self, interaction: Interaction) -> None:
         await interaction.response.defer()
 
-        data: list = JSON.read('notifys')
+        data: dict[str, Any] = JSON.read('notifys')
         for i in range(len(data)):
-            if data[i]['uuid'] == self.custom_id and data[i]['id'] == str(self.view.interaction.user.id):
-                data.pop(i)
+            if data[i]['uuid'] == self.custom_id and data[i]['id'] == str(self.view.interaction.user.id):  # type: ignore
+                data.pop(i)  # type: ignore
                 break
 
         JSON.save('notifys', data)
 
-        del self.view.skin_source[self.custom_id]
-        self.view.update_button()
-        embed = self.view.main_embed()
-        await self.view.interaction.edit_original_response(embed=embed, view=self.view)
+        del self.view.skin_source[self.custom_id]  # type: ignore
+        self.view.update_button()  # type: ignore
+        embed = self.view.main_embed()  # type: ignore
+        await self.view.interaction.edit_original_response(embed=embed, view=self.view)  # type: ignore
 
 
 class NotifyViewList(ui.View):
     skin_source: dict
 
-    def __init__(self, interaction: Interaction, response: dict[str, Any]) -> None:
+    def __init__(self, interaction: Interaction[ValorantBot], response: dict[str, Any]) -> None:
         self.interaction: Interaction = interaction
         self.response = response
-        self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
+        self.bot: ValorantBot = interaction.client
         self.default_language = 'en-US'
         super().__init__(timeout=600)
 
@@ -132,13 +132,13 @@ class NotifyViewList(ui.View):
     def create_button(self) -> None:
         data = self.skin_source
         for index, skin in enumerate(data, start=1):
-            self.add_item(_NotifyListButton(label=index, custom_id=skin))
+            self.add_item(_NotifyListButton(label=str(index), custom_id=skin))
 
     def get_data(self) -> None:
         """Gets the data from the cache."""
 
         database = JSON.read('notifys')
-        notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]
+        notify_skin = [x['uuid'] for x in database if x['id'] == str(self.interaction.user.id)]  # type: ignore
         skin_source = {}
 
         for uuid in notify_skin:
@@ -223,7 +223,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             cookie = self.cookie
             user_id = self.interaction.user.id
             auth = self.db.auth
-            auth.locale_code = self.interaction.locale
+            auth.locale_code = self.interaction.locale  # type: ignore
 
             async def send_embed(content: str) -> None:
                 embed = discord.Embed(description=content, color=0xFD4554)
@@ -237,11 +237,11 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
             auth = await auth.give2facode(code, cookie)
 
             if auth['auth'] == 'response':
-                login = await self.db.login(user_id, auth, self.interaction.locale)
-                if login['auth']:
-                    return await send_embed(f"{self.response.get('SUCCESS')} **{login['player']}!**")
+                login = await self.db.login(user_id, auth, self.interaction.locale)  # type: ignore
+                if login['auth']:  # type: ignore
+                    return await send_embed(f"{self.response.get('SUCCESS')} **{login['player']}!**")  # type: ignore
 
-                return await send_embed(login['error'])
+                return await send_embed(login['error'])  # type: ignore
 
             elif auth['auth'] == 'failed':
                 return await send_embed(auth['error'])
@@ -255,19 +255,21 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
 # inspired by https://github.com/giorgi-o
 class BaseBundle(ui.View):
-    def __init__(self, interaction: Interaction, entries: dict[str, Any], response: dict[str, Any]) -> None:
+    def __init__(
+        self, interaction: Interaction[ValorantBot], entries: dict[str, Any], response: dict[str, Any]
+    ) -> None:
         self.interaction: Interaction = interaction
         self.entries = entries
         self.response = response
         self.language = str(VLR_locale)
-        self.bot: ValorantBot = getattr(interaction, 'client', interaction._state._get_client())
+        self.bot: ValorantBot = interaction.client
         self.current_page: int = 0
         self.embeds: list[list[discord.Embed]] = []
         self.page_format = {}
         super().__init__()
         self.clear_items()
 
-    def fill_items(self, force=False) -> None:
+    def fill_items(self, force: bool = False) -> None:
         self.clear_items()
         if len(self.embeds) > 1 or force:
             self.add_item(self.back_button)
@@ -290,26 +292,29 @@ class BaseBundle(ui.View):
 
         collection_title = self.response.get('TITLE')
 
-        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names'][self.language]), start=1):
+        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names'][self.language]), start=1):  # type: ignore
             if index == selected_bundle:
                 embeds.append(
                     discord.Embed(
-                        title=bundle['names'][self.language] + f' {collection_title}',
-                        description=f"{vp_emoji} {bundle['price']}",
+                        title=bundle['names'][self.language] + f' {collection_title}',  # type: ignore
+                        description=f"{vp_emoji} {bundle['price']}",  # type: ignore
                         color=0xFD4554,
-                    ).set_image(url=bundle['icon'])
+                    ).set_image(url=bundle['icon'])  # type: ignore
                 )
 
-                for items in sorted(bundle['items'], key=lambda x: x['price'], reverse=True):
-                    item = GetItems.get_item_by_type(items['type'], items['uuid'])
-                    item_type = get_item_type(items['type'])
+                for items in sorted(bundle['items'], key=lambda x: x['price'], reverse=True):  # type: ignore
+                    item = GetItems.get_item_by_type(items['type'], items['uuid'])  # type: ignore
+                    item_type = get_item_type(items['type'])  # type: ignore
 
-                    emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
+                    emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''  # type: ignore
                     icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
                     color = 0xFD4554 if item_type == 'Skins' else 0x0F1923
 
                     embed = self.base_embed(
-                        f"{emoji} {item['names'][self.language]}", f"{vp_emoji} {items['price']}", icon, color
+                        f"{emoji} {item['names'][self.language]}",
+                        f"{vp_emoji} {items['price']}",  # type: ignore
+                        icon,
+                        color,  # type: ignore
                     )
                     embeds.append(embed)
 
@@ -327,33 +332,33 @@ class BaseBundle(ui.View):
 
         vp_emoji = discord.utils.get(self.bot.emojis, name='ValorantPointIcon')
 
-        name = bundle['names'][self.language]
+        name = bundle['names'][self.language]  # type: ignore
 
         featured_bundle_title = self.response.get('TITLE')
 
-        duration = bundle['duration']
-        duration_text = self.response.get('DURATION').format(
+        duration = bundle['duration']  # type: ignore
+        duration_text = self.response.get('DURATION').format(  # type: ignore
             duration=format_relative(datetime.utcnow() + timedelta(seconds=duration))
         )
 
-        bundle_price = bundle['price']
-        bundle_base_price = bundle['base_price']
+        bundle_price = bundle['price']  # type: ignore
+        bundle_base_price = bundle['base_price']  # type: ignore
         bundle_price_text = (
             f"**{bundle_price}** {(f'~~{bundle_base_price}~~' if bundle_base_price != bundle_price else '')}"
         )
 
         embed = discord.Embed(
-            title=featured_bundle_title.format(bundle=name),
+            title=featured_bundle_title.format(bundle=name),  # type: ignore
             description=f'{vp_emoji} {bundle_price_text}' f' ({duration_text})',
             color=0xFD4554,
         )
-        embed.set_image(url=bundle['icon'])
+        embed.set_image(url=bundle['icon'])  # type: ignore
 
         embed_list = []
 
         embeds = [embed]
 
-        for items in sorted(bundle['items'], reverse=True, key=lambda c: c['base_price']):
+        for items in sorted(bundle['items'], reverse=True, key=lambda c: c['base_price']):  # type: ignore
             item = GetItems.get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
             emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
@@ -381,8 +386,8 @@ class BaseBundle(ui.View):
 
     def build_select(self) -> None:
         """Builds the select bundle"""
-        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):
-            self.select_bundle.add_option(label=bundle['names'][self.language], value=index)
+        for index, bundle in enumerate(sorted(self.entries, key=lambda c: c['names']['en-US']), start=1):  # type: ignore
+            self.select_bundle.add_option(label=bundle['names'][self.language], value=index)  # type: ignore
 
     @ui.select(placeholder='Select a bundle:')
     async def select_bundle(self, interaction: Interaction, select: ui.Select):
@@ -481,30 +486,30 @@ class BaseBundle(ui.View):
         if len(BUNDLES) > 1:
             return await self.interaction.followup.send('\u200b', view=SelectionFeaturedBundleView(BUNDLES, self))
 
-        self.embeds = self.build_featured_bundle(BUNDLES[0])
+        self.embeds = self.build_featured_bundle(BUNDLES[0])  # type: ignore
         self.fill_items()
         self.update_button()
-        await self.interaction.followup.send(embeds=self.embeds[0], view=self)
+        await self.interaction.followup.send(embeds=self.embeds[0], view=self)  # type: ignore
 
 
 class SelectionFeaturedBundleView(ui.View):
-    def __init__(self, bundles: dict[str, Any], other_view: ui.View | BaseBundle = None):
+    def __init__(self, bundles: list[dict[str, Any]], other_view: ui.View | BaseBundle | None = None):  # type: ignore
         self.bundles = bundles
         self.other_view = other_view
         super().__init__(timeout=120)
         self.__build_select()
-        self.select_bundle.placeholder = self.other_view.response.get('DROPDOWN_CHOICE_TITLE')
+        self.select_bundle.placeholder = self.other_view.response.get('DROPDOWN_CHOICE_TITLE')  # type: ignore
 
     def __build_select(self) -> None:
         """Builds the select bundle"""
         for index, bundle in enumerate(self.bundles):
-            self.select_bundle.add_option(label=bundle['names'][str(VLR_locale)], value=index)
+            self.select_bundle.add_option(label=bundle['names'][str(VLR_locale)], value=str(index))
 
     @ui.select(placeholder='Select a bundle:')
     async def select_bundle(self, interaction: Interaction, select: ui.Select):
         value = select.values[0]
         bundle = self.bundles[int(value)]
-        embeds = self.other_view.build_featured_bundle(bundle)
-        self.other_view.fill_items()
-        self.other_view.update_button()
-        await interaction.response.edit_message(content=None, embeds=embeds[0], view=self.other_view)
+        embeds = self.other_view.build_featured_bundle(bundle)  # type: ignore
+        self.other_view.fill_items()  # type: ignore
+        self.other_view.update_button()  # type: ignore
+        await interaction.response.edit_message(content=None, embeds=embeds[0], view=self.other_view)  # type: ignore

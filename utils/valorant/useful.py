@@ -41,7 +41,7 @@ def is_valid_uuid(value: str) -> bool:
 # ---------- ACT SEASON ---------- #
 
 
-def get_season_by_content(content: dict) -> tuple[str, str]:
+def get_season_by_content(content: dict) -> dict[str, Any]:
     """Get season id by content"""
 
     try:
@@ -71,14 +71,14 @@ def calculate_level_xp(level: int) -> int:  # https://github.com/giorgi-o
 # ---------- TIME UTILS ---------- #
 
 
-def iso_to_time(iso: datetime) -> datetime:
+def iso_to_time(iso: str) -> datetime:
     """Convert ISO time to datetime"""
     timestamp = datetime.strptime(iso, '%Y-%m-%dT%H:%M:%S%z').timestamp()
     time = datetime.utcfromtimestamp(timestamp)
     return time
 
 
-def format_dt(dt: datetime, style: str = None) -> str:  # style 'R' or 'd'
+def format_dt(dt: datetime, style: str | None = None) -> str:
     """datatime to time format"""
 
     if dt.tzinfo is None:
@@ -112,7 +112,7 @@ class JSON:
         """Read json file"""
         try:
             if on_replit:
-                from replit import db
+                from replit import db  # type: ignore
 
                 data = db[filename]
             else:
@@ -131,7 +131,7 @@ class JSON:
         """Save data to json file"""
         try:
             if on_replit:
-                from replit import db
+                from replit import db  # type: ignore
 
                 db[filename] = data
             else:
@@ -202,7 +202,7 @@ class GetItems:
         return tier
 
     @staticmethod
-    def get_spray(uuid: str) -> dict[str, Any]:
+    def get_spray(uuid: str) -> Any:
         """Get Spray"""
 
         data = JSON.read('cache')
@@ -212,7 +212,7 @@ class GetItems:
         return spray
 
     @staticmethod
-    def get_title(uuid: str) -> dict[str, Any]:
+    def get_title(uuid: str) -> Any:
         """Get Title"""
 
         data = JSON.read('cache')
@@ -222,7 +222,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_playercard(uuid: str) -> dict[str, Any]:
+    def get_playercard(uuid: str) -> Any:
         """Get Player card"""
 
         data = JSON.read('cache')
@@ -232,7 +232,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_buddie(uuid: str) -> dict[str, Any]:
+    def get_buddie(uuid: str) -> Any:
         """Get Buddie"""
 
         data = JSON.read('cache')
@@ -242,7 +242,7 @@ class GetItems:
         return title
 
     @staticmethod
-    def get_skin_lvl_or_name(name: str, uuid: str) -> dict[str, Any]:
+    def get_skin_lvl_or_name(name: str, uuid: str) -> Any:
         """Get Skin uuid by name"""
 
         data = JSON.read('cache')
@@ -267,7 +267,7 @@ class GetItems:
         return name
 
     @staticmethod
-    def get_contract(uuid: str) -> dict[str, Any]:
+    def get_contract(uuid: str) -> Any:
         """Get contract by uuid"""
 
         data = JSON.read('cache')
@@ -277,7 +277,7 @@ class GetItems:
         return contract
 
     @staticmethod
-    def get_bundle(uuid: str) -> dict[str, Any]:
+    def get_bundle(uuid: str) -> Any:
         """Get bundle by uuid"""
 
         data = JSON.read('cache')
@@ -305,13 +305,13 @@ class GetEmoji:
     def tier_by_bot(cls, skin_uuid: str, bot: ValorantBot) -> discord.Emoji:
         """Get tier emoji from bot"""
 
-        emoji = discord.utils.get(bot.emojis, name=GetItems.get_tier_name(skin_uuid) + 'Tier')
+        emoji = discord.utils.get(bot.emojis, name=GetItems.get_tier_name(skin_uuid) + 'Tier')  # type: ignore
         if emoji is None:
             return cls.tier(skin_uuid)
         return emoji
 
     @staticmethod
-    def point_by_bot(point: str, bot: ValorantBot) -> discord.Emoji:
+    def point_by_bot(point: str, bot: ValorantBot) -> discord.Emoji | str | None:
         """Get point emoji from bot"""
 
         emoji = discord.utils.get(bot.emojis, name=point)
@@ -371,7 +371,7 @@ class GetFormat:
         except KeyError:
             weekly_end = ''
 
-        def get_mission_by_id(ID) -> str | None:
+        def get_mission_by_id(ID: str) -> str | None:
             data = JSON.read('cache')
             mission = data['missions'][ID]
             return mission
@@ -379,18 +379,18 @@ class GetFormat:
         for m in mission:
             mission = get_mission_by_id(m['ID'])
             (*complete,) = m['Objectives'].values()
-            title = mission['titles'][str(VLR_locale)]
-            progress = mission['progress']
-            xp = mission['xp']
+            title = mission['titles'][str(VLR_locale)]  # type: ignore
+            progress = mission['progress']  # type: ignore
+            xp = mission['xp']  # type: ignore
 
             format_m = f'\n{title} | **+ {xp:,} XP**\n- **`{complete[0]}/{progress}`**'
 
-            if mission['type'] == 'EAresMissionType::Weekly':
+            if mission['type'] == 'EAresMissionType::Weekly':  # type: ignore
                 weekly.append(format_m)
-            if mission['type'] == 'EAresMissionType::Daily':
+            if mission['type'] == 'EAresMissionType::Daily':  # type: ignore
                 daily_end = m['ExpirationTime']
                 daily.append(format_m)
-            if mission['type'] == 'EAresMissionType::NPE':
+            if mission['type'] == 'EAresMissionType::NPE':  # type: ignore
                 newplayer.append(format_m)
 
         misson_data = {
@@ -517,9 +517,9 @@ class GetFormat:
             if data_contracts['contracts'][x]['reward']['relationUuid'] == season_id
         ]
         if contracts_uuid:
-            battlepass = [x for x in contracts if x['ContractDefinitionID'] == contracts_uuid[0]]
-            TIER = battlepass[0]['ProgressionLevelReached']
-            XP = battlepass[0]['ProgressionTowardsNextLevel']
+            battlepass = [x for x in contracts if x['ContractDefinitionID'] == contracts_uuid[0]]  # type: ignore
+            TIER = battlepass[0]['ProgressionLevelReached']  # type: ignore
+            XP = battlepass[0]['ProgressionTowardsNextLevel']  # type: ignore
             REWARD = data_contracts['contracts'][contracts_uuid[0]]['reward']['chapters']
             ACT = data_contracts['contracts'][contracts_uuid[0]]['names'][str(VLR_locale)]
 
@@ -535,8 +535,8 @@ class GetFormat:
         contracts = JSON.read('cache')
         # data_contracts['contracts'].pop('version')
 
-        season_id = season['id']
-        season_end = season['end']
+        season_id = season['id']  # type: ignore
+        season_end = season['end']  # type: ignore
 
         btp = cls.__get_contracts_by_season_id(data, contracts, season_id)
         if btp['success']:

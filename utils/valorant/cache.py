@@ -13,7 +13,7 @@ def create_json(filename: str, formats: dict[str, Any]) -> None:
     """Create a json file"""
 
     if on_replit:
-        from replit import db
+        from replit import db  # type: ignore
 
         db[filename] = formats
     else:

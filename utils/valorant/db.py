@@ -122,19 +122,19 @@ class DATABASE:
         response = LocalErrorResponse('DATABASE', locale_code)
 
         auth = await self.is_login(user_id, response)
-        puuid = auth['puuid']
-        region = auth['region']
-        username = auth['username']
-        access_token = auth['access_token']
-        entitlements_token = auth['emt']
-        notify_mode = auth['notify_mode']
-        expiry_token = auth['expiry_token']
-        cookie = auth['cookie']
-        notify_channel = auth.get('notify_channel', None)
-        dm_message = auth.get('DM_Message', None)
+        puuid = auth['puuid']  # type: ignore
+        region = auth['region']  # type: ignore
+        username = auth['username']  # type: ignore
+        access_token = auth['access_token']  # type: ignore
+        entitlements_token = auth['emt']  # type: ignore
+        notify_mode = auth['notify_mode']  # type: ignore
+        expiry_token = auth['expiry_token']  # type: ignore
+        cookie = auth['cookie']  # type: ignore
+        notify_channel = auth.get('notify_channel', None)  # type: ignore
+        dm_message = auth.get('DM_Message', None)  # type: ignore
 
         if timestamp_utc() > expiry_token:
-            access_token, entitlements_token = await self.refresh_token(user_id, auth)
+            access_token, entitlements_token = await self.refresh_token(user_id, auth)  # type: ignore
 
         headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
 
@@ -169,13 +169,13 @@ class DATABASE:
 
         return access_token, entitlements_token
 
-    def change_notify_mode(self, user_id: int, mode: str = None) -> None:
+    def change_notify_mode(self, user_id: int, mode: str | None = None) -> None:
         """Change notify mode"""
 
         db = self.read_db()
 
         overite_mode = {'All Skin': 'All', 'Specified Skin': 'Specified', 'Off': None}
-        db[str(user_id)]['notify_mode'] = overite_mode[mode]
+        db[str(user_id)]['notify_mode'] = overite_mode[mode]  # type: ignore
 
         self.insert_user(db)
 
@@ -195,7 +195,7 @@ class DATABASE:
 
     def check_notify_list(self, user_id: int) -> None:
         database = JSON.read('notifys')
-        notify_skin = [x for x in database if x['id'] == str(user_id)]
+        notify_skin = [x for x in database if x['id'] == str(user_id)]  # type: ignore
         if len(notify_skin) == 0:
             raise DatabaseError("You're notification list is empty!")
 

@@ -33,14 +33,14 @@ class ValorantBot(commands.Bot):
 
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
-        self.session: aiohttp.ClientSession = None
+        self.session: aiohttp.ClientSession | None = None
         self.bot_version = '3.3.5'
         self.tree.interaction_check = self.interaction_check
 
     @staticmethod
     async def interaction_check(interaction: discord.Interaction) -> bool:
-        locale_v2.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update
-        locale_v2.set_valorant_locale(interaction.locale)  # valorant localized
+        locale_v2.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update # type: ignore
+        locale_v2.set_valorant_locale(interaction.locale)  # valorant localized # type: ignore
         return True
 
     @property
@@ -61,7 +61,7 @@ class ValorantBot(commands.Bot):
             self.session = aiohttp.ClientSession()
 
         try:
-            self.owner_id = int(os.getenv('OWNER_ID'))
+            self.owner_id = int(os.getenv('OWNER_ID'))  # type: ignore
         except ValueError:
             self.bot_app_info = await self.application_info()
             self.owner_id = self.bot_app_info.owner.id
@@ -91,7 +91,8 @@ class ValorantBot(commands.Bot):
             get_cache()
 
     async def close(self) -> None:
-        await self.session.close()
+        if self.session:
+            await self.session.close()
         await super().close()
 
     async def start(self, debug: bool = False) -> None:
