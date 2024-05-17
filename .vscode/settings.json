@@ -1,0 +1,19 @@
+{
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+      // "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "ruff.lint.args": ["--unfixable=F401"],
+  "editor.fontFamily": "Zed Mono",
+  "markdown.preview.fontFamily": "Zed Mono",
+  "debug.console.fontFamily": "Zed Mono",
+  "workbench.activityBar.location": "bottom",
+  "python.analysis.completeFunctionParens": false
+}

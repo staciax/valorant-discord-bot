@@ -1,2 +1,7 @@
 discord.py>=2.3.2
 python-dotenv>=1.0.1
+sqlmodel>=0.0.18
+typer>=0.12.*
+pydantic-settings>=2.2.*,<3
+
+uvloop; sys_platform != 'win32'
