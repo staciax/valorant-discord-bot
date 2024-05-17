@@ -33,8 +33,11 @@ ignore = [
 ]
 
 [tool.ruff.format]
+preview = true
 quote-style = "single"
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+# keep runtime
