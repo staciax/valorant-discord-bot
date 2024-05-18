@@ -1,5 +1,5 @@
 {
-    "translation_by": "NIGHTMARE#3194",
+    "translation_by": "NIGHTMARE#3194 제작 | mayone 수정",
     "commands": {
         "login": {
             "NAME": "로그인",
@@ -24,7 +24,7 @@
                 "username": "아이디를 입력하세요! (임시 로그인)",
                 "password": "아이디를 입력하세요! (임시 로그인)"
             },
-            "RESPONSE": "**{username}**의 일일상점 | {duration} 남음"
+            "RESPONSE": "**{username}**의 일일상점 | {duration} 갱신"
         },
         "point": {
             "NAME": "포인트",
@@ -39,13 +39,13 @@
             "WEEKLY": "주간",
             "NEWPLAYER": "신규 플레이어",
             "NO_MISSION": "미션 없음",
-            "DAILY_RESET": "{duration} 후 초기화",
-            "REFILLS": "{duration} 후 갱신"
+            "DAILY_RESET": "{duration} 초기화",
+            "REFILLS": "{duration} 갱신"
         },
         "nightmarket": {
             "NAME": "야시장",
             "DESCRIPTION": "본인 계정의 야시장을 표시합니다.",
-            "RESPONSE": "**{username}** 의 야시장 | {duration} 남음",
+            "RESPONSE": "**{username}** 의 야시장 | {duration} 종료",
             "NIGMARKET_HAS_END": "**야시장** 종료"
         },
         "battlepass": {
@@ -66,11 +66,11 @@
             "DESCRIBE": {
                 "skin": "알림 받고 싶은 특정 스킨"
             },
-            "SUCCESS": "{emoji} **{skin}** 이 알림 리스트에 등록되었습니다.",
+            "SUCCESS": "{emoji} **{skin}** 이(가) 알림 리스트에 등록되었습니다.",
             "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** 은 이미 알림 리스트에 등록이 되어있습니다.",
             "NOT_FOUND": "스킨을 찾을 수 없습니다.",
             "REMOVE_NOTIFY": "알림 삭제",
-            "REMOVED_NOTIFY": "**{skin}** 이 알림 리스트에서 삭제되었습니다."
+            "REMOVED_NOTIFY": "**{skin}** 이(가) 알림 리스트에서 삭제되었습니다."
         },
         "notify_list": {
             "NAME": "알림 리스트",
@@ -99,8 +99,8 @@
             "PLEASE_ALLOW_DM_MESSAGE": "설정의 `개인정보 보호 및 보안 탭`에 `서버 멤버가 보내는 다이렉트 메시지 허용하기`를 활성화 해주세요."
         },
         "notify_send": {
-            "RESPONSE_SPECIFIED": "{emoji} **{name}** 이 일일상점에 떴습니다.\n{duration} 남음",
-            "RESPONSE_ALL": "**{username}** 의 일일 상점 | {duration} 남음"
+            "RESPONSE_SPECIFIED": "{emoji} **{name}** 이(가) 일일상점에 떴습니다.\n{duration} 초기화",
+            "RESPONSE_ALL": "**{username}** 의 일일 상점 | {duration} 갱신"
         },
         "notify_channel": {
             "NAME": "채널",
@@ -124,8 +124,8 @@
             "NAME": "번들",
             "DESCRIPTION": "본인 계정의 번들 진행상황",
             "TITLE": "포함된 번들: {bundle} 컬렉션",
-            "DURATION": "Expires {duration}",
-            "DROPDOWN_CHOICE_TITLE": "Select a bundle:"
+            "DURATION": "{duration} 종료",
+            "DROPDOWN_CHOICE_TITLE": "번들 선택:"
         },
         "debug": {
             "NAME": "디버그",
@@ -141,13 +141,13 @@
             "SUCCESS": "성공적으로 디버깅됨: **{bug}**"
         },
         "cookies": {
-            "NAME": "cookies",
-            "DESCRIPTION": "Log into your riot account with a browser cookie",
+            "NAME": "쿠키",
+            "DESCRIPTION": "브라우저 쿠키를 사용하여 라이엇 계정에 로그인",
             "DESCRIBE": {
-                "cookie": "Your cookie"
+                "cookie": "브라우저 쿠기"
             },
-            "SUCCESS": "Successfully logged in",
-            "FAILED": "Invalid cookie"
+            "SUCCESS": "로그인 성공!",
+            "FAILED": "잘못된 쿠키. 다시 시도하세요."
         }
     },
     "errors": {
@@ -163,7 +163,7 @@
             "2FA_ENABLE": "2단계 인증이 활성화 되어있습니다.",
             "2FA_TO_EMAIL": "라이엇 게임즈가 다음 메일 주소로 코드를 보냈습니다.",
             "2FA_INVALID_CODE": "코드가 올바르지 않습니다. 다시 '/login' 해주세요.",
-            "TEMP_LOGIN_NOT_SUPPORT_2FA": "Not supported 2FA, Please use `/login` and use other cmd without username, password."
+            "TEMP_LOGIN_NOT_SUPPORT_2FA": "2단계 인증을 지원하지 않습니다. 로그인하려면 `/cookies`를 사용해 주세요."
         },
         "DATABASE": {
             "NOT_LOGIN": "가입되지 않은 유저입니다. `/login`을 통해 가입해주세요!",
