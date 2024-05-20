@@ -25,9 +25,7 @@ class RemoveNoise(logging.Filter):
         super().__init__(name='discord.state')
 
     def filter(self, record: logging.LogRecord) -> bool:
-        if record.levelname == 'WARNING' and 'referencing an unknown' in record.msg:
-            return False
-        return True
+        return not (record.levelname == 'WARNING' and 'referencing an unknown' in record.msg)
 
 
 @contextlib.contextmanager
@@ -44,7 +42,8 @@ def setup_logging():
         logging.getLogger('discord.state').addFilter(RemoveNoise())
 
         log.setLevel(logging.INFO)
-        handler = RotatingFileHandler(
+
+        file_handler = RotatingFileHandler(
             filename='bot.log',
             encoding='utf-8',
             mode='w',
@@ -53,13 +52,14 @@ def setup_logging():
         )
         dt_fmt = '%Y-%m-%d %H:%M:%S'
         fmt = logging.Formatter('[{asctime}] [{levelname:<7}] {name}: {message}', dt_fmt, style='{')
-        handler.setFormatter(fmt)
-        log.addHandler(handler)
-        handler = logging.StreamHandler()
-        if isinstance(handler, logging.StreamHandler) and utils.stream_supports_colour(handler.stream):
-            fmt = utils._ColourFormatter()
-        handler.setFormatter(fmt)
-        log.addHandler(handler)
+        file_handler.setFormatter(fmt)
+        log.addHandler(file_handler)
+
+        stream_handler = logging.StreamHandler()
+        if utils.stream_supports_colour(stream_handler.stream):
+            stream_handler.setFormatter(utils._ColourFormatter())
+        log.addHandler(stream_handler)
+
         yield
     finally:
         # __exit__
