@@ -275,11 +275,12 @@ class BaseBundle(ui.View):
             self.add_item(self.back_button)
             self.add_item(self.next_button)
 
-    def base_embed(self, title: str, description: str, icon: str, color: int = 0x0F1923) -> discord.Embed:
+    def base_embed(self, title: str, description: str, icon: str|None, color: int = 0x0F1923) -> discord.Embed:
         """Base embed for the view"""
 
         embed = discord.Embed(title=title, description=description, color=color)
-        embed.set_thumbnail(url=icon)
+        if icon:
+            embed.set_thumbnail(url=icon)
         return embed
 
     def build_embeds(self, selected_bundle: int = 1) -> None:
@@ -362,7 +363,10 @@ class BaseBundle(ui.View):
             item = GetItems.get_item_by_type(items['type'], items['uuid'])
             item_type = get_item_type(items['type'])
             emoji = GetEmoji.tier_by_bot(items['uuid'], self.bot) if item_type == 'Skins' else ''
-            icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large']
+            if item_type == 'Player titles':
+                icon = None
+            else:
+                icon = item['icon'] if item_type != 'Player Cards' else item['icon']['large'] if item['icon']['large'] else item['icon']['small']
             color = 0xFD4554 if item_type == 'Skins' else 0x0F1923
 
             item_price = items['price']
