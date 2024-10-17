@@ -1,0 +1,183 @@
+{
+  "translation_by": "sev#1337",
+  "commands": {
+    "login": {
+      "NAME": "login",
+      "DESCRIPTION": "Entrar com a sua conta Riot",
+      "DESCRIBE": {
+        "username": "Introduza o nome de utilizador!",
+        "password": "Introduza a sua senha!"
+      },
+      "SUCCESS": "Login bem sucedido!",
+      "FAILED": "Falha no login, por favor tente novamente"
+    },
+    "logout": {
+      "NAME": "logout",
+      "DESCRIPTION": "Sair da conta e apagar o registo da base de dados",
+      "SUCCESS": "Logout bem sucedido!",
+      "FAILED": "Falha no logout, por favor tente novamente!"
+    },
+    "store": {
+      "NAME": "loja",
+      "DESCRIPTION": "Apresentar a loja diária das suas contas",
+      "DESCRIBE": {
+        "username": "Introduza o nome de utilizador! (login temporário)",
+        "password": "Introduza a sua senha! (login temporário)"
+      },
+      "RESPONSE": "Loja diária de **{username}** \nExpira {duration}"
+    },
+    "point": {
+      "NAME": "pontos",
+      "DESCRIPTION": "Ver seus Valorant Points e Radianite Points (VP/RP)",
+      "POINT": "Pontos"
+    },
+    "mission": {
+      "NAME": "missao",
+      "DESCRIPTION": "Ver o progresso da sua missão diária/semanal",
+      "TITLE": "Missão",
+      "DAILY": "Diária",
+      "WEEKLY": "Semanal",
+      "NEWPLAYER": "Novo jogador",
+      "NO_MISSION": "Nenhuma missão disponível",
+      "DAILY_RESET": "Expiram {duration}",
+      "REFILLS": "Recarregam {duration}"
+    },
+    "nightmarket": {
+      "NAME": "mercadonoturno",
+      "DESCRIPTION": "Ver ofertas de skins no seu Night Market",
+      "RESPONSE": "Night Market de **{username}** | Expira {duration}",
+      "NIGMARKET_HAS_END": "**Night Market** acabou"
+    },
+    "battlepass": {
+      "NAME": "passe",
+      "DESCRIPTION": "Ver o seu tier atual do battlepass",
+      "RESPONSE": "**Próxima recompensa:** {next}\n**Tipo:** {type}\n**XP:** {xp}\n**ACABA EM:** {end}",
+      "TIER": "TIER",
+      "PLAYER_CARD": "Card de Jogador",
+      "SPRAY": "Spray",
+      "BUDDY": "Buddy de arma",
+      "POINT": "Ponto",
+      "PLAYER_TITLE": "Título",
+      "SKIN": "Skin"
+    },
+    "notify_add": {
+      "NAME": "add",
+      "DESCRIPTION": "Definir uma notificação quando uma skin específica aparecer na sua loja",
+      "DESCRIBE": {
+        "skin": "O nome da skin da qual pretende ser notificado"
+      },
+      "SUCCESS": "Definida com sucesso uma notificação para {emoji} **{skin}**",
+      "SKIN_ALREADY_IN_LIST": "{emoji} **{skin}** já está na sua lista de notificações",
+      "NOT_FOUND": "Skin não encontrada",
+      "REMOVE_NOTIFY": "Remover notificação",
+      "REMOVED_NOTIFY": "**{skin}** foi removida das notificações"
+    },
+    "notify_list": {
+      "NAME": "list",
+      "DESCRIPTION": "Ver skins que você definiu uma notificação",
+      "TITLE": "Sua lista de notificação",
+      "DONT_HAVE_NOTIFY": "Você não tem nenhuma lista de notificação",
+      "REMOVE_NOTIFY": "Clique no botão para remover notificação"
+    },
+    "notify_mode": {
+      "NAME": "mode",
+      "DESCRIPTION": "Mudar modo de notificação",
+      "DESCRIBE": {
+        "mode": "O modo que você quer mudar"
+      },
+      "SUCCESS": "Você mudou com sucesso o modo de notificação para **{mode}**",
+      "TURN_OFF": "Desligar o modo de notificação"
+    },
+    "notify_test": {
+      "NAME": "test",
+      "DESCRIPTION": "Testar notificação",
+      "NOTIFY_IS_WORKING": "Notificação está a funcionar",
+      "NOTIFY_TURN_OFF": "Você não ativou o modo notificação",
+      "EMPTY_LIST": "A lista de notificação está vazia",
+      "BOT_MISSING_PERM": "**Eu não tenho permissão para enviar notificações nesse canal!** \nPor favor verifique se o bot tem permissões `Ver canal`, `Enviar mensagens`, `Inserir links` e `Usar emojis externos` nesse canal, e tente novamente.",
+      "FAILED_SEND_NOTIFY": "Falha ao enviar notificação, por favor tente novamente",
+      "PLEASE_ALLOW_DM_MESSAGE": "Por favor permita mensagens diretas nas suas configurações de privacidade"
+    },
+    "notify_send": {
+      "RESPONSE_SPECIFIED": "{emoji} **{name}** está na sua loja diária!\nExpira {duration}",
+      "RESPONSE_ALL": "Loja diária de **{username}** | Expira {duration}"
+    },
+    "notify_channel": {
+      "NAME": "channel",
+      "DESCRIPTION": "Mudar o canal de notificação",
+      "DESCRIBE": {
+        "channel": "Selecione o canal que você quer mudar"
+      },
+      "SUCCESS": "Canal de notificação mudou para **{channel}**"
+    },
+    "bundle": {
+      "NAME": "bundle",
+      "DESCRIPTION": "Ver um bundle específico",
+      "DESCRIBE": {
+        "bundle": "O nome do bundle que você quer ver!"
+      },
+      "TITLE": "Coleção",
+      "DROPDOWN_CHOICE_TITLE": "Selecione um bundle:",
+      "NOT_FOUND_BUNDLE": "Nenhum bundle encontrado"
+    },
+    "bundles": {
+      "NAME": "bundles",
+      "DESCRIPTION": "Ver o bundle em destaque atual",
+      "TITLE": "Bundle em Destaque: Coleção {bundle}",
+      "DURATION": "Expira em {duration}",
+      "DROPDOWN_CHOICE_TITLE": "Selecione um bundle:"
+    },
+    "debug": {
+      "NAME": "debug",
+      "DESCRIPTION": "O comando de debug para o bot",
+      "DESCRIBE": {
+        "bug": "O bug que você quer corrigir.",
+        "choice": {
+          "skin_price_not_loading": "Preço de skin não carrega",
+          "emoji_price_not_loading": "Emoji não carrega",
+          "cache_price_not_loading": "Cache não carrega"
+        }
+      },
+      "SUCCESS": "Debug com sucesso: **{bug}**"
+    },
+    "cookies": {
+      "NAME": "cookies",
+      "DESCRIPTION": "Entrar na sua conta Riot com um cookie",
+      "DESCRIBE": {
+        "cookie": "O seu cookie"
+      },
+      "SUCCESS": "Login bem sucedido!",
+      "FAILED": "Cookie inválido"
+    }
+  },
+  "errors": {
+    "UNKNOW_ERROR": "Ocorreu um erro desconhecido.",
+    "AUTH": {
+      "INVALID_PASSWORD": "Seu nome de utilizador ou senha podem estar incorretos!",
+      "RATELIMIT": "Por favor aguarde alguns minutos e tente novamente.",
+      "COOKIES_EXPIRED": "Os cookies expiraram, por favor `/login` novamente.",
+      "NO_NAME_TAG": "Este utilizador não criou um nome ou tagline ainda.",
+      "REGION_NOT_FOUND": "Ocorreu um erro desconhecido, por favor `/login` novamente",
+      "LOGIN_COOKIE_FAILED": "Login com cookies falhou.",
+      "INPUT_2FA_CODE": "Insira o código de autenticação de 2 fatores",
+      "2FA_ENABLE": "Você tem autenticação de 2 fatores ligada!",
+      "2FA_TO_EMAIL": "Riot enviou o código para",
+      "2FA_INVALID_CODE": "Código inválido. Por favor `/login` novamente",
+      "TEMP_LOGIN_NOT_SUPPORT_2FA": "Não suportado 2FA, Por favor use `/login` e use outro comando sem nome de utilizador, senha."
+    },
+    "DATABASE": {
+      "NOT_LOGIN": "Você não está registado, por favor `/login` para se registar!",
+      "LOGIN_ERROR": "Falha no login, por favor tente novamente",
+      "LOGOUT_ERROR": "Eu não consigo fazer logout se você não estiver registado!",
+      "LOGOUT_EXCEPT": "Ocorreu um erro ao fazer logout."
+    },
+    "API": {
+      "FAILED_ACTIVE": "Falha ao ativar API",
+      "REQUEST_FAILED": "Resposta da API falhou!"
+    },
+    "SETUP_EMOJI": {
+      "MISSING_PERM": "Eu não tenho permissão para criar emoji!",
+      "FAILED_CREATE_EMOJI": "Eu não consigo criar emoji, por favor tente novamente!"
+    }
+  }
+}
