@@ -50,11 +50,11 @@
 เขียนโดย Python และ ไลบรารี่ [Discord.py](https://github.com/Rapptz/discord.py) <br>
 ต้องการความช่วยเหลือสามารถเข้ามาใน [เซิฟเวอร์ดิสคอร์ด](https://discord.gg/RaCzsPnfNM)
 
-## Heroku
+<!-- ## Heroku
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-- [วีดีโอสอน](https://youtu.be/5ZFsEcDT8e4)
+- [วีดีโอสอน](https://youtu.be/5ZFsEcDT8e4) -->
 
 ## ภาพประกอบ
 
@@ -82,14 +82,7 @@
   รันสคริปตามข้างล่าง
 
 ```
-pip install -r requirements.txt
-```
-
-```
-# หรือจะติดตั่งแบบทีละอย่าง
-pip install git+https://github.com/Rapptz/discord.py@master
-pip install requests
-pip install python-dotenv
+uv sync
 ```
 
 * เก็บ Token และ Owner ID ในไฟล์  [.env](https://github.com/staciax/ValorantStoreChecker-discord-bot/blob/master/.env)
