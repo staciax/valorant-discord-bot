@@ -124,8 +124,7 @@ class API_ENDPOINT:
         Contracts_Fetch
         Get a list of contracts and completion status including match history
         """
-        data = self.fetch(endpoint=f'/contracts/v1/contracts/{self.puuid}', url='pd')
-        return data
+        return self.fetch(endpoint=f'/contracts/v1/contracts/{self.puuid}', url='pd')
 
     # PVP endpoints
 
@@ -134,21 +133,18 @@ class API_ENDPOINT:
         Content_FetchContent
         Get names and ids for game content such as agents, maps, guns, etc.
         """
-        data = self.fetch(endpoint='/content-service/v3/content', url='shared')
-        return data
+        return self.fetch(endpoint='/content-service/v3/content', url='shared')
 
     def fetch_account_xp(self) -> dict[str, Any]:
         """
         AccountXP_GetPlayer
         Get the account level, XP, and XP history for the active player
         """
-        data = self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
-        return data
+        return self.fetch(endpoint=f'/account-xp/v1/players/{self.puuid}', url='pd')
 
     def fetch_player_mmr(self, puuid: str | None = None) -> dict[str, Any]:
         puuid = self.__check_puuid(puuid)
-        data = self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
-        return data
+        return self.fetch(endpoint=f'/mmr/v1/players/{puuid}', url='pd')
 
     def fetch_name_by_puuid(self, puuid: str | None = None) -> dict[str, Any]:
         """
@@ -161,24 +157,21 @@ class API_ENDPOINT:
             puuids = [self.__check_puuid()]
         elif puuid is not None and type(puuid) is str:
             puuids = [puuid]
-        data = self.put(endpoint='/name-service/v2/players', url='pd', data=puuids)
-        return data
+        return self.put(endpoint='/name-service/v2/players', url='pd', data=puuids)
 
     def fetch_player_loadout(self) -> dict[str, Any]:
         """
         playerLoadoutUpdate
         Get the player's current loadout
         """
-        data = self.fetch(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd')
-        return data
+        return self.fetch(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd')
 
     def put_player_loadout(self, loadout: dict[str, Any]) -> dict[str, Any]:
         """
         playerLoadoutUpdate
         Use the values from `fetch_player_loadout` excluding properties like `subject` and `version.` Loadout changes take effect when starting a new game
         """
-        data = self.put(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd', data=loadout)
-        return data
+        return self.put(endpoint=f'/personalization/v2/players/{self.puuid}/playerloadout', url='pd', data=loadout)
 
     # store endpoints
 
@@ -187,16 +180,14 @@ class API_ENDPOINT:
         Store_GetOffers
         Get prices for all store items
         """
-        data = self.fetch('/store/v1/offers/', url='pd')
-        return data
+        return self.fetch('/store/v1/offers/', url='pd')
 
     def store_fetch_storefront(self) -> dict[str, Any]:
         """
         Store_GetStorefrontV2
         Get the currently available items in the store
         """
-        data = self.fetch(f'/store/v2/storefront/{self.puuid}', url='pd')
-        return data
+        return self.fetch(f'/store/v2/storefront/{self.puuid}', url='pd')
 
     def store_fetch_wallet(self) -> dict[str, Any]:
         """
@@ -204,16 +195,14 @@ class API_ENDPOINT:
         Get amount of Valorant points and Radiant points the player has
         Valorant points have the id 85ad13f7-3d1b-5128-9eb2-7cd8ee0b5741 and Radiant points have the id e59aa87c-4cbf-517a-5983-6e81511be9b7
         """
-        data = self.fetch(f'/store/v1/wallet/{self.puuid}', url='pd')
-        return data
+        return self.fetch(f'/store/v1/wallet/{self.puuid}', url='pd')
 
     def store_fetch_order(self, order_id: str) -> dict[str, Any]:
         """
         Store_GetOrder
         {order id}: The ID of the order. Can be obtained when creating an order.
         """
-        data = self.fetch(f'/store/v1/order/{order_id}', url='pd')
-        return data
+        return self.fetch(f'/store/v1/order/{order_id}', url='pd')
 
     def store_fetch_entitlements(self, item_type: dict) -> dict[str, Any]:
         """
@@ -232,8 +221,7 @@ class API_ENDPOINT:
         '3ad1b2b2-acdb-4524-852f-954a76ddae0a': 'Skins chroma',\n
         'de7caa6b-adf7-4588-bbd1-143831e786c6': 'Player titles',\n
         """
-        data = self.fetch(endpoint=f'/store/v1/entitlements/{self.puuid}/{item_type}', url='pd')
-        return data
+        return self.fetch(endpoint=f'/store/v1/entitlements/{self.puuid}/{item_type}', url='pd')
 
     # useful endpoints
 
@@ -242,15 +230,13 @@ class API_ENDPOINT:
         Get player daily/weekly missions
         """
         data = self.fetch_contracts()
-        mission = data['Missions']
-        return mission
+        return data['Missions']
 
     def get_player_level(self) -> dict[str, Any]:
         """
         Aliases `fetch_account_xp` but received a level
         """
-        data = self.fetch_account_xp()['Progress']['Level']
-        return data
+        return self.fetch_account_xp()['Progress']['Level']
 
     def get_player_tier_rank(self, puuid: str | None = None) -> str:
         """
@@ -261,8 +247,7 @@ class API_ENDPOINT:
         if len(season_id) == 0:
             season_id = self.__get_live_season()
         current_season = data['QueueSkills']['competitive']['SeasonalInfoBySeasonID']
-        current_Tier = current_season[season_id]['CompetitiveTier']
-        return current_Tier
+        return current_season[season_id]['CompetitiveTier']
 
     # local utility functions
 
@@ -305,7 +290,7 @@ class API_ENDPOINT:
         """Get the client version"""
         r = requests.get('https://valorant-api.com/v1/version')
         data = r.json()['data']
-        return f"{data['branch']}-shipping-{data['buildVersion']}-{data['version'].split('.')[3]}"  # return formatted version string
+        return f'{data["branch"]}-shipping-{data["buildVersion"]}-{data["version"].split(".")[3]}'  # return formatted version string
 
     def _get_valorant_version(self) -> str | None:
         """Get the valorant version"""

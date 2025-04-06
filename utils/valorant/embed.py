@@ -221,7 +221,7 @@ class GetEmbed:
         embed = Embed(description, title='BATTLEPASS')
 
         if icon:
-            if original_type in ['PlayerCard', 'EquippableSkinLevel']:
+            if original_type in {'PlayerCard', 'EquippableSkinLevel'}:
                 embed.set_image(url=icon)
             else:
                 embed.set_thumbnail(url=icon)

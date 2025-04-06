@@ -9,12 +9,9 @@ import aiohttp
 import discord
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
-from dotenv import load_dotenv
 
 from utils import locale_v2
 from utils.valorant.cache import get_cache
-
-load_dotenv()
 
 initial_extensions = ['cogs.admin', 'cogs.errors', 'cogs.notify', 'cogs.valorant']
 
@@ -34,13 +31,15 @@ class ValorantBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
         self.session: aiohttp.ClientSession | None = None
-        self.bot_version = '3.3.5'
-        self.tree.interaction_check = self.interaction_check
+        self.bot_version = '3.6.0'
+        self.tree.interaction_check = self.interaction_check  # type: ignore[method-assign]
 
     @staticmethod
     async def interaction_check(interaction: discord.Interaction) -> bool:
-        locale_v2.set_interaction_locale(interaction.locale)  # bot responses localized # wait for update # type: ignore
-        locale_v2.set_valorant_locale(interaction.locale)  # valorant localized # type: ignore
+        locale_v2.set_interaction_locale(
+            interaction.locale  # type: ignore[arg-type]
+        )  # bot responses localized # wait for update # type: ignore[arg-type]
+        locale_v2.set_valorant_locale(interaction.locale)  # type: ignore[arg-type]
         return True
 
     @property
@@ -85,7 +84,7 @@ class ValorantBot(commands.Bot):
     @staticmethod
     def setup_cache() -> None:
         try:
-            with open('data/cache.json'):
+            with open('data/cache.json', encoding='utf-8'):
                 ...
         except FileNotFoundError:
             get_cache()
@@ -95,9 +94,9 @@ class ValorantBot(commands.Bot):
             await self.session.close()
         await super().close()
 
-    async def start(self, debug: bool = False) -> None:
+    async def start(self, debug: bool = False) -> None:  # type: ignore[override]
         self.debug = debug
-        return await super().start(os.getenv('TOKEN'), reconnect=True)  # type: ignore
+        return await super().start(os.getenv('DISCORD_TOKEN'), reconnect=True)  # type: ignore
 
 
 def run_bot() -> None:

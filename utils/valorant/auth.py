@@ -25,8 +25,7 @@ def _extract_tokens(data: str) -> str:
     pattern = re.compile(
         r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)'
     )
-    response = pattern.findall(data['response']['parameters']['uri'])[0]  # type: ignore
-    return response
+    return pattern.findall(data['response']['parameters']['uri'])[0]
 
 
 def _extract_tokens_from_uri(url: str) -> tuple[str, str]:
@@ -73,7 +72,7 @@ class Auth:
     RIOT_CLIENT_USER_AGENT = 'RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)'
 
     def __init__(self) -> None:
-        self._headers: dict = {
+        self._headers: dict[str, Any] = {
             'Content-Type': 'application/json',
             'User-Agent': Auth.RIOT_CLIENT_USER_AGENT,
             'Accept': 'application/json, text/plain, */*',
@@ -137,7 +136,7 @@ class Auth:
 
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
 
-        elif data['type'] == 'multifactor':
+        if data['type'] == 'multifactor':
             if r.status == 429:
                 raise AuthenticationError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
 
@@ -146,7 +145,7 @@ class Auth:
 
             if data['multifactor']['method'] == 'email':
                 WaitFor2FA['message'] = (
-                    f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                    f'{local_response.get("2FA_TO_EMAIL", "Riot sent a code to")} {data["multifactor"]["email"]}'
                 )
                 return WaitFor2FA
 
@@ -320,8 +319,7 @@ class Auth:
                 'Authorization': f'Bearer {access_token}',
                 'X-Riot-Entitlements-JWT': entitlements_token,
             }
-            user_data = {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
-            return user_data
+            return {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
 
         raise AuthenticationError(self.local_response().get('TEMP_LOGIN_NOT_SUPPORT_2FA'))
 
@@ -366,8 +364,7 @@ class Auth:
         accessToken, tokenID = _extract_tokens_from_uri(await r.text())
         entitlements_token = await self.get_entitlements_token(accessToken)
 
-        data = {'cookies': new_cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
-        return data
+        return {'cookies': new_cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
 
     async def refresh_token(self, cookies: dict) -> tuple[dict[str, Any], str, str]:
         return await self.redeem_cookies(cookies)

@@ -6,23 +6,18 @@ from typing import Any
 
 import requests
 
-from .useful import JSON, on_replit
+from .useful import JSON
 
 
 def create_json(filename: str, formats: dict[str, Any]) -> None:
     """Create a json file"""
 
-    if on_replit:
-        from replit import db  # type: ignore
-
-        db[filename] = formats
-    else:
-        file_path = 'data/' + filename + '.json'
-        file_dir = os.path.dirname(file_path)
-        os.makedirs(file_dir, exist_ok=True)
-        if not os.path.exists(file_path):
-            with open(file_path, 'w') as fp:
-                json.dump(formats, fp, indent=2)
+    file_path = 'data/' + filename + '.json'
+    file_dir = os.path.dirname(file_path)
+    os.makedirs(file_dir, exist_ok=True)
+    if not os.path.exists(file_path):
+        with open(file_path, 'w', encoding='utf-8') as fp:
+            json.dump(formats, fp, indent=2)
 
 
 def get_valorant_version() -> str | None:
@@ -32,7 +27,7 @@ def get_valorant_version() -> str | None:
 
     resp = requests.get('https://valorant-api.com/v1/version')
 
-    return resp.json()['data']['manifestId']
+    return resp.json()['data']['manifestId']  # type: ignore[no-any-return]
 
 
 def fetch_skin() -> None:
@@ -41,7 +36,7 @@ def fetch_skin() -> None:
     data = JSON.read('cache')
 
     print('Fetching weapons skin !')
-    resp = requests.get('https://valorant-api.com/v1/weapons/skins?language=all')
+    resp = requests.get('https://valorant-api.com/v1/weapons/skins?language=all')  # noqa: S113
     if resp.status_code == 200:
         json = {}
         for skin in resp.json()['data']:
@@ -255,7 +250,7 @@ def fetch_contracts() -> None:
         'de37c775-4017-177a-8c64-a8bb414dae1f',  # BP EP 3 ACT 1
         'b0bd7062-4d62-1ff1-7920-b39622ee926b',  # BP EP 3 ACT 2
         'be540721-4d60-0675-a586-ecb14adcb5f7',  # BP EP 3 ACT 3
-        '60f2e13a-4834-0a18-5f7b-02b1a97b7adb' '60f2e13a-4834-0a18-5f7b-02b1a97b7adb',  # BP EP 4 ACT 1  # BP EP 4 ACT 1
+        '60f2e13a-4834-0a18-5f7b-02b1a97b7adb60f2e13a-4834-0a18-5f7b-02b1a97b7adb',  # BP EP 4 ACT 1  # BP EP 4 ACT 1
         # 'c1cd8895-4bd2-466d-e7ff-b489e3bc3775', # BP EP 4 ACT 2
     ]
 
@@ -337,7 +332,7 @@ def fetch_buddies() -> None:
         JSON.save('cache', data)
 
 
-def fetch_price(data_price: dict) -> None:
+def fetch_price(data_price: dict[str, Any]) -> None:
     """Fetch the price of a skin"""
 
     data = JSON.read('cache')

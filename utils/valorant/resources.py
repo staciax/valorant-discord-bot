@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from io import BytesIO
 from typing import TYPE_CHECKING
 
+import aiohttp
 import discord
-import requests
 
 from ..errors import ValorantBotError
 from .local import LocalErrorResponse
@@ -19,7 +18,7 @@ base_endpoint = 'https://pd.{shard}.a.pvp.net'
 base_endpoint_glz = 'https://glz-{region}-1.{shard}.a.pvp.net'
 base_endpoint_shared = 'https://shared.{shard}.a.pvp.net'
 
-regions: list = ['na', 'eu', 'latam', 'br', 'ap', 'kr', 'pbe']
+regions: list[str] = ['na', 'eu', 'latam', 'br', 'ap', 'kr', 'pbe']
 region_shard_override = {
     'latam': 'na',
     'br': 'na',
@@ -90,14 +89,13 @@ def get_item_type(uuid: str) -> str | None:
     return item_type.get(uuid)
 
 
-def __url_to_image(url: str) -> bytes | None:
-    session = requests.session()
-
-    r = session.get(url)
-    image = BytesIO(r.content)
-    image_value = image.getvalue()
-    if r.status_code in range(200, 299):
-        return image_value
+async def __url_to_image(url: str) -> bytes | None:
+    async with aiohttp.ClientSession() as session:  # noqa: SIM117
+        async with session.get(url) as r:
+            if r.status == 200:  # noqa: PLR2004
+                return await r.read()
+            print(f'Failed to fetch image from {url}, status code: {r.status}')
+            return None
 
 
 async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, force: bool = False) -> None:
@@ -108,12 +106,11 @@ async def setup_emoji(bot: ValorantBot, guild: discord.Guild, local_code: str, f
         emoji = discord.utils.get(bot.emojis, name=name)
         if not emoji:
             try:
-                emoji = await guild.create_custom_emoji(name=name, image=__url_to_image(emoji_url))  # type: ignore
+                emoji = await guild.create_custom_emoji(name=name, image=await __url_to_image(emoji_url))  # type: ignore
             except discord.Forbidden as e:
                 if force:
                     raise ValorantBotError(response.get('MISSING_PERM')) from e
                 continue
             except discord.HTTPException:
                 print(response.get('FAILED_CREATE_EMOJI'))
-                pass
                 # raise RuntimeError(f'Failed to create emoji !')

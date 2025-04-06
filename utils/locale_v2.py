@@ -70,13 +70,12 @@ def get_interaction_locale() -> str:
 
 def set_interaction_locale(locale: str | None) -> None:
     """Set the locale for bot"""
-    _current_locale.set(locale)
+    _current_locale.set(locale)  # type: ignore[arg-type]
 
 
 def get_valorant_locale() -> str:
     """Get the locale for valorant api"""
-    valorant_locale = valorant_locale_overwrite.get(str(_valorant_current_locale.get()), 'en-US')
-    return valorant_locale
+    return valorant_locale_overwrite.get(str(_valorant_current_locale.get()), 'en-US')
 
 
 def set_valorant_locale(locale: str | None) -> None:
@@ -86,15 +85,14 @@ def set_valorant_locale(locale: str | None) -> None:
     locale_json = str(locale) + '.json'
     if locale_json not in language_files:
         _valorant_current_locale.set('en-US')
-    _valorant_current_locale.set(locale)
+    _valorant_current_locale.set(locale)  # type: ignore[arg-type]
 
 
 class ValorantTranslator:
     """Translate valorant item name"""
 
     def __str__(self) -> str:
-        locale = get_valorant_locale()
-        return locale
+        return get_valorant_locale()
 
     def lower(self) -> str:
         locale = get_valorant_locale()
@@ -105,8 +103,7 @@ class Translator:
     """Translate valorant item name"""
 
     def __str__(self) -> str:
-        locale = get_interaction_locale()
-        return locale
+        return get_interaction_locale()
 
     def lower(self) -> str:
         locale = get_interaction_locale()
