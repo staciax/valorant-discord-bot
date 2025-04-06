@@ -31,7 +31,7 @@ class ValorantBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=BOT_PREFIX, case_insensitive=True, intents=intents)
         self.session: aiohttp.ClientSession | None = None
-        self.bot_version = '3.3.5'
+        self.bot_version = '3.6.0'
         self.tree.interaction_check = self.interaction_check  # type: ignore[method-assign]
 
     @staticmethod
@@ -96,7 +96,7 @@ class ValorantBot(commands.Bot):
 
     async def start(self, debug: bool = False) -> None:  # type: ignore[override]
         self.debug = debug
-        return await super().start(os.getenv('TOKEN'), reconnect=True)  # type: ignore
+        return await super().start(os.getenv('DISCORD_TOKEN'), reconnect=True)  # type: ignore
 
 
 def run_bot() -> None:
