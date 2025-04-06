@@ -48,8 +48,10 @@
 
 ## Note ⚠️
 - will not receive updates until v4.0.0 will be finished. sorry 😭
-- `
-I'm a student and I have to divide my study time with this project.`
+<!-- - `
+I'm a student and I have to divide my study time with this project.` -->
+- **v3.6.0 Update:** This version only includes cleanup of unused files, some refactoring, switch from pip to uv, and preparations for a complete refactor in the upcoming v4.0.0.
+
 
 # About
 
