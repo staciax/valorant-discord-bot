@@ -60,37 +60,37 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, HandshakeError):
             error_message = 'Could not connect to Riot server.'
         elif isinstance(error, (CommandOnCooldown | AppCommandNotFound | MissingPermissions | BotMissingPermissions)):
-            error = error
+            error = error  # noqa: PLW0127
         # else:
         #     traceback.print_exception(type(error), error)
 
         embed = discord.Embed(description=f'{str(error_message)[:2000]}', color=0xFE676E)
         if interaction.response.is_done():
             return await interaction.followup.send(embed=embed, ephemeral=True)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context[ValorantBot], error: Exception) -> None:
+    async def on_command_error(self, ctx: commands.Context[ValorantBot], error: Exception) -> None:  # noqa: PLR6301
         embed = discord.Embed(color=0xFE676E)
 
         if isinstance(error, CommandNotFound):
             return
-        elif isinstance(error, CheckFailure):
+        if isinstance(error, CheckFailure):
             cm_error = 'Only owners can run this command!'
         elif isinstance(error, MissingRequiredArgument):
             cm_error = "You didn't pass a required argument!"
-            if ctx.command and ctx.command.name in ['sync', 'unsync']:
+            if ctx.command and ctx.command.name in ('sync', 'unsync'):  # noqa: PLR6201
                 cm_error = 'You need to specify a sync type: `guild` or `global`'
         elif hasattr(error, 'original'):
-            if isinstance(error.original, discord.Forbidden):  # type: ignore
+            if isinstance(error.original, discord.Forbidden):
                 cm_error = "Bot don't have permission to run this command."
-                if ctx.command and ctx.command.name in ['sync', 'unsync']:
+                if ctx.command and ctx.command.name in ('sync', 'unsync'):  # noqa: PLR6201
                     cm_error = "Bot don't have permission `applications.commands` to sync."
                     embed.set_image(url=app_cmd_scope)
-            elif isinstance(error.original, discord.HTTPException):  # type: ignore
+            elif isinstance(error.original, discord.HTTPException):
                 cm_error = 'An error occurred while processing your request.'
         elif isinstance(error, BadLiteralArgument):
-            cm_error = f"**Invalid literal:** {', '.join(error.literals)}"
+            cm_error = f'**Invalid literal:** {", ".join(error.literals)}'
         else:
             traceback.print_exception(type(error), error, error.__traceback__)
             cm_error = 'An unknown error occurred, sorry'

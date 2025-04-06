@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import contextlib
 import json
+from pathlib import Path
 from typing import Any
 
 # credit by /giorgi-o/
@@ -34,13 +35,12 @@ def InteractionLanguage(local_code: str) -> str:
     return Locale.get(str(local_code), 'en-US')
 
 
-def __LocalRead(filename: str) -> dict:
-    data = {}
-    try:
-        with open(f'languages/{filename}.json', encoding='utf-8') as json_file:
-            data = json.load(json_file)
-    except FileNotFoundError:
-        return __LocalRead('en-US')
+def local_read(filename: str) -> dict[str, Any]:
+    path = Path(__file__).parent.parent / 'languages' / f'{filename}.json'
+    if not path.exists():
+        return local_read('en-US')
+
+    data: dict[str, Any] = json.loads(path.read_text(encoding='utf-8'))
     return data
 
 
@@ -48,7 +48,7 @@ def ResponseLanguage(command_name: str, local_code: str) -> dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
-        local_dict = __LocalRead(local_code)
+        local_dict = local_read(local_code)
         local = local_dict['commands'][str(command_name)]
     return local
 
@@ -57,12 +57,12 @@ def LocalErrorResponse(value: str, local_code: str) -> dict[str, Any]:
     local_code = __verify_localcode(local_code)
     local = {}
     with contextlib.suppress(KeyError):
-        local_dict = __LocalRead(local_code)
+        local_dict = local_read(local_code)
         local = local_dict['errors'][value]
     return local
 
 
 def __verify_localcode(local_code: str) -> str:
-    if local_code in ['en-US', 'en-GB']:
+    if local_code in ('en-US', 'en-GB'):  # noqa: PLR6201
         return 'en-US'
     return local_code

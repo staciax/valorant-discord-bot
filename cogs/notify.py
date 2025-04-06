@@ -29,8 +29,8 @@ if TYPE_CHECKING:
 class Notify(commands.Cog):
     def __init__(self, bot: ValorantBot) -> None:
         self.bot: ValorantBot = bot
-        self.endpoint: API_ENDPOINT = None  # type: ignore
-        self.db: DATABASE = None  # type: ignore
+        self.endpoint: API_ENDPOINT | None = None
+        self.db: DATABASE = None
         self.notifys.start()
 
     def cog_unload(self) -> None:
@@ -44,7 +44,7 @@ class Notify(commands.Cog):
     async def get_endpoint_and_data(self, user_id: int) -> tuple[API_ENDPOINT, Any]:
         data = await self.db.is_data(user_id, 'en-US')
         endpoint = self.endpoint
-        endpoint.activate(data)  # type: ignore
+        endpoint.activate(data)
         return endpoint, data
 
     async def send_notify(self) -> None:
@@ -206,10 +206,10 @@ class Notify(commands.Cog):
     async def notify_list(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True)
 
-        response = ResponseLanguage('notify_list', interaction.locale)  # type: ignore
+        response = ResponseLanguage('notify_list', interaction.locale)
 
-        await self.db.is_data(interaction.user.id, interaction.locale)  # check if user is in db # type: ignore
-        view = View.NotifyViewList(interaction, response)  # type: ignore
+        await self.db.is_data(interaction.user.id, interaction.locale)
+        view = View.NotifyViewList(interaction, response)
         await view.start()
 
     @notify.command(name='mode', description='Change notification mode/channel.')
@@ -219,9 +219,9 @@ class Notify(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         # language
-        response = ResponseLanguage('notify_mode', interaction.locale)  # type: ignore
+        response = ResponseLanguage('notify_mode', interaction.locale)
 
-        await self.db.is_data(interaction.user.id, interaction.locale)  # type: ignore
+        await self.db.is_data(interaction.user.id, interaction.locale)
 
         if mode == 'Specified Skin':  # Check notify list if use mode specified skin
             self.db.check_notify_list(interaction.user.id)  # check total notify list
@@ -231,7 +231,7 @@ class Notify(commands.Cog):
         success = response.get('SUCCESS')
         turn_off = response.get('TURN_OFF')
 
-        embed = Embed(success.format(mode=mode))  # type: ignore
+        embed = Embed(success.format(mode=mode))
         if mode == 'Specified Skin':
             embed.set_image(url='https://i.imgur.com/RF6fHRY.png')
         elif mode == 'All Skin':
@@ -248,16 +248,16 @@ class Notify(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         # language
-        response = ResponseLanguage('notify_channel', interaction.locale)  # type: ignore
+        response = ResponseLanguage('notify_channel', interaction.locale)
 
-        await self.db.is_data(interaction.user.id, interaction.locale)  # type: ignore
+        await self.db.is_data(interaction.user.id, interaction.locale)
 
         self.db.check_notify_list(interaction.user.id)  # check total notify list
         self.db.change_notify_channel(interaction.user.id, channel, interaction.channel_id)  # change notify channel
 
-        channel = '**DM Message**' if channel == 'DM Message' else f'{interaction.channel.mention}'  # type: ignore
+        channel = '**DM Message**' if channel == 'DM Message' else f'{interaction.channel.mention}'
 
-        embed = discord.Embed(description=response.get('SUCCESS').format(channel=channel), color=0x77DD77)  # type: ignore
+        embed = discord.Embed(description=response.get('SUCCESS').format(channel=channel), color=0x77DD77)
 
         await interaction.followup.send(embed=embed, ephemeral=True)
 
@@ -267,9 +267,9 @@ class Notify(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         # language
-        response_test = ResponseLanguage('notify_test', interaction.locale)  # type: ignore
-        response_send = ResponseLanguage('notify_send', interaction.locale)  # type: ignore
-        response_add = ResponseLanguage('notify_add', interaction.locale)  # type: ignore
+        response_test = ResponseLanguage('notify_test', interaction.locale)
+        response_send = ResponseLanguage('notify_send', interaction.locale)
+        response_add = ResponseLanguage('notify_add', interaction.locale)
 
         # notify list
         notify_data = JSON.read('notifys')
@@ -280,7 +280,7 @@ class Notify(commands.Cog):
 
         # offer data
         duration = offer['SkinsPanelLayout']['SingleItemOffersRemainingDurationInSeconds']
-        user_skin_list = [skin for skin in notify_data if skin['id'] == str(interaction.user.id)]  # type: ignore
+        user_skin_list = [skin for skin in notify_data if skin['id'] == str(interaction.user.id)]
 
         if len(user_skin_list) == 0:
             empty_list = response_test.get('EMPTY_LIST')
@@ -291,28 +291,28 @@ class Notify(commands.Cog):
         try:
             if data['notify_mode'] == 'Specified':
                 for notify in user_skin_list:
-                    uuid = notify['uuid']  # type: ignore
+                    uuid = notify['uuid']
                     skin = GetItems.get_skin(uuid)
 
                     name = skin['names'][str(VLR_locale)]
                     icon = skin['icon']
                     emoji = GetEmoji.tier_by_bot(uuid, self.bot)
 
-                    notify_send: str = response_send.get('RESPONSE_SPECIFIED')  # type: ignore
+                    notify_send: str = response_send.get('RESPONSE_SPECIFIED')
                     duration = format_relative(datetime.utcnow() + timedelta(seconds=duration))
 
                     embed = Embed(notify_send.format(emoji=emoji, name=name, duration=duration), color=0xFD4554)
                     embed.set_thumbnail(url=icon)
                     view = View.NotifyView(interaction.user.id, uuid, name, response_add)
-                    view.message = await channel_send.send(embed=embed, view=view)  # type: ignore
+                    view.message = await channel_send.send(embed=embed, view=view)
                     break
 
             elif data['notify_mode'] == 'All':
                 embeds = GetEmbed.notify_all_send(endpoint.player, offer, response_send, self.bot)
-                await channel_send.send(embeds=embeds)  # type: ignore
+                await channel_send.send(embeds=embeds)
 
             else:
-                raise ValorantBotError(response_test.get('NOTIFY_TURN_OFF'))
+                raise ValorantBotError(response_test.get('NOTIFY_TURN_OFF'))  # noqa: TRY301
 
         except Forbidden as e:
             if channel_send == interaction.user:
@@ -322,7 +322,7 @@ class Notify(commands.Cog):
             raise ValorantBotError(response_test.get('FAILED_SEND_NOTIFY')) from e
         except Exception as e:
             print(e)
-            raise ValorantBotError(f"{response_test.get('FAILED_SEND_NOTIFY')} - {e}") from e
+            raise ValorantBotError(f'{response_test.get("FAILED_SEND_NOTIFY")} - {e}') from e  # noqa: TRY003
         else:
             await interaction.followup.send(
                 embed=Embed(response_test.get('NOTIFY_IS_WORKING'), color=0x77DD77), ephemeral=True

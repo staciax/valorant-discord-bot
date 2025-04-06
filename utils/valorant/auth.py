@@ -25,7 +25,7 @@ def _extract_tokens(data: str) -> str:
     pattern = re.compile(
         r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)'
     )
-    response = pattern.findall(data['response']['parameters']['uri'])[0]  # type: ignore
+    response = pattern.findall(data['response']['parameters']['uri'])[0]
     return response
 
 
@@ -73,7 +73,7 @@ class Auth:
     RIOT_CLIENT_USER_AGENT = 'RiotClient/60.0.6.4770705.4749685 rso-auth (Windows;10;;Professional, x64)'
 
     def __init__(self) -> None:
-        self._headers: dict = {
+        self._headers: dict[str, Any] = {
             'Content-Type': 'application/json',
             'User-Agent': Auth.RIOT_CLIENT_USER_AGENT,
             'Accept': 'application/json, text/plain, */*',
@@ -137,7 +137,7 @@ class Auth:
 
             return {'auth': 'response', 'data': {'cookie': cookies, 'access_token': access_token, 'token_id': token_id}}
 
-        elif data['type'] == 'multifactor':
+        if data['type'] == 'multifactor':
             if r.status == 429:
                 raise AuthenticationError(local_response.get('RATELIMIT', 'Please wait a few minutes and try again.'))
 
@@ -146,7 +146,7 @@ class Auth:
 
             if data['multifactor']['method'] == 'email':
                 WaitFor2FA['message'] = (
-                    f"{local_response.get('2FA_TO_EMAIL', 'Riot sent a code to')} {data['multifactor']['email']}"
+                    f'{local_response.get("2FA_TO_EMAIL", "Riot sent a code to")} {data["multifactor"]["email"]}'
                 )
                 return WaitFor2FA
 

@@ -8,15 +8,10 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 import discord
-from dotenv import load_dotenv
 
 from ..errors import ValorantBotError
 from ..locale_v2 import ValorantTranslator
 from .resources import get_item_type, points as points_emoji, tiers as tiers_resources
-
-load_dotenv()
-global on_replit
-on_replit = bool(os.getenv('ON_REPLIT'))
 
 VLR_locale = ValorantTranslator()
 
@@ -41,7 +36,7 @@ def is_valid_uuid(value: str) -> bool:
 # ---------- ACT SEASON ---------- #
 
 
-def get_season_by_content(content: dict) -> dict[str, Any]:
+def get_season_by_content(content: dict[str, Any]) -> dict[str, Any]:
     """Get season id by content"""
 
     try:
@@ -62,10 +57,9 @@ def calculate_level_xp(level: int) -> int:  # https://github.com/giorgi-o
     level_multiplier = 750
     if 2 <= level <= 50:
         return 2000 + (level - 2) * level_multiplier
-    elif 51 <= level <= 55:
+    if 51 <= level <= 55:
         return 36500
-    else:
-        return 0
+    return 0
 
 
 # ---------- TIME UTILS ---------- #
@@ -111,32 +105,22 @@ class JSON:
     def read(filename: str, force: bool = True) -> dict[str, Any]:
         """Read json file"""
         try:
-            if on_replit:
-                from replit import db  # type: ignore
-
-                data = db[filename]
-            else:
-                with open('data/' + filename + '.json', encoding='utf-8') as json_file:
-                    data = json.load(json_file)
+            with open('data/' + filename + '.json', encoding='utf-8') as json_file:
+                data = json.load(json_file)
         except (FileNotFoundError, KeyError):
             from .cache import create_json
 
             if force:
                 create_json(filename, {})
                 return JSON.read(filename, False)
-        return data
+        return data  # type: ignore[no-any-return]
 
     @staticmethod
     def save(filename: str, data: dict[str, Any]) -> None:
         """Save data to json file"""
         try:
-            if on_replit:
-                from replit import db  # type: ignore
-
-                db[filename] = data
-            else:
-                with open('data/' + filename + '.json', 'w', encoding='utf-8') as json_file:
-                    json.dump(data, json_file, indent=2, ensure_ascii=False)
+            with open('data/' + filename + '.json', 'w', encoding='utf-8') as json_file:
+                json.dump(data, json_file, indent=2, ensure_ascii=False)
         except (FileNotFoundError, KeyError):
             from .cache import create_json
 
@@ -149,26 +133,27 @@ class JSON:
 
 class GetItems:
     @classmethod
-    def get_item_by_type(cls, Itemtype: str, uuid: str) -> dict[str, Any]:  # type: ignore
+    def get_item_by_type(cls, Itemtype: str, uuid: str) -> dict[str, Any]:
         """Get item by type"""
 
         item_type = get_item_type(Itemtype)
         if item_type == 'Agents':
             ...
         elif item_type == 'Contracts':
-            return cls.get_contract(uuid)
+            return cls.get_contract(uuid)  # type: ignore[no-any-return]
         elif item_type == 'Sprays':
-            return cls.get_spray(uuid)
+            return cls.get_spray(uuid)  # type: ignore[no-any-return]
         elif item_type == 'Gun Buddies':
-            return cls.get_buddie(uuid)
+            return cls.get_buddie(uuid)  # type: ignore[no-any-return]
         elif item_type == 'Player Cards':
-            return cls.get_playercard(uuid)
+            return cls.get_playercard(uuid)  # type: ignore[no-any-return]
         elif item_type == 'Skins':
             return cls.get_skin(uuid)
         elif item_type == 'Skins chroma':
             ...
         elif item_type == 'Player titles':
-            return cls.get_title(uuid)
+            return cls.get_title(uuid)  # type: ignore[no-any-return]
+        return None  # type: ignore[return-value]
 
     @staticmethod
     def get_skin(uuid: str) -> dict[str, Any]:
@@ -177,8 +162,8 @@ class GetItems:
             skin_data = JSON.read('cache')
             skin = skin_data['skins'][uuid]
         except KeyError as e:
-            raise ValorantBotError('Some skin data is missing, plz use `/debug cache`') from e
-        return skin
+            raise ValorantBotError('Some skin data is missing, plz use `/debug cache`') from e  # noqa: TRY003
+        return skin  # type: ignore[no-any-return]
 
     @staticmethod
     def get_skin_price(uuid: str) -> str:
@@ -190,7 +175,7 @@ class GetItems:
             cost = price[uuid]
         except Exception:
             cost = '-'
-        return cost
+        return cost  # type: ignore[no-any-return]
 
     @staticmethod
     def get_skin_tier_icon(skin: str) -> str:
@@ -199,7 +184,7 @@ class GetItems:
         skindata = JSON.read('cache')
         tier_uuid = skindata['skins'][skin]['tier']
         tier = skindata['tiers'][tier_uuid]['icon']
-        return tier
+        return tier  # type: ignore[no-any-return]
 
     @staticmethod
     def get_spray(uuid: str) -> Any:
@@ -251,7 +236,7 @@ class GetItems:
             skin = data['skins'][uuid]
         with contextlib.suppress(Exception):
             if skin is None:
-                skin = [data['skins'][x] for x in data['skins'] if data['skins'][x]['name'] in name][0]
+                skin = next(data['skins'][x] for x in data['skins'] if data['skins'][x]['name'] in name)
         return skin
 
     @staticmethod
@@ -263,8 +248,8 @@ class GetItems:
             uuid = data['skins'][skin_uuid]['tier']
             name = data['tiers'][uuid]['name']
         except KeyError as e:
-            raise ValorantBotError('Some skin data is missing, plz use `/debug cache`') from e
-        return name
+            raise ValorantBotError('Some skin data is missing, plz use `/debug cache`') from e  # noqa: TRY003
+        return name  # type: ignore[no-any-return]
 
     @staticmethod
     def get_contract(uuid: str) -> Any:
@@ -299,7 +284,7 @@ class GetEmoji:
         uuid = data['skins'][skin_uuid]['tier']
         uuid = data['tiers'][uuid]['uuid']
         emoji = tiers_resources[uuid]['emoji']
-        return emoji
+        return emoji  # type: ignore[return-value]
 
     @classmethod
     def tier_by_bot(cls, skin_uuid: str, bot: ValorantBot) -> discord.Emoji:
@@ -374,23 +359,23 @@ class GetFormat:
         def get_mission_by_id(ID: str) -> str | None:
             data = JSON.read('cache')
             mission = data['missions'][ID]
-            return mission
+            return mission  # type: ignore[no-any-return]
 
         for m in mission:
             mission = get_mission_by_id(m['ID'])
             (*complete,) = m['Objectives'].values()
-            title = mission['titles'][str(VLR_locale)]  # type: ignore
-            progress = mission['progress']  # type: ignore
-            xp = mission['xp']  # type: ignore
+            title = mission['titles'][str(VLR_locale)]
+            progress = mission['progress']
+            xp = mission['xp']
 
             format_m = f'\n{title} | **+ {xp:,} XP**\n- **`{complete[0]}/{progress}`**'
 
-            if mission['type'] == 'EAresMissionType::Weekly':  # type: ignore
+            if mission['type'] == 'EAresMissionType::Weekly':
                 weekly.append(format_m)
-            if mission['type'] == 'EAresMissionType::Daily':  # type: ignore
+            if mission['type'] == 'EAresMissionType::Daily':
                 daily_end = m['ExpirationTime']
                 daily.append(format_m)
-            if mission['type'] == 'EAresMissionType::NPE':  # type: ignore
+            if mission['type'] == 'EAresMissionType::NPE':
                 newplayer.append(format_m)
 
         misson_data = {
@@ -450,34 +435,34 @@ class GetFormat:
             item_type = response.get('POINT', 'Point')
             return {'success': True, 'data': {'type': item_type, 'name': '10 ' + name, 'icon': icon}}
 
-        elif type == 'PlayerCard':
+        if type == 'PlayerCard':
             data = JSON.read('cache')
             name = data['playercards'][uuid]['names'][str(VLR_locale)]
             icon = data['playercards'][uuid]['icon']['wide']
             item_type = response.get('PLAYER_CARD', 'Player Card')
             return {'success': True, 'data': {'type': item_type, 'name': name, 'icon': icon}}
 
-        elif type == 'Title':
+        if type == 'Title':
             data = JSON.read('cache')
             name = data['titles'][uuid]['names'][str(VLR_locale)]
             item_type = response.get('PLAYER_TITLE', 'Title')
             return {'success': True, 'data': {'type': item_type, 'name': name, 'icon': False}}
 
-        elif type == 'Spray':
+        if type == 'Spray':
             data = JSON.read('cache')
             name = data['sprays'][uuid]['names'][str(VLR_locale)]
             icon = data['sprays'][uuid]['icon']
             item_type = response.get('SPRAY', 'Spray')
             return {'success': True, 'data': {'type': item_type, 'name': name, 'icon': icon}}
 
-        elif type == 'EquippableSkinLevel':
+        if type == 'EquippableSkinLevel':
             data = JSON.read('cache')
             name = data['skins'][uuid]['names'][str(VLR_locale)]
             icon = data['skins'][uuid]['icon']
             item_type = response.get('SKIN', 'Skin')
             return {'success': True, 'data': {'type': item_type, 'name': name, 'icon': icon}}
 
-        elif type == 'EquippableCharmLevel':
+        if type == 'EquippableCharmLevel':
             data = JSON.read('cache')
             name = data['buddies'][uuid]['names'][str(VLR_locale)]
             icon = data['buddies'][uuid]['icon']
@@ -503,7 +488,7 @@ class GetFormat:
             next_reward = 55
         current_reward = data[next_reward]
 
-        return current_reward
+        return current_reward  # type: ignore[no-any-return]
 
     @staticmethod
     def __get_contracts_by_season_id(

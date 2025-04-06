@@ -23,7 +23,7 @@ class Admin(commands.Cog):
 
         async with ctx.typing():
             if sync_type == 'guild':
-                self.bot.tree.copy_global_to(guild=ctx.guild)  # type: ignore
+                self.bot.tree.copy_global_to(guild=ctx.guild)
                 await self.bot.tree.sync(guild=ctx.guild)
                 await ctx.reply('Synced guild !')
                 return
@@ -43,7 +43,7 @@ class Admin(commands.Cog):
                 await ctx.reply('Un-Synced guild !')
                 return
 
-            self.bot.tree.clear_commands()  # type: ignore
+            self.bot.tree.clear_commands()
             await self.bot.tree.sync()
             await ctx.reply('Un-Synced global !')
 

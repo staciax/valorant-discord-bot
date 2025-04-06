@@ -70,7 +70,7 @@ def get_interaction_locale() -> str:
 
 def set_interaction_locale(locale: str | None) -> None:
     """Set the locale for bot"""
-    _current_locale.set(locale)
+    _current_locale.set(locale)  # type: ignore[arg-type]
 
 
 def get_valorant_locale() -> str:
@@ -86,7 +86,7 @@ def set_valorant_locale(locale: str | None) -> None:
     locale_json = str(locale) + '.json'
     if locale_json not in language_files:
         _valorant_current_locale.set('en-US')
-    _valorant_current_locale.set(locale)
+    _valorant_current_locale.set(locale)  # type: ignore[arg-type]
 
 
 class ValorantTranslator:

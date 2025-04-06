@@ -58,21 +58,22 @@ the [In-game API.][ValorantClientAPI]
 written using Python and the [Discord.py][DiscordPy] library <br>
 If you need help regarding Valorant Discord Bot, please join the [support server][Support]
 
-## Heroku
+<!-- ## Heroku
 - [ ⚠️ Heroku announces plans to eliminate free plans][Heroku_announce]
 > Important: Please note that dynos will have be restarted every **24 hours**. All changes to the local filesystem will be deleted, which means you'll have to relogin using `/login` once the 24-hour limit is reached. Read more about automatic dyno restarts [here][Heroku].
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-- [Youtube Tutorial][Tutorial]
+- [Youtube Tutorial][Tutorial] -->
 
-## Repl.it
+<!-- ## Repl.it
 
 > Important: All projects under the Repl.it free plan are public. To solve the privacy problem, all data is stored in the Repl.it Database, but the Repl.it Database is slow to read and it takes time to execute commands. (Cache system to be updated)
 
 [![Run on Repl.it](https://replit.com/badge/github/staciax/Valorant-DiscordBot)](https://replit.com/new/github/staciax/Valorant-DiscordBot)
 
-P.S. need to add 2 secrets: `TOKEN` and `OWNER_ID`, need to use [Uptimerobot](https://uptimerobot.com/) or other services to keep the bot alive.
-## Docker
+P.S. need to add 2 secrets: `TOKEN` and `OWNER_ID`, need to use [Uptimerobot](https://uptimerobot.com/) or other services to keep the bot alive. -->
+
+<!-- ## Docker
 
 To simply install the latest stable version, run
 
@@ -94,7 +95,7 @@ docker run -e TOKEN=<YOUR_BOT_TOKEN> -e OWNER_ID=<YOUR_OWNER_ID> marchingon12/va
 
 or use `--env-file` to point to the path you stored your env file. Read more info on how to do so [here](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
 
-View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valorant-bot).
+View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valorant-bot). -->
 
 
 ## Screenshots
@@ -113,7 +114,7 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 
 ## Installation
 
-* [Python 3.10+](https://www.python.org/downloads/)
+* [Python 3.12+](https://www.python.org/downloads/)
 
 * Install requirements
 
@@ -128,7 +129,7 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 * Clone/[Download][ZipDownload]
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 * Store discord bot token and owner ID under [.env](/.env)
