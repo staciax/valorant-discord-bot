@@ -7,3 +7,6 @@ __pycache__/
 
 # MacOS
 .DS_Store
+
+# cache
+data/*.json
