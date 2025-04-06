@@ -16,7 +16,7 @@ def create_json(filename: str, formats: dict[str, Any]) -> None:
     file_dir = os.path.dirname(file_path)
     os.makedirs(file_dir, exist_ok=True)
     if not os.path.exists(file_path):
-        with open(file_path, 'w') as fp:
+        with open(file_path, 'w', encoding='utf-8') as fp:
             json.dump(formats, fp, indent=2)
 
 

@@ -84,7 +84,7 @@ class ValorantBot(commands.Bot):
     @staticmethod
     def setup_cache() -> None:
         try:
-            with open('data/cache.json'):
+            with open('data/cache.json', encoding='utf-8'):
                 ...
         except FileNotFoundError:
             get_cache()

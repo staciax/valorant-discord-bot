@@ -100,17 +100,18 @@ class ValorantCog(commands.Cog, name='Valorant'):
             login = await self.db.login(user_id, authenticate, interaction.locale)  # type: ignore
 
             if login['auth']:  # type: ignore
-                embed = Embed(f"{response.get('SUCCESS')} **{login['player']}!**")  # type: ignore
+                embed = Embed(f'{response.get("SUCCESS")} **{login["player"]}!**')  # type: ignore
                 return await interaction.followup.send(embed=embed, ephemeral=True)
 
-            raise ValorantBotError(f"{response.get('FAILED')}")
+            raise ValorantBotError(f'{response.get("FAILED")}')
 
-        elif authenticate['auth'] == '2fa':  # type: ignore
+        if authenticate['auth'] == '2fa':  # type: ignore
             cookies = authenticate['cookie']  # type: ignore
             message = authenticate['message']  # type: ignore
             label = authenticate['label']  # type: ignore
             modal = View.TwoFA_UI(interaction, self.db, cookies, message, label, response)
             await interaction.response.send_modal(modal)
+        return None
 
     @app_commands.command(description='Logout and Delete your account from database')
     # @dynamic_cooldown(cooldown_5s)
@@ -125,6 +126,7 @@ class ValorantCog(commands.Cog, name='Valorant'):
                 embed = Embed(response.get('SUCCESS'))
                 return await interaction.followup.send(embed=embed, ephemeral=True)
             raise ValorantBotError(response.get('FAILED'))
+        return None
 
     @app_commands.command(description='Shows your daily store in your accounts')
     @app_commands.guild_only()
@@ -326,13 +328,13 @@ class ValorantCog(commands.Cog, name='Valorant'):
         login = await self.db.cookie_login(interaction.user.id, cookie, interaction.locale.value)
 
         if login['auth']:  # type: ignore
-            embed = Embed(f"{response.get('SUCCESS')} **{login['player']}!**")  # type: ignore
+            embed = Embed(f'{response.get("SUCCESS")} **{login["player"]}!**')  # type: ignore
             await interaction.followup.send(embed=embed, ephemeral=True)
             return
 
         view = ui.View()
         view.add_item(ui.Button(label='Tutorial', emoji='🔗', url='https://youtu.be/cFMNHEHEp2A'))
-        await interaction.followup.send(f"{response.get('FAILURE')}", view=view, ephemeral=True)
+        await interaction.followup.send(f'{response.get("FAILURE")}', view=view, ephemeral=True)
 
     # ---------- ROAD MAP ---------- #
 

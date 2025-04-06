@@ -37,7 +37,7 @@ class share_button(ui.View):
         await self.interaction.edit_original_response(view=None)
 
     @ui.button(label='Share to friends', style=ButtonStyle.primary)
-    async def button_callback(self, interaction: Interaction, button: ui.Button[Self]):
+    async def button_callback(self, interaction: Interaction, button: ui.Button[Self]) -> None:
         await interaction.channel.send(embeds=self.embeds)  # type: ignore
         await self.interaction.edit_original_response(content='\u200b', embed=None, view=None)
 
@@ -67,7 +67,7 @@ class NotifyView(discord.ui.View):
             await self.message.edit_original_response(view=self)  # type: ignore
 
     @discord.ui.button(label='Remove Notify', emoji='✖️', style=ButtonStyle.red)
-    async def remove_notify(self, interaction: Interaction, button: ui.Button):
+    async def remove_notify(self, interaction: Interaction, button: ui.Button) -> None:
         data = JSON.read('notifys')
 
         for i in range(len(data)):
@@ -232,6 +232,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
                 if interaction.response.is_done():
                     return await interaction.followup.send(embed=embed, ephemeral=True)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
+                return None
 
             if not code.isdigit():
                 return await send_embed(f'`{code}` is not a number')
@@ -247,6 +248,7 @@ class TwoFA_UI(ui.Modal, title='Two-factor authentication'):
 
             if auth['auth'] == 'failed':
                 return await send_embed(auth['error'])
+        return None
 
     async def on_error(self, interaction: Interaction, error: Exception) -> None:
         """Called when the user submits the modal with an error."""
@@ -277,7 +279,7 @@ class BaseBundle(ui.View):
             self.add_item(self.back_button)
             self.add_item(self.next_button)
 
-    def base_embed(self, title: str, description: str, icon: str, color: int = 0x0F1923) -> discord.Embed:
+    def base_embed(self, title: str, description: str, icon: str, color: int = 0x0F1923) -> discord.Embed:  # noqa: PLR6301
         """Base embed for the view"""
 
         embed = discord.Embed(title=title, description=description, color=color)
@@ -304,7 +306,7 @@ class BaseBundle(ui.View):
                     ).set_image(url=bundle['icon'])  # type: ignore[index]
                 )
 
-                for items in sorted(bundle['items'], key=lambda x: x['price'], reverse=True):  # type: ignore[index]
+                for items in sorted(bundle['items'], key=operator.itemgetter('price'), reverse=True):  # type: ignore[index]
                     item = GetItems.get_item_by_type(items['type'], items['uuid'])  # type: ignore[index]
                     item_type = get_item_type(items['type'])  # type: ignore[index]
 
@@ -320,7 +322,7 @@ class BaseBundle(ui.View):
                     )
                     embeds.append(embed)
 
-                    if len(embeds) == 10:
+                    if len(embeds) == 10:  # noqa: PLR2004
                         embeds_list.append(embeds)
                         embeds = []
 
@@ -340,7 +342,7 @@ class BaseBundle(ui.View):
 
         duration = bundle['duration']  # type: ignore[call-overload]
         duration_text = self.response.get('DURATION').format(  # type: ignore[call-overload]
-            duration=format_relative(datetime.utcnow() + timedelta(seconds=duration))  # type: ignore[union-attr]
+            duration=format_relative(datetime.utcnow() + timedelta(seconds=duration))  # type: ignore[union-attr]  # noqa: DTZ003
         )
 
         bundle_price = bundle['price']
@@ -377,7 +379,7 @@ class BaseBundle(ui.View):
 
             embeds.append(embed)
 
-            if len(embeds) == 10:
+            if len(embeds) == 10:  # noqa: PLR2004
                 embed_list.append(embeds)
                 embeds = []
 
@@ -401,14 +403,14 @@ class BaseBundle(ui.View):
         await interaction.response.edit_message(embeds=embeds, view=self)
 
     @ui.button(label='Back')
-    async def back_button(self, interaction: Interaction, button: ui.Button[Self]) -> None:
+    async def back_button(self, interaction: Interaction, _button: ui.Button[Self]) -> None:
         self.current_page = 0
         embeds = self.embeds[self.current_page]
         self.update_button()
         await interaction.response.edit_message(embeds=embeds, view=self)
 
     @ui.button(label='Next')
-    async def next_button(self, interaction: Interaction, button: ui.Button[Self]) -> None:
+    async def next_button(self, interaction: Interaction, _button: ui.Button[Self]) -> None:
         self.current_page = 1
         embeds = self.embeds[self.current_page]
         self.update_button()

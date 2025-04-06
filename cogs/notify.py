@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import functools
+import operator
 import traceback
 from datetime import datetime, time, timedelta
 from difflib import get_close_matches
@@ -117,8 +119,8 @@ class Notify(commands.Cog):
 
     @tasks.loop(time=time(hour=0, minute=0, second=10))  # utc 00:00:15
     async def notifys(self) -> None:
-        __verify_time = datetime.utcnow()
-        if __verify_time.hour == 0:
+        verify_time = datetime.utcnow()
+        if verify_time.hour == 0:
             await self.send_notify()
 
     @notifys.before_loop
@@ -151,9 +153,7 @@ class Notify(commands.Cog):
         skin_data = self.db.read_cache()
 
         # find skin
-        skin_list = sum(
-            [list(skin_data['skins'][x]['names'].values()) for x in skin_data['skins']], []
-        )  # get skin list with multilingual names
+        skin_list = functools.reduce(operator.iadd, [list(skin_data['skins'][x]['names'].values()) for x in skin_data['skins']], [])  # get skin list with multilingual names
         skin_name = get_close_matches(skin, skin_list, 1)  # get skin close match
 
         if skin_name:

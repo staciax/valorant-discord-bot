@@ -27,13 +27,11 @@ class DATABASE:
 
     def read_db(self) -> dict[str, Any]:
         """Read database"""
-        data = JSON.read('users')
-        return data
+        return JSON.read('users')
 
     def read_cache(self) -> dict[str, Any]:
         """Read database"""
-        data = JSON.read('cache')
-        return data
+        return JSON.read('cache')
 
     def insert_cache(self, data: dict[str, Any]) -> None:
         """Insert cache"""
@@ -49,7 +47,7 @@ class DATABASE:
 
         if data is None:
             raise DatabaseError(response.get('NOT_LOGIN'))
-        elif login:
+        if login:
             return False
         return data
 
@@ -138,7 +136,7 @@ class DATABASE:
 
         headers = {'Authorization': f'Bearer {access_token}', 'X-Riot-Entitlements-JWT': entitlements_token}
 
-        data = {
+        return {
             'puuid': puuid,
             'region': region,
             'headers': headers,
@@ -148,7 +146,6 @@ class DATABASE:
             'notify_channel': notify_channel,
             'dm_message': dm_message,
         }
-        return data
 
     async def refresh_token(self, user_id: int, data: dict[str, Any]) -> tuple[str, str]:
         """Refresh token"""
@@ -203,8 +200,7 @@ class DATABASE:
         """Get user is notify"""
 
         database = JSON.read('users')
-        notifys = [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
-        return notifys
+        return [user_id for user_id in database if database[user_id]['notify_mode'] is not None]
 
     def insert_skin_price(self, skin_price: dict[str, Any], force: bool = False) -> None:
         """Insert skin price to cache"""

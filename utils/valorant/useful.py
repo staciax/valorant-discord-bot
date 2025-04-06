@@ -68,8 +68,7 @@ def calculate_level_xp(level: int) -> int:  # https://github.com/giorgi-o
 def iso_to_time(iso: str) -> datetime:
     """Convert ISO time to datetime"""
     timestamp = datetime.strptime(iso, '%Y-%m-%dT%H:%M:%S%z').timestamp()
-    time = datetime.utcfromtimestamp(timestamp)
-    return time
+    return datetime.utcfromtimestamp(timestamp)
 
 
 def format_dt(dt: datetime, style: str | None = None) -> str:
@@ -183,8 +182,7 @@ class GetItems:
 
         skindata = JSON.read('cache')
         tier_uuid = skindata['skins'][skin]['tier']
-        tier = skindata['tiers'][tier_uuid]['icon']
-        return tier  # type: ignore[no-any-return]
+        return skindata['tiers'][tier_uuid]['icon']
 
     @staticmethod
     def get_spray(uuid: str) -> Any:
@@ -283,8 +281,7 @@ class GetEmoji:
         data = JSON.read('cache')
         uuid = data['skins'][skin_uuid]['tier']
         uuid = data['tiers'][uuid]['uuid']
-        emoji = tiers_resources[uuid]['emoji']
-        return emoji  # type: ignore[return-value]
+        return tiers_resources[uuid]['emoji']
 
     @classmethod
     def tier_by_bot(cls, skin_uuid: str, bot: ValorantBot) -> discord.Emoji:
@@ -317,7 +314,6 @@ class GetFormat:
         duration = data['SkinsPanelLayout']['SingleItemOffersRemainingDurationInSeconds']
 
         skin_count = 0
-        skin_source = {}
 
         for skin_count, skin_id in enumerate(offer_list):
             skin = GetItems.get_skin(skin_id)
@@ -335,9 +331,7 @@ class GetFormat:
             elif skin_count == 3:
                 skin4 = {'name': name, 'icon': icon, 'price': price, 'tier': tier_icon, 'uuid': skin_id}
 
-        skin_source = {'skin1': skin1, 'skin2': skin2, 'skin3': skin3, 'skin4': skin4, 'duration': duration}
-
-        return skin_source
+        return {'skin1': skin1, 'skin2': skin2, 'skin3': skin3, 'skin4': skin4, 'duration': duration}
 
     # ---------- UTILS FOR MISSION EMBED ---------- #
 
@@ -358,8 +352,7 @@ class GetFormat:
 
         def get_mission_by_id(ID: str) -> str | None:
             data = JSON.read('cache')
-            mission = data['missions'][ID]
-            return mission  # type: ignore[no-any-return]
+            return data['missions'][ID]
 
         for m in mission:
             mission = get_mission_by_id(m['ID'])
@@ -378,14 +371,13 @@ class GetFormat:
             if mission['type'] == 'EAresMissionType::NPE':
                 newplayer.append(format_m)
 
-        misson_data = {
+        return {
             'daily': daily,
             'weekly': weekly,
             'daily_end': daily_end,
             'weekly_end': weekly_end,
             'newplayer': newplayer,
         }
-        return misson_data
 
     # ---------- UTILS FOR NIGHTMARKET EMBED ---------- #
 
@@ -419,8 +411,7 @@ class GetFormat:
                 'price': price[0],
                 'disprice': Disprice[0],
             }
-        data = {'nightmarket': night_market, 'duration': duration}
-        return data
+        return {'nightmarket': night_market, 'duration': duration}
 
     # ---------- UTILS FOR BATTLEPASS EMBED ---------- #
 
@@ -486,9 +477,7 @@ class GetFormat:
         next_reward = tier + 1
         if tier == 55:
             next_reward = 55
-        current_reward = data[next_reward]
-
-        return current_reward  # type: ignore[no-any-return]
+        return data[next_reward]
 
     @staticmethod
     def __get_contracts_by_season_id(

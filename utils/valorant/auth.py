@@ -25,8 +25,7 @@ def _extract_tokens(data: str) -> str:
     pattern = re.compile(
         r'access_token=((?:[a-zA-Z]|\d|\.|-|_)*).*id_token=((?:[a-zA-Z]|\d|\.|-|_)*).*expires_in=(\d*)'
     )
-    response = pattern.findall(data['response']['parameters']['uri'])[0]
-    return response
+    return pattern.findall(data['response']['parameters']['uri'])[0]
 
 
 def _extract_tokens_from_uri(url: str) -> tuple[str, str]:
@@ -320,8 +319,7 @@ class Auth:
                 'Authorization': f'Bearer {access_token}',
                 'X-Riot-Entitlements-JWT': entitlements_token,
             }
-            user_data = {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
-            return user_data
+            return {'puuid': puuid, 'region': region, 'headers': headers, 'player_name': player_name}
 
         raise AuthenticationError(self.local_response().get('TEMP_LOGIN_NOT_SUPPORT_2FA'))
 
@@ -366,8 +364,7 @@ class Auth:
         accessToken, tokenID = _extract_tokens_from_uri(await r.text())
         entitlements_token = await self.get_entitlements_token(accessToken)
 
-        data = {'cookies': new_cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
-        return data
+        return {'cookies': new_cookies, 'AccessToken': accessToken, 'token_id': tokenID, 'emt': entitlements_token}
 
     async def refresh_token(self, cookies: dict) -> tuple[dict[str, Any], str, str]:
         return await self.redeem_cookies(cookies)
