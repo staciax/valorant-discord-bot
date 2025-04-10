@@ -6,6 +6,9 @@
   <br>
 </h1>
 
+> [!WARNING]  
+> This project is currently in development phase and not production-ready. The codebase is undergoing a complete refactoring.
+
 <h4 align="center">Store, Nightmarket, Battlepass, Missions, Bundle, Notify</h4>
 
 <p align="center">
@@ -47,11 +50,11 @@
 <!-- https://github.com/Cog-Creators/Red-DiscordBot -->
 
 ## Note ⚠️
+
 - will not receive updates until v4.0.0 will be finished. sorry 😭
 <!-- - `
 I'm a student and I have to divide my study time with this project.` -->
 - **v3.6.0 Update:** This version only includes cleanup of unused files, some refactoring, switch from pip to uv, and preparations for a complete refactor in the upcoming v4.0.0.
-
 
 # About
 
@@ -99,13 +102,13 @@ or use `--env-file` to point to the path you stored your env file. Read more inf
 
 View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valorant-bot). -->
 
-
 ## Screenshots
 
-* Embed Design by [Giorgio][Giorgio]
+- Embed Design by [Giorgio][Giorgio]
 
 ![image](https://i.imgur.com/uF9THEa.png)
 ![image](https://i.imgur.com/ijjvQV3.png)
+
 <details>
 <summary>See more screenshots</summary>
 <img src="https://i.imgur.com/GhzLBSr.png" alt="battlepass">
@@ -116,73 +119,74 @@ View on Docker image on [DockerHub](https://hub.docker.com/r/marchingon12/valora
 
 ## Installation
 
-* [Python 3.12+](https://www.python.org/downloads/)
+- [Python 3.12+](https://www.python.org/downloads/)
 
-* Install requirements
+- Install requirements
 
-* **Create** the [discord bot][DiscordBotDocs]
+- **Create** the [discord bot][DiscordBotDocs]
 
-* Under **Privileged Gateway Intents** enable [`MESSAGE CONTENT INTENT`](/resources/dc_MESSAGE_CONTENT_INTENT.png)
+- Under **Privileged Gateway Intents** enable [`MESSAGE CONTENT INTENT`](/resources/dc_MESSAGE_CONTENT_INTENT.png)
 
-* Enable the required bot [permissions](/resources/dc_BOT_PERMS.png).
+- Enable the required bot [permissions](/resources/dc_BOT_PERMS.png).
 
-* Invite your bot to the server with the scopes [`bot & applications.commands`](/resources/dc_SCOPES.png)
+- Invite your bot to the server with the scopes [`bot & applications.commands`](/resources/dc_SCOPES.png)
 
-* Clone/[Download][ZipDownload]
+- Clone/[Download][ZipDownload]
 
 ```bash
 uv sync
 ```
 
-* Store discord bot token and owner ID under [.env](/.env)
+- Store discord bot token and owner ID under [.env](/.env)
 
 ```
 TOKEN='INPUT DISCORD TOKEN HERE'
 OWNER_ID='INPUT YOUR DISCORD ID'
 ```
-*  <details><summary>How to get your Owner ID</summary>
+
+- <details><summary>How to get your Owner ID</summary>
     <p>
 
-    1. Turn on Developer Mode under Discord Settings > Advanced <img src="resources/dc_DevMode.png">
+  1. Turn on Developer Mode under Discord Settings > Advanced <img src="resources/dc_DevMode.png">
 
-    2. Right click on your profile icon in any chat and copy your ID <img src="resources/dc_CopyID.png">
+  2. Right click on your profile icon in any chat and copy your ID <img src="resources/dc_CopyID.png">
 
     </p>
   </details>
 
-* Run the bot
+- Run the bot
 
 ```bash
 python bot.py
 ```
 
-* the Slash Command (`/`) will automaticalled be assigned for global commands (global commands can also take up to an hour to update for Android users). Refer to [docs][CommandDocs].
-* to use commands in your server immediately, use `-sync guild`.
-* remove commands in your server by using `-unsync guild`.
-* remove global commands by using `-unsync global`. This removes commands for everyone using the bot.
+- the Slash Command (`/`) will automaticalled be assigned for global commands (global commands can also take up to an hour to update for Android users). Refer to [docs][CommandDocs].
+- to use commands in your server immediately, use `-sync guild`.
+- remove commands in your server by using `-unsync guild`.
+- remove global commands by using `-unsync global`. This removes commands for everyone using the bot.
 
 > Important: custom emojis used by the bot will be added to your server so that they can be accessed when needed. If there are no slots left, emojis will not be added and therefore displayed in text from e.g. `:ValorantPointIcon:`. There are 7 custom emojis in total.
 
 ## Usage
 
-| Command                       | Action                                                                                                     |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `/store`  | Shows your daily store |
-| `/point`  | Shows your valorant point |
-| `/login`  | Log in with your Riot account |
-| `/logout`  | Log out of your Riot account |
-| `/misson`  | View your daily/weekly mission progress |
-| `/nightmarket`  | Shows your nightmarket |
-| `/battlepass`  | View your battlepass' current tier |
-| `/bundle`  | inspect a specific bundle `credit by Giorgio` |
-| `/bundles`  | Show the current featured bundles `credit by Giorgio` |
-| `/cookies`  | Login to your account with a cookie, [How to cookies][SkinpeekCookies] `credit by Giorgio`, [video][CookieLogin] |
-| `/notify add`  | Set a notification when a specific skin is available on your store |
-| `/notify list`  | View skins you have set a notification for |
-| `/notify mode`  | Change notification mode `Specified skin` or `all skin` |
-| `/notify test`  | Testing notification |
-| `/notify channel`  | Change notification channel `DM Message` or `Channel(in server)` |
-| `/debug`  | command for debug `emoji`, `skin price`,`cache` is not loaded |
+| Command           | Action                                                                                                           |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `/store`          | Shows your daily store                                                                                           |
+| `/point`          | Shows your valorant point                                                                                        |
+| `/login`          | Log in with your Riot account                                                                                    |
+| `/logout`         | Log out of your Riot account                                                                                     |
+| `/misson`         | View your daily/weekly mission progress                                                                          |
+| `/nightmarket`    | Shows your nightmarket                                                                                           |
+| `/battlepass`     | View your battlepass' current tier                                                                               |
+| `/bundle`         | inspect a specific bundle `credit by Giorgio`                                                                    |
+| `/bundles`        | Show the current featured bundles `credit by Giorgio`                                                            |
+| `/cookies`        | Login to your account with a cookie, [How to cookies][SkinpeekCookies] `credit by Giorgio`, [video][CookieLogin] |
+| `/notify add`     | Set a notification when a specific skin is available on your store                                               |
+| `/notify list`    | View skins you have set a notification for                                                                       |
+| `/notify mode`    | Change notification mode `Specified skin` or `all skin`                                                          |
+| `/notify test`    | Testing notification                                                                                             |
+| `/notify channel` | Change notification channel `DM Message` or `Channel(in server)`                                                 |
+| `/debug`          | command for debug `emoji`, `skin price`,`cache` is not loaded                                                    |
 
 ## Translations
 
@@ -248,13 +252,14 @@ This project wouldn't have happened without.
 <img link="https://ko-fi.com/staciax" src="https://static.tipme.in.th/img/logo.f8267020b29b.svg" width="170" />
 </a>
 
-
 <!------------------- Links -------------------->
 
 <!-- Valorant -->
+
 [ValApi]: https://valorant-api.com/
 
 <!-- Discord -->
+
 [Support]: https://discord.gg/RaCzsPnfNM
 [DiscordBotDocs]: https://discord.com/developers/applications
 [VAD]: https://discord.gg/a9yzrw3KAm
@@ -262,6 +267,7 @@ This project wouldn't have happened without.
 [CommandDocs]: https://discord.com/developers/docs/interactions/application-commands
 
 <!-- Github -->
+
 [ZipDownload]: https://github.com/staciax/ValorantStoreChecker-discord-bot/archive/refs/heads/master.zip
 [ForkDocs]: https://docs.github.com/en/get-started/quickstart/fork-a-repo
 [ValorantClientAPI]: https://github.com/HeyM1ke/ValorantClientAPI
@@ -274,10 +280,12 @@ This project wouldn't have happened without.
 [Contributors]: https://github.com/staciax/ValorantStoreChecker-discord-bot/graphs/contributors
 
 <!-- YouTube -->
+
 [Tutorial]: https://youtu.be/5ZFsEcDT8e4
 [CookieLogin]: https://youtu.be/cFMNHEHEp2A
 
 <!-- Other -->
+
 [Heroku]: https://devcenter.heroku.com/articles/dynos#automatic-dyno-restarts
 [Crowdin]: (https://crowdin.com/project/discord-bot-valorant)
 [Heroku_announce]: https://blog.heroku.com/next-chapter
